@@ -4,6 +4,8 @@
  * MIT Licensed
  */
 
+import type {AssertionArgs} from '../../types.js';
+
 /**
  * ### .getActual(object, [actual])
  *
@@ -15,6 +17,6 @@
  * @namespace Utils
  * @name getActual
  */
-export function getActual(obj, args) {
+export function getActual(obj: object, args: AssertionArgs) {
   return args.length > 4 ? args[4] : obj._obj;
 }

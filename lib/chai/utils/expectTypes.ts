@@ -21,7 +21,7 @@ import {type} from './type-detect.js';
  * @name expectTypes
  * @public
  */
-export function expectTypes(obj, types) {
+export function expectTypes(obj: object, types: string[]) {
   let flagMsg = flag(obj, 'message');
   let ssfi = flag(obj, 'ssfi');
 

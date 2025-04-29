@@ -4,6 +4,8 @@
  * MIT Licensed
  */
 
+import type {Assertion} from '../assertion.js';
+
 /**
  * ### .transferFlags(assertion, object, includeAll = true)
  *
@@ -25,8 +27,10 @@
  * @name transferFlags
  * @private
  */
-export function transferFlags(assertion, object, includeAll) {
-  let flags = assertion.__flags || (assertion.__flags = Object.create(null));
+export function transferFlags<
+  T extends {__flags?: {[key: PropertyKey]: unknown}}
+>(assertion: Assertion, object: T, includeAll?: boolean) {
+  const flags = assertion.__flags || (assertion.__flags = Object.create(null));
 
   if (!object.__flags) {
     object.__flags = Object.create(null);
@@ -34,7 +38,7 @@ export function transferFlags(assertion, object, includeAll) {
 
   includeAll = arguments.length === 3 ? includeAll : true;
 
-  for (let flag in flags) {
+  for (const flag in flags) {
     if (
       includeAll ||
       (flag !== 'object' &&
@@ -42,7 +46,7 @@ export function transferFlags(assertion, object, includeAll) {
         flag !== 'lockSsfi' &&
         flag != 'message')
     ) {
-      object.__flags[flag] = flags[flag];
+      object.__flags![flag] = flags[flag];
     }
   }
 }

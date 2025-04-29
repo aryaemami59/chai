@@ -2,7 +2,7 @@
  * @param {unknown} obj
  * @returns {string}
  */
-export function type(obj) {
+export function type(obj: unknown): string {
   if (typeof obj === 'undefined') {
     return 'undefined';
   }
@@ -11,7 +11,7 @@ export function type(obj) {
     return 'null';
   }
 
-  const stringTag = obj[Symbol.toStringTag];
+  const stringTag = obj[Symbol.toStringTag as keyof typeof obj];
   if (typeof stringTag === 'string') {
     return stringTag;
   }

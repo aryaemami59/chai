@@ -17,10 +17,10 @@
  * @name getOwnEnumerablePropertySymbols
  * @public
  */
-export function getOwnEnumerablePropertySymbols(obj) {
+export function getOwnEnumerablePropertySymbols(obj: object): symbol[] {
   if (typeof Object.getOwnPropertySymbols !== 'function') return [];
 
   return Object.getOwnPropertySymbols(obj).filter(function (sym) {
-    return Object.getOwnPropertyDescriptor(obj, sym).enumerable;
+    return Object?.getOwnPropertyDescriptor?.(obj, sym)?.enumerable;
   });
 }

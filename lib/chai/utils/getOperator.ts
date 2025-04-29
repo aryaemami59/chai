@@ -5,7 +5,7 @@ import {type} from './type-detect.js';
  * @param {unknown} obj
  * @returns {boolean}
  */
-function isObjectType(obj) {
+function isObjectType(obj: unknown): obj is object {
   let objectType = type(obj);
   let objectTypes = ['Array', 'Object', 'Function'];
 
@@ -28,7 +28,7 @@ function isObjectType(obj) {
  * @name getOperator
  * @public
  */
-export function getOperator(obj, args) {
+export function getOperator(obj: object, args: unknown[]) {
   let operator = flag(obj, 'operator');
   let negate = flag(obj, 'negate');
   let expected = args[3];

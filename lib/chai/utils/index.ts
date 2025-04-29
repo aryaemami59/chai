@@ -9,10 +9,10 @@ import * as checkError from 'check-error';
 
 // test utility
 export {test} from './test.js';
+export {type};
 
 // type utility
 import {type} from './type-detect.js';
-export {type};
 
 // expectTypes utility
 export {expectTypes} from './expectTypes.js';
@@ -47,7 +47,7 @@ export {getPathInfo, hasProperty} from 'pathval';
  * @param {Function} fn
  * @returns {string}
  */
-export function getName(fn) {
+export function getName(fn: (...args: any[]) => any): string {
   return fn.name;
 }
 
@@ -103,7 +103,7 @@ export {getOperator} from './getOperator.js';
  * @param {*} obj Object to test
  * @returns {boolean}
  */
-export function isRegExp(obj) {
+export function isRegExp(obj: any): boolean {
   return Object.prototype.toString.call(obj) === '[object RegExp]';
 }
 
@@ -113,6 +113,6 @@ export function isRegExp(obj) {
  * @param {unknown} obj Object to test
  * @returns {boolean}
  */
-export function isNumeric(obj) {
+export function isNumeric(obj: unknown): boolean {
   return ['Number', 'BigInt'].includes(type(obj));
 }

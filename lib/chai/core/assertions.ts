@@ -5,10 +5,10 @@
  * MIT Licensed
  */
 
-import {Assertion} from '../assertion.js';
 import {AssertionError} from 'assertion-error';
-import * as _ from '../utils/index.js';
+import {Assertion} from '../assertion.js';
 import {config} from '../config.js';
+import * as _ from '../utils/index.js';
 
 const {flag} = _;
 
@@ -325,7 +325,7 @@ const functionTypes = {
  * @namespace BDD
  * @public
  */
-function an(type, msg) {
+function an(this: Assertion, type: string, msg: string) {
   if (msg) flag(this, 'message', msg);
   type = type.toLowerCase();
   let obj = flag(this, 'object'),
@@ -335,7 +335,7 @@ function an(type, msg) {
 
   if (functionTypes['function'].includes(type)) {
     this.assert(
-      functionTypes[type].includes(detectedType),
+      functionTypes[type as keyof typeof functionTypes].includes(detectedType),
       'expected #{this} to be ' + article + type,
       'expected #{this} not to be ' + article + type
     );
@@ -356,12 +356,12 @@ Assertion.addChainableMethod('a', an);
  * @param {unknown} b
  * @returns {boolean}
  */
-function SameValueZero(a, b) {
+function SameValueZero(a: unknown, b: unknown): boolean {
   return (_.isNaN(a) && _.isNaN(b)) || a === b;
 }
 
 /** */
-function includeChainingBehavior() {
+function includeChainingBehavior(this: Assertion) {
   flag(this, 'contains', true);
 }
 
@@ -507,21 +507,21 @@ function includeChainingBehavior() {
  * @alias includes
  * @alias contains
  * @param {unknown} val
- * @param {string} msg _optional_
+ * @param {string} message _optional_
  * @namespace BDD
  * @public
  */
-function include(val, msg) {
-  if (msg) flag(this, 'message', msg);
+function include(this: Assertion, val: unknown, message?: string) {
+  if (message) flag(this, 'message', message);
 
-  let obj = flag(this, 'object'),
-    objType = _.type(obj).toLowerCase(),
-    flagMsg = flag(this, 'message'),
-    negate = flag(this, 'negate'),
-    ssfi = flag(this, 'ssfi'),
-    isDeep = flag(this, 'deep'),
-    descriptor = isDeep ? 'deep ' : '',
-    isEql = isDeep ? flag(this, 'eql') : SameValueZero;
+  const obj = flag(this, 'object');
+  const objType = _.type(obj).toLowerCase();
+  let flagMsg = flag(this, 'message');
+  const negate = flag(this, 'negate');
+  const ssfi: (...args: any[]) => any = flag(this, 'ssfi');
+  const isDeep = flag(this, 'deep');
+  const descriptor = isDeep ? 'deep ' : '';
+  const isEql = isDeep ? flag(this, 'eql') : SameValueZero;
 
   flagMsg = flagMsg ? flagMsg + ': ' : '';
 
@@ -529,7 +529,7 @@ function include(val, msg) {
 
   switch (objType) {
     case 'string':
-      included = obj.indexOf(val) !== -1;
+      included = (obj as string).indexOf(val as string) !== -1;
       break;
 
     case 'weakset':

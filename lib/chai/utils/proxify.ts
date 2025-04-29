@@ -31,7 +31,10 @@ const builtins = ['__flags', '__methods', '_obj', 'assert'];
  * @param {string} [nonChainableMethodName]
  * @returns {T}
  */
-export function proxify(obj, nonChainableMethodName) {
+export function proxify<T extends object>(
+  obj: T,
+  nonChainableMethodName?: string
+): T {
   if (!isProxyEnabled()) return obj;
 
   return new Proxy(obj, {
@@ -103,7 +106,10 @@ export function proxify(obj, nonChainableMethodName) {
       // if the `lockSsfi` flag is set, thus indicating that this assertion is
       // being called from within another assertion. In that case, the `ssfi`
       // flag is already set to the outer assertion's starting point.
-      if (builtins.indexOf(property) === -1 && !flag(target, 'lockSsfi')) {
+      if (
+        builtins.indexOf(property as keyof typeof property) === -1 &&
+        !flag(target, 'lockSsfi')
+      ) {
         flag(target, 'ssfi', proxyGetter);
       }
 
@@ -122,7 +128,7 @@ export function proxify(obj, nonChainableMethodName) {
  * @returns {number} min(string distance between strA and strB, cap)
  * @private
  */
-function stringDistanceCapped(strA, strB, cap) {
+function stringDistanceCapped(strA: string, strB: string, cap: number): number {
   if (Math.abs(strA.length - strB.length) >= cap) {
     return cap;
   }

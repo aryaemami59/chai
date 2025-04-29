@@ -39,18 +39,39 @@ import {transferFlags} from './transferFlags.js';
  * @name overwriteChainableMethod
  * @public
  */
-export function overwriteChainableMethod(ctx, name, method, chainingBehavior) {
-  let chainableBehavior = ctx.__methods[name];
+export function overwriteChainableMethod<
+  T extends {
+    __methods: {
+      method: {
+        (...args: any[]): void;
+        method: (...args: any[]) => any;
+        chainingBehavior: (...args: any[]) => any;
+      };
+      [key: string]: {
+        (...args: any[]): void;
+        method: (...args: any[]) => any;
+        chainingBehavior: (...args: any[]) => any;
+      };
+    };
+  }
+>(
+  this: Assertion,
+  ctx: T,
+  name: string,
+  method: (...args: any[]) => (...args: any[]) => any,
+  chainingBehavior?: (...args: any[]) => (...args: any[]) => any
+) {
+  const chainableBehavior = ctx.__methods[name];
 
-  let _chainingBehavior = chainableBehavior.chainingBehavior;
+  const _chainingBehavior = chainableBehavior.chainingBehavior;
   chainableBehavior.chainingBehavior =
     function overwritingChainableMethodGetter() {
-      let result = chainingBehavior(_chainingBehavior).call(this);
+      const result = chainingBehavior?.(_chainingBehavior).call(this);
       if (result !== undefined) {
         return result;
       }
 
-      let newAssertion = new Assertion();
+      const newAssertion = new Assertion();
       transferFlags(this, newAssertion);
       return newAssertion;
     };

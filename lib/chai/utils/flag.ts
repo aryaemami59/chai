@@ -24,8 +24,12 @@
  * @returns {unknown | undefined}
  * @private
  */
-export function flag(obj, key, value) {
-  let flags = obj.__flags || (obj.__flags = Object.create(null));
+export function flag<T extends {__flags?: {[key: PropertyKey]: unknown}}>(
+  obj: T,
+  key: string,
+  value?: unknown
+): T | undefined {
+  const flags = obj.__flags || (obj.__flags = Object.create(null));
   if (arguments.length === 3) {
     flags[key] = value;
   } else {

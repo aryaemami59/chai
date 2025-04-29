@@ -4,16 +4,17 @@
  * MIT Licensed
  */
 
-import * as util from './chai/utils/index.js';
 import {AssertionError} from 'assertion-error';
+import {Assertion} from './chai/assertion.js';
 import {config} from './chai/config.js';
 import './chai/core/assertions.js';
-import {expect} from './chai/interface/expect.js';
-import {Assertion} from './chai/assertion.js';
-import * as should from './chai/interface/should.js';
 import {assert} from './chai/interface/assert.js';
+import {expect} from './chai/interface/expect.js';
+import * as should from './chai/interface/should.js';
+import * as util from './chai/utils/index.js';
+import type {ChaiPlugin, ChaiStatic} from './types.js';
 
-const used = [];
+const used: ChaiPlugin[] = [];
 
 // Assertion Error
 export {AssertionError};
@@ -27,8 +28,8 @@ export {AssertionError};
  * @returns {this} for chaining
  * @public
  */
-export function use(fn) {
-  const exports = {
+export function use(fn: ChaiPlugin): ChaiStatic {
+  const exports: ChaiStatic = {
     use,
     AssertionError,
     util,

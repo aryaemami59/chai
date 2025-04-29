@@ -4,4 +4,4 @@
  * MIT Licensed
  */
 
-export const isNaN = Number.isNaN;
+export const {isNaN} = Number;

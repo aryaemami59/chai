@@ -4,9 +4,9 @@
  * MIT Licensed
  */
 
+import type {AssertionStatic} from '../../types.js';
 import {Assertion} from '../assertion.js';
 import {flag} from './flag.js';
-import {isProxyEnabled} from './isProxyEnabled.js';
 import {transferFlags} from './transferFlags.js';
 
 /**
@@ -41,14 +41,22 @@ import {transferFlags} from './transferFlags.js';
  * @name overwriteProperty
  * @public
  */
-export function overwriteProperty(ctx, name, getter) {
-  let _get = Object.getOwnPropertyDescriptor(ctx, name),
-    _super = function () {};
-
-  if (_get && 'function' === typeof _get.get) _super = _get.get;
+export function overwriteProperty(
+  this: Assertion,
+  ctx: object,
+  name: string,
+  getter: (this: AssertionStatic, _super: any) => any
+) {
+  const _get = Object.getOwnPropertyDescriptor(ctx, name);
+  const _super =
+    _get && 'function' === typeof _get.get
+      ? _get.get
+      : function (this: Assertion) {
+          return this;
+        };
 
   Object.defineProperty(ctx, name, {
-    get: function overwritingPropertyGetter() {
+    get: function overwritingPropertyGetter(this: AssertionStatic) {
       // Setting the `ssfi` flag to `overwritingPropertyGetter` causes this
       // function to be the starting point for removing implementation frames
       // from the stack trace of a failed assertion.
@@ -64,23 +72,25 @@ export function overwriteProperty(ctx, name, getter) {
       //
       // If proxy protection is enabled, then the `ssfi` flag has already been
       // set by the proxy getter.
-      if (!isProxyEnabled() && !flag(this, 'lockSsfi')) {
-        flag(this, 'ssfi', overwritingPropertyGetter);
-      }
+      // if (!isProxyEnabled() && !flag(this, "lockSsfi")) {
+      //   flag(this, "ssfi", overwritingPropertyGetter);
+      // }
 
       // Setting the `lockSsfi` flag to `true` prevents the overwritten
       // assertion from changing the `ssfi` flag. By this point, the `ssfi`
       // flag is already set to the correct starting point for this assertion.
-      let origLockSsfi = flag(this, 'lockSsfi');
+      const origLockSsfi = flag(this, 'lockSsfi');
       flag(this, 'lockSsfi', true);
-      let result = getter(_super).call(this);
+      // const result = getter(_super).call(this);
+      // const result = getter(_super).call(this);
+      const result = getter.apply(this, [_super]).call(this);
       flag(this, 'lockSsfi', origLockSsfi);
 
       if (result !== undefined) {
         return result;
       }
 
-      let newAssertion = new Assertion();
+      const newAssertion = new Assertion();
       transferFlags(this, newAssertion);
       return newAssertion;
     },

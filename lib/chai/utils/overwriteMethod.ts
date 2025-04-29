@@ -43,7 +43,11 @@ import {transferFlags} from './transferFlags.js';
  * @name overwriteMethod
  * @public
  */
-export function overwriteMethod(ctx, name, method) {
+export function overwriteMethod(
+  ctx: Record<string, any>,
+  name: string,
+  method: Function
+) {
   let _method = ctx[name],
     _super = function () {
       throw new Error(name + ' is not a function');
@@ -51,7 +55,7 @@ export function overwriteMethod(ctx, name, method) {
 
   if (_method && 'function' === typeof _method) _super = _method;
 
-  let overwritingMethodWrapper = function () {
+  let overwritingMethodWrapper = function (this: Assertion) {
     // Setting the `ssfi` flag to `overwritingMethodWrapper` causes this
     // function to be the starting point for removing implementation frames from
     // the stack trace of a failed assertion.

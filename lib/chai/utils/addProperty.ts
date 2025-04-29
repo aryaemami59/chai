@@ -34,7 +34,7 @@ import {transferFlags} from './transferFlags.js';
  * @name addProperty
  * @public
  */
-export function addProperty(ctx, name, getter) {
+export function addProperty(ctx: object, name: string, getter?: () => any) {
   getter = getter === undefined ? function () {} : getter;
 
   Object.defineProperty(ctx, name, {

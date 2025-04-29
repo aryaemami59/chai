@@ -1,3 +1,32 @@
+export interface Config {
+  /**
+   * Default: false
+   */
+  includeStack: boolean;
+
+  /**
+   * Default: true
+   */
+  showDiff: boolean;
+
+  /**
+   * Default: 40
+   */
+  truncateThreshold: number;
+
+  /**
+   * Default: true
+   */
+  useProxy: boolean;
+
+  /**
+   * Default: ['then', 'catch', 'inspect', 'toJSON']
+   */
+  proxyExcludedKeys: string[];
+
+  deepEqual?: (<L, R>(expected: L, actual: R) => void) | null;
+}
+
 export const config = {
   /**
    * ### config.includeStack
@@ -109,4 +138,4 @@ export const config = {
    * @public
    */
   deepEqual: null
-};
+} as const satisfies Config as Config;

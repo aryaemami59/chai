@@ -20,11 +20,16 @@ import {config} from '../config.js';
  * @namespace Utils
  * @name inspect
  */
-export function inspect(obj, showHidden, depth, colors) {
-  let options = {
-    colors: colors,
+export function inspect(
+  obj: any,
+  showHidden?: boolean,
+  depth?: number,
+  colors?: boolean
+) {
+  const options = {
+    colors,
     depth: typeof depth === 'undefined' ? 2 : depth,
-    showHidden: showHidden,
+    showHidden,
     truncate: config.truncateThreshold ? config.truncateThreshold : Infinity
   };
   return _inspect(obj, options);

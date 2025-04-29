@@ -26,7 +26,7 @@
   "bugs": {
     "url": "https://github.com/chaijs/chai/issues"
   },
-  "main": "./chai.js",
+  "main": "./dist/index.js",
   "scripts": {
     "prebuild": "npm run clean",
     "build": "npm run build:esm",
@@ -55,6 +55,9 @@
   "devDependencies": {
     "@eslint/js": "^9.17.0",
     "@rollup/plugin-commonjs": "^25.0.7",
+    "@types/check-error": "^1.0.3",
+    "@types/deep-eql": "^4.0.2",
+    "@types/pathval": "^1.1.2",
     "@web/dev-server-rollup": "^0.6.1",
     "@web/test-runner": "^0.18.0",
     "@web/test-runner-playwright": "^0.11.0",

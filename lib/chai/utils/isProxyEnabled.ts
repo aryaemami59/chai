@@ -17,7 +17,7 @@ import {config} from '../config.js';
  * @name isProxyEnabled
  * @returns {boolean}
  */
-export function isProxyEnabled() {
+export function isProxyEnabled(): boolean {
   return (
     config.useProxy &&
     typeof Proxy !== 'undefined' &&

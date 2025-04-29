@@ -4,18 +4,32 @@
  * MIT Licensed
  */
 
-import {Assertion} from '../assertion.js';
 import {AssertionError} from 'assertion-error';
+import type {AssertionStatic, Operator, ShouldAssertion} from '../../types.js';
+import {Assertion} from '../assertion.js';
+
+export interface Should extends ShouldAssertion {
+  not: ShouldAssertion;
+  fail(message?: string): never;
+  fail(
+    actual: any,
+    expected: any,
+    message?: string,
+    operator?: Operator
+  ): never;
+}
+
+// export type {Should} from '../../types.js';
 
 /**
  * @returns {void}
  */
-function loadShould() {
+function loadShould(): Should {
   // explicitly define this method as function as to have it's name to include as `ssfi`
   /**
    * @returns {Assertion}
    */
-  function shouldGetter() {
+  function shouldGetter(this: Assertion & AssertionStatic) {
     if (
       this instanceof String ||
       this instanceof Number ||
@@ -30,7 +44,7 @@ function loadShould() {
   /**
    * @param {unknown} value
    */
-  function shouldSetter(value) {
+  function shouldSetter(this: Assertion & AssertionStatic, value: unknown) {
     // See https://github.com/chaijs/chai/issues/86: this makes
     // `whatever.should = someValue` actually set `someValue`, which is
     // especially useful for `global.should = require('chai').should()`.
@@ -38,7 +52,7 @@ function loadShould() {
     // Note that we have to use [[DefineProperty]] instead of [[Put]]
     // since otherwise we would trigger this very setter!
     Object.defineProperty(this, 'should', {
-      value: value,
+      value,
       enumerable: true,
       configurable: true,
       writable: true
@@ -51,7 +65,7 @@ function loadShould() {
     configurable: true
   });
 
-  let should = {};
+  let should: Partial<Should> = {};
 
   /**
    * ### .fail([message])
@@ -74,7 +88,22 @@ function loadShould() {
    * @namespace BDD
    * @public
    */
-  should.fail = function (actual, expected, message, operator) {
+  // should.fail =
+  // function fail(message?: string): never;
+
+  // function fail(
+  //   actual: any,
+  //   expected: any,
+  //   message?: string,
+  //   operator?: Operator
+  // ): never;
+
+  function fail(
+    actual?: any,
+    expected?: any,
+    message?: string,
+    operator?: Operator
+  ): never {
     if (arguments.length < 2) {
       message = actual;
       actual = undefined;
@@ -84,13 +113,15 @@ function loadShould() {
     throw new AssertionError(
       message,
       {
-        actual: actual,
-        expected: expected,
-        operator: operator
+        actual,
+        expected,
+        operator
       },
       should.fail
     );
-  };
+  }
+
+  should.fail = fail;
 
   /**
    * ### .equal(actual, expected, [message])
@@ -156,7 +187,7 @@ function loadShould() {
   };
 
   // negation
-  should.not = {};
+  should.not = {} as ShouldAssertion;
 
   /**
    * ### .not.equal(actual, expected, [message])
@@ -187,16 +218,21 @@ function loadShould() {
    *
    * @name not.throw
    * @alias not.Throw
-   * @param {Function} fn
-   * @param {Error} errt
-   * @param {RegExp} errs
-   * @param {string} msg
+   * @param {Function} actual
+   * @param {Error} constructor
+   * @param {RegExp} expected
+   * @param {string} message
    * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Error#Error_types
    * @namespace Should
    * @public
    */
-  should.not.Throw = function (fn, errt, errs, msg) {
-    new Assertion(fn, msg).to.not.Throw(errt, errs);
+  should.not.Throw = function (
+    actual: Function,
+    constructor?: Error | Function | string | RegExp,
+    expected?: string | RegExp,
+    message?: string
+  ) {
+    new Assertion(actual, message).to.not.Throw(constructor, expected);
   };
 
   /**
@@ -220,7 +256,7 @@ function loadShould() {
   should['throw'] = should['Throw'];
   should.not['throw'] = should.not['Throw'];
 
-  return should;
+  return should as Should;
 }
 
 export const should = loadShould;

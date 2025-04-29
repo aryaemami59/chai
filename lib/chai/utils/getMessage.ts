@@ -4,6 +4,7 @@
  * MIT Licensed
  */
 
+import type {AssertionArgs} from '../../types.js';
 import {flag} from './flag.js';
 import {getActual} from './getActual.js';
 import {objDisplay} from './objDisplay.js';
@@ -27,7 +28,7 @@ import {objDisplay} from './objDisplay.js';
  * @name getMessage
  * @public
  */
-export function getMessage(obj, args) {
+export function getMessage(obj: any, args: AssertionArgs): string {
   let negate = flag(obj, 'negate');
   let val = flag(obj, 'object');
   let expected = args[3];

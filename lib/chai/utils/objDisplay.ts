@@ -4,8 +4,8 @@
  * MIT Licensed
  */
 
-import {inspect} from './inspect.js';
 import {config} from '../config.js';
+import {inspect} from './inspect.js';
 
 /**
  * ### .objDisplay(object)
@@ -20,19 +20,20 @@ import {config} from '../config.js';
  * @namespace Utils
  * @public
  */
-export function objDisplay(obj) {
+export function objDisplay(obj: unknown): string {
   let str = inspect(obj),
     type = Object.prototype.toString.call(obj);
 
   if (config.truncateThreshold && str.length >= config.truncateThreshold) {
     if (type === '[object Function]') {
-      return !obj.name || obj.name === ''
+      const fn = obj as () => void;
+      return !fn.name || fn.name === ''
         ? '[Function]'
-        : '[Function: ' + obj.name + ']';
+        : '[Function: ' + fn.name + ']';
     } else if (type === '[object Array]') {
-      return '[ Array(' + obj.length + ') ]';
+      return `[ Array(${(obj as []).length}) ]`;
     } else if (type === '[object Object]') {
-      let keys = Object.keys(obj),
+      let keys = Object.keys(obj as object),
         kstr =
           keys.length > 2
             ? keys.splice(0, 2).join(', ') + ', ...'

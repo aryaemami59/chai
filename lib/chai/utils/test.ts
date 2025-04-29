@@ -4,6 +4,7 @@
  * MIT Licensed
  */
 
+import type {AssertionArgs} from '../../types.js';
 import {flag} from './flag.js';
 
 /**
@@ -17,7 +18,7 @@ import {flag} from './flag.js';
  * @namespace Utils
  * @name test
  */
-export function test(obj, args) {
+export function test(obj: object, args: AssertionArgs): unknown {
   let negate = flag(obj, 'negate'),
     expr = args[0];
   return negate ? !expr : expr;

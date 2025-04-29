@@ -64,14 +64,28 @@ let call = Function.prototype.call,
  * @name addChainableMethod
  * @public
  */
-export function addChainableMethod(ctx, name, method, chainingBehavior) {
+export function addChainableMethod<
+  T extends {
+    __methods: {
+      [key: string]: {
+        method?: (...args: any[]) => any;
+        chainingBehavior: (...args: any[]) => any;
+      };
+    };
+  }
+>(
+  ctx: T,
+  name: string,
+  method: (...args: any[]) => void,
+  chainingBehavior?: () => void
+) {
   if (typeof chainingBehavior !== 'function') {
     chainingBehavior = function () {};
   }
 
-  let chainableBehavior = {
-    method: method,
-    chainingBehavior: chainingBehavior
+  const chainableBehavior = {
+    method,
+    chainingBehavior
   };
 
   // save the methods so we can overwrite them later, if we need to.
@@ -81,10 +95,10 @@ export function addChainableMethod(ctx, name, method, chainingBehavior) {
   ctx.__methods[name] = chainableBehavior;
 
   Object.defineProperty(ctx, name, {
-    get: function chainableMethodGetter() {
+    get: function chainableMethodGetter(this: Assertion) {
       chainableBehavior.chainingBehavior.call(this);
 
-      let chainableMethodWrapper = function () {
+      const chainableMethodWrapper = function (this: Assertion) {
         // Setting the `ssfi` flag to `chainableMethodWrapper` causes this
         // function to be the starting point for removing implementation
         // frames from the stack trace of a failed assertion.
@@ -104,12 +118,14 @@ export function addChainableMethod(ctx, name, method, chainingBehavior) {
           flag(this, 'ssfi', chainableMethodWrapper);
         }
 
-        let result = chainableBehavior.method.apply(this, arguments);
+        const args = arguments as unknown as any[];
+
+        const result = chainableBehavior.method.apply(this, args);
         if (result !== undefined) {
           return result;
         }
 
-        let newAssertion = new Assertion();
+        const newAssertion = new Assertion();
         transferFlags(this, newAssertion);
         return newAssertion;
       };
@@ -119,7 +135,7 @@ export function addChainableMethod(ctx, name, method, chainingBehavior) {
       // Use `Object.setPrototypeOf` if available
       if (canSetPrototype) {
         // Inherit all properties from the object by replacing the `Function` prototype
-        let prototype = Object.create(this);
+        const prototype = Object.create(this);
         // Restore the `call` and `apply` methods from `Function`
         prototype.call = call;
         prototype.apply = apply;
@@ -127,18 +143,18 @@ export function addChainableMethod(ctx, name, method, chainingBehavior) {
       }
       // Otherwise, redefine all properties (slow!)
       else {
-        let asserterNames = Object.getOwnPropertyNames(ctx);
+        const asserterNames = Object.getOwnPropertyNames(ctx);
         asserterNames.forEach(function (asserterName) {
           if (excludeNames.indexOf(asserterName) !== -1) {
             return;
           }
 
-          let pd = Object.getOwnPropertyDescriptor(ctx, asserterName);
+          const pd = Object.getOwnPropertyDescriptor(ctx, asserterName);
           Object.defineProperty(chainableMethodWrapper, asserterName, pd);
         });
       }
 
-      transferFlags(this, chainableMethodWrapper);
+      transferFlags(this, chainableMethodWrapper as unknown as Assertion);
       return proxify(chainableMethodWrapper);
     },
     configurable: true

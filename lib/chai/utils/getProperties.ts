@@ -16,13 +16,13 @@
  * @name getProperties
  * @public
  */
-export function getProperties(object) {
+export function getProperties(object: object) {
   let result = Object.getOwnPropertyNames(object);
 
   /**
    * @param {unknown} property
    */
-  function addProperty(property) {
+  function addProperty(property: string) {
     if (result.indexOf(property) === -1) {
       result.push(property);
     }

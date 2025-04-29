@@ -40,8 +40,12 @@ const fnLengthDesc = Object.getOwnPropertyDescriptor(function () {}, 'length');
  * @namespace Utils
  * @name addLengthGuard
  */
-export function addLengthGuard(fn, assertionName, isChainable) {
-  if (!fnLengthDesc.configurable) return fn;
+export function addLengthGuard(
+  fn: Function,
+  assertionName: string,
+  isChainable: boolean
+): Function {
+  if (!fnLengthDesc?.configurable) return fn;
 
   Object.defineProperty(fn, 'length', {
     get: function () {

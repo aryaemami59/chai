@@ -4,16 +4,17 @@
  * MIT Licensed
  */
 
-import * as chai from '../../../index.js';
-import {Assertion} from '../assertion.js';
 import {AssertionError} from 'assertion-error';
+import * as chai from '../../../index.js';
+import type {Operator} from '../../types.js';
+import {Assertion} from '../assertion.js';
 
 /**
  * @param {unknown} val
  * @param {string} message
  * @returns {Assertion}
  */
-function expect(val, message) {
+function expect(val: any, message?: string): Assertion {
   return new Assertion(val, message);
 }
 
@@ -40,7 +41,12 @@ export {expect};
  * @namespace expect
  * @public
  */
-expect.fail = function (actual, expected, message, operator) {
+expect.fail = function (
+  actual: any,
+  expected: any,
+  message?: string,
+  operator?: Operator
+) {
   if (arguments.length < 2) {
     message = actual;
     actual = undefined;
@@ -50,9 +56,9 @@ expect.fail = function (actual, expected, message, operator) {
   throw new AssertionError(
     message,
     {
-      actual: actual,
-      expected: expected,
-      operator: operator
+      actual,
+      expected,
+      operator
     },
     chai.expect.fail
   );
