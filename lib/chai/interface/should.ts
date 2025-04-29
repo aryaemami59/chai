@@ -156,16 +156,21 @@ function loadShould(): Should {
    *
    * @name throw
    * @alias Throw
-   * @param {Function} fn
-   * @param {Error} errt
-   * @param {RegExp} errs
-   * @param {string} msg
+   * @param {Function} actual
+   * @param {Error} constructor
+   * @param {RegExp} expected
+   * @param {string} message
    * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Error#Error_types
    * @namespace Should
    * @public
    */
-  should.Throw = function (fn, errt, errs, msg) {
-    new Assertion(fn, msg).to.Throw(errt, errs);
+  should.Throw = function (
+    actual: Function,
+    constructor: Error | Function,
+    expected?: string | RegExp,
+    message?: string
+  ): void {
+    new Assertion(actual, message).to.Throw(constructor, expected);
   };
 
   /**
@@ -228,7 +233,7 @@ function loadShould(): Should {
    */
   should.not.Throw = function (
     actual: Function,
-    constructor?: Error | Function | string | RegExp,
+    constructor: Error | Function,
     expected?: string | RegExp,
     message?: string
   ) {

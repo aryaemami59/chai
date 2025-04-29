@@ -11,6 +11,7 @@ import type {
   AssertionPrototype,
   AssertionStatic,
   CloseTo,
+  ContainSubset,
   Deep,
   Equal,
   Include,
@@ -35,7 +36,7 @@ import type {
   TypeComparison
 } from '../types.js';
 import {config} from './config.js';
-import * as util from './utils/index.js';
+import {eql, getOperator, util} from './utils/index.js';
 
 export interface Assertion
   extends LanguageChains,
@@ -65,11 +66,14 @@ export interface Assertion
   arguments: Assertion;
   Arguments: Assertion;
   finite: Assertion;
+  callable: Assertion;
+  numeric: Assertion;
   equal: Equal;
   equals: Equal;
   eq: Equal;
   eql: Equal;
   eqls: Equal;
+  containSubset: ContainSubset;
   property: Property;
   ownProperty: Property;
   haveOwnProperty: Property;
@@ -158,7 +162,7 @@ export class Assertion {
     util.flag(this, 'lockSsfi', lockSsfi);
     util.flag(this, 'object', target);
     util.flag(this, 'message', message);
-    util.flag(this, 'eql', config.deepEqual || util.eql);
+    util.flag(this, 'eql', config.deepEqual || eql);
 
     return util.proxify(this);
   }
@@ -212,7 +216,7 @@ export class Assertion {
    */
   static addMethod(
     name: string,
-    method: (this: AssertionStatic, ...args: any[]) => any
+    method: (this: Assertion, ...args: any[]) => any
   ) {
     util.addMethod(this.prototype, name, method);
   }
@@ -224,7 +228,7 @@ export class Assertion {
    */
   static addChainableMethod(
     name: string,
-    method: (this: AssertionStatic, ...args: any[]) => void,
+    method: (this: Assertion, ...args: any[]) => void,
     chainingBehavior?: () => void
   ) {
     util.addChainableMethod(this.prototype, name, method, chainingBehavior);
@@ -284,8 +288,8 @@ export class Assertion {
    */
   assert(
     _expr: unknown,
-    msg: Message,
-    _negateMsg: Message,
+    msg?: Message,
+    _negateMsg?: Message,
     expected?: unknown,
     _actual?: unknown,
     showDiff?: boolean
@@ -306,7 +310,7 @@ export class Assertion {
         showDiff
       } satisfies Record<PropertyKey, unknown> as Record<PropertyKey, unknown>;
 
-      const operator = util.getOperator(this, args);
+      const operator = getOperator(this, args);
       if (operator) {
         assertionErrorObjectProperties.operator = operator;
       }

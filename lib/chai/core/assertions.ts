@@ -6,6 +6,7 @@
  */
 
 import {AssertionError} from 'assertion-error';
+import type {AssertionStatic} from '../../types.js';
 import {Assertion} from '../assertion.js';
 import {config} from '../config.js';
 import * as _ from '../utils/index.js';
@@ -3951,14 +3952,14 @@ Assertion.addProperty('extensible', function () {
  * @public
  */
 Assertion.addProperty('sealed', function () {
-  let obj = flag(this, 'object');
+  const obj = flag(this, 'object');
 
   // In ES5, if the argument to this method is a primitive, then it will cause a TypeError.
   // In ES6, a non-object argument will be treated as if it was a sealed ordinary object, simply return true.
   // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/isSealed
   // The following provides ES6 behavior for ES5 environments.
 
-  let isSealed = obj === Object(obj) ? Object.isSealed(obj) : true;
+  const isSealed = obj === Object(obj) ? Object.isSealed(obj) : true;
 
   this.assert(
     isSealed,
@@ -3992,14 +3993,14 @@ Assertion.addProperty('sealed', function () {
  * @public
  */
 Assertion.addProperty('frozen', function () {
-  let obj = flag(this, 'object');
+  const obj = flag(this, 'object');
 
   // In ES5, if the argument to this method is a primitive, then it will cause a TypeError.
   // In ES6, a non-object argument will be treated as if it was a frozen ordinary object, simply return true.
   // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/isFrozen
   // The following provides ES6 behavior for ES5 environments.
 
-  let isFrozen = obj === Object(obj) ? Object.isFrozen(obj) : true;
+  const isFrozen = obj === Object(obj) ? Object.isFrozen(obj) : true;
 
   this.assert(
     isFrozen,
@@ -4056,8 +4057,8 @@ Assertion.addProperty('frozen', function () {
  * @namespace BDD
  * @public
  */
-Assertion.addProperty('finite', function (_msg) {
-  let obj = flag(this, 'object');
+Assertion.addProperty('finite', function (this: AssertionStatic) {
+  const obj = flag(this, 'object');
 
   this.assert(
     typeof obj === 'number' && isFinite(obj),

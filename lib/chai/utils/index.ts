@@ -154,3 +154,30 @@ export const util = {
   compatibleConstructor,
   compatibleMessage
 } satisfies ChaiUtils;
+
+export {
+  addChainableMethod,
+  addLengthGuard,
+  addMethod,
+  addProperty,
+  compareByInspect,
+  compatibleConstructor,
+  compatibleInstance,
+  compatibleMessage,
+  expectTypes,
+  flag,
+  getActual,
+  getOwnEnumerableProperties,
+  getPathInfo,
+  getProperties,
+  hasProperty,
+  inspect,
+  isProxyEnabled,
+  objDisplay,
+  overwriteChainableMethod,
+  overwriteMethod,
+  overwriteProperty,
+  proxify,
+  test,
+  transferFlags
+};

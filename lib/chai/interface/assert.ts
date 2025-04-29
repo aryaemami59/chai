@@ -6,8 +6,1923 @@
 
 import {AssertionError} from 'assertion-error';
 import * as chai from '../../index.js';
+import type {
+  AssertStatic,
+  Constructor,
+  Operator,
+  OperatorComparable
+} from '../../types.js';
 import {Assertion} from '../assertion.js';
 import {flag, inspect} from '../utils/index.js';
+
+export interface Assert {
+  /**
+   * @param expression    Expression to test for truthiness.
+   * @param message    Message to display on error.
+   */
+  (expression: any, message?: string): asserts expression;
+
+  /**
+   * Throws a failure.
+   *
+   * @param message    Message to display on error.
+   * @remarks Node.js assert module-compatible.
+   */
+  fail(message?: string): never;
+
+  /**
+   * Throws a failure.
+   *
+   * T   Type of the objects.
+   * @param actual   Actual value.
+   * @param expected   Potential expected value.
+   * @param message    Message to display on error.
+   * @param operator   Comparison operator, if not strict equality.
+   * @remarks Node.js assert module-compatible.
+   */
+  fail<T>(actual: T, expected: T, message?: string, operator?: Operator): never;
+
+  /**
+   * Asserts that object is truthy.
+   *
+   * @param object   Object to test.
+   * @param message    Message to display on error.
+   */
+  isOk(value: unknown, message?: string): asserts value;
+
+  /**
+   * Asserts that object is truthy.
+   *
+   * @param object   Object to test.
+   * @param message    Message to display on error.
+   */
+  ok(value: unknown, message?: string): asserts value;
+
+  /**
+   * Asserts that object is falsy.
+   *
+   * T   Type of object.
+   * @param object   Object to test.
+   * @param message    Message to display on error.
+   */
+  isNotOk<T>(value: T, message?: string): void;
+
+  /**
+   * Asserts that object is falsy.
+   *
+   * T   Type of object.
+   * @param object   Object to test.
+   * @param message    Message to display on error.
+   */
+  notOk<T>(value: T, message?: string): void;
+
+  /**
+   * Asserts non-strict equality (==) of actual and expected.
+   *
+   * T   Type of the objects.
+   * @param actual   Actual value.
+   * @param expected   Potential expected value.
+   * @param message   Message to display on error.
+   */
+  equal<T>(actual: T, expected: T, message?: string): void;
+
+  /**
+   * Asserts non-strict inequality (!=) of actual and expected.
+   *
+   * T   Type of the objects.
+   * @param actual   Actual value.
+   * @param expected   Potential expected value.
+   * @param message   Message to display on error.
+   */
+  notEqual<T>(actual: T, expected: T, message?: string): void;
+
+  /**
+   * Asserts strict equality (===) of actual and expected.
+   *
+   * T   Type of the objects.
+   * @param actual   Actual value.
+   * @param expected   Potential expected value.
+   * @param message   Message to display on error.
+   */
+  strictEqual<T>(actual: T, expected: T, message?: string): void;
+
+  /**
+   * Asserts strict inequality (!==) of actual and expected.
+   *
+   * T   Type of the objects.
+   * @param actual   Actual value.
+   * @param expected   Potential expected value.
+   * @param message   Message to display on error.
+   */
+  notStrictEqual<T>(actual: T, expected: T, message?: string): void;
+
+  /**
+   * Asserts that actual is deeply equal to expected.
+   *
+   * T   Type of the objects.
+   * @param actual   Actual value.
+   * @param expected   Potential expected value.
+   * @param message   Message to display on error.
+   */
+  deepEqual<T>(actual: T, expected: T, message?: string): void;
+
+  /**
+   * Asserts that actual is not deeply equal to expected.
+   *
+   * T   Type of the objects.
+   * @param actual   Actual value.
+   * @param expected   Potential expected value.
+   * @param message   Message to display on error.
+   */
+  notDeepEqual<T>(actual: T, expected: T, message?: string): void;
+
+  /**
+   * Alias to deepEqual
+   *
+   * T   Type of the objects.
+   * @param actual   Actual value.
+   * @param expected   Potential expected value.
+   * @param message   Message to display on error.
+   */
+  deepStrictEqual<T>(actual: T, expected: T, message?: string): void;
+
+  /**
+   * Partially matches actual and expected.
+   *
+   * @param actual   Actual value.
+   * @param expected   Potential subset of the value.
+   * @param message   Message to display on error.
+   */
+  containSubset(val: any, exp: any, msg?: string): void;
+
+  /**
+   * Partially matches actual and expected.
+   *
+   * @param actual   Actual value.
+   * @param expected   Potential subset of the value.
+   * @param message   Message to display on error.
+   */
+  containsSubset(val: any, exp: any, msg?: string): void;
+
+  /**
+   * No partial match between actual and expected exists.
+   *
+   * @param actual   Actual value.
+   * @param expected   Potential subset of the value.
+   * @param message   Message to display on error.
+   */
+  doesNotContainSubset(val: any, exp: any, msg?: string): void;
+
+  /**
+   * Asserts valueToCheck is strictly greater than (>) valueToBeAbove.
+   *
+   * @param valueToCheck   Actual value.
+   * @param valueToBeAbove   Minimum Potential expected value.
+   * @param message   Message to display on error.
+   */
+  isAbove(valueToCheck: number, valueToBeAbove: number, message?: string): void;
+
+  /**
+   * Asserts valueToCheck is greater than or equal to (>=) valueToBeAtLeast.
+   *
+   * @param valueToCheck   Actual value.
+   * @param valueToBeAtLeast   Minimum Potential expected value.
+   * @param message   Message to display on error.
+   */
+  isAtLeast(
+    valueToCheck: number,
+    valueToBeAtLeast: number,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts valueToCheck is strictly less than (<) valueToBeBelow.
+   *
+   * @param valueToCheck   Actual value.
+   * @param valueToBeBelow   Minimum Potential expected value.
+   * @param message   Message to display on error.
+   */
+  isBelow(valueToCheck: number, valueToBeBelow: number, message?: string): void;
+
+  /**
+   * Asserts valueToCheck is less than or equal to (<=) valueToBeAtMost.
+   *
+   * @param valueToCheck   Actual value.
+   * @param valueToBeAtMost   Minimum Potential expected value.
+   * @param message   Message to display on error.
+   */
+  isAtMost(
+    valueToCheck: number,
+    valueToBeAtMost: number,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that value is true.
+   *
+   * @param value   Actual value.
+   * @param message   Message to display on error.
+   */
+  isTrue(value: unknown, message?: string): asserts value is true;
+
+  /**
+   * Asserts that value is false.
+   *
+   * @param value   Actual value.
+   * @param message   Message to display on error.
+   */
+  isFalse(value: unknown, message?: string): asserts value is false;
+
+  /**
+   * Asserts that value is not true.
+   *
+   * T   Type of value.
+   * @param value   Actual value.
+   * @param message   Message to display on error.
+   */
+  isNotTrue<T>(value: T, message?: string): asserts value is Exclude<T, true>;
+
+  /**
+   * Asserts that value is not false.
+   *
+   * @param value   Actual value.
+   * @param message   Message to display on error.
+   */
+  isNotFalse<T>(value: T, message?: string): asserts value is Exclude<T, false>;
+
+  /**
+   * Asserts that value is null.
+   *
+   * @param value   Actual value.
+   * @param message   Message to display on error.
+   */
+  isNull(value: unknown, message?: string): asserts value is null;
+
+  /**
+   * Asserts that value is not null.
+   *
+   * T   Type of value.
+   * @param value   Actual value.
+   * @param message   Message to display on error.
+   */
+  isNotNull<T>(value: T, message?: string): asserts value is Exclude<T, null>;
+
+  /**
+   * Asserts that value is NaN.
+   *
+   * T   Type of value.
+   * @param value   Actual value.
+   * @param message   Message to display on error.
+   */
+  isNaN<T>(value: T, message?: string): void;
+
+  /**
+   * Asserts that value is not NaN.
+   *
+   * T   Type of value.
+   * @param value   Actual value.
+   * @param message   Message to display on error.
+   */
+  isNotNaN<T>(value: T, message?: string): void;
+
+  /**
+   * Asserts that the target is neither null nor undefined.
+   *
+   * T   Type of value.
+   * @param value   Actual value.
+   * @param message    Message to display on error.
+   */
+  exists<T>(value: T, message?: string): asserts value is NonNullable<T>;
+
+  /**
+   * Asserts that the target is either null or undefined.
+   *
+   * @param value   Actual value.
+   * @param message    Message to display on error.
+   */
+  notExists(
+    value: unknown,
+    message?: string
+  ): asserts value is null | undefined;
+
+  /**
+   * Asserts that value is undefined.
+   *
+   * @param value   Actual value.
+   * @param message   Message to display on error.
+   */
+  isUndefined(value: unknown, message?: string): asserts value is undefined;
+
+  /**
+   * Asserts that value is not undefined.
+   *
+   * T   Type of value.
+   * @param value   Actual value.
+   * @param message   Message to display on error.
+   */
+  isDefined<T>(
+    value: T,
+    message?: string
+  ): asserts value is Exclude<T, undefined>;
+
+  /**
+   * Asserts that value is a function.
+   *
+   * T   Type of value.
+   * @param value   Actual value.
+   * @param message   Message to display on error.
+   */
+  isFunction<T>(value: T, message?: string): void;
+
+  /**
+   * Asserts that value is not a function.
+   *
+   * T   Type of value.
+   * @param value   Actual value.
+   * @param message   Message to display on error.
+   */
+  isNotFunction<T>(value: T, message?: string): void;
+
+  /**
+   * Asserts that value is an object of type 'Object'
+   * (as revealed by Object.prototype.toString).
+   *
+   * T   Type of value.
+   * @param value   Actual value.
+   * @param message   Message to display on error.
+   * @remarks The assertion does not match subclassed objects.
+   */
+  isObject<T>(value: T, message?: string): void;
+
+  /**
+   * Asserts that value is not an object of type 'Object'
+   * (as revealed by Object.prototype.toString).
+   *
+   * T   Type of value.
+   * @param value   Actual value.
+   * @param message   Message to display on error.
+   */
+  isNotObject<T>(value: T, message?: string): void;
+
+  /**
+   * Asserts that value is an array.
+   *
+   * T   Type of value.
+   * @param value   Actual value.
+   * @param message   Message to display on error.
+   */
+  isArray<T>(value: T, message?: string): void;
+
+  /**
+   * Asserts that value is not an array.
+   *
+   * T   Type of value.
+   * @param value   Actual value.
+   * @param message   Message to display on error.
+   */
+  isNotArray<T>(value: T, message?: string): void;
+
+  /**
+   * Asserts that value is a string.
+   *
+   * T   Type of value.
+   * @param value   Actual value.
+   * @param message   Message to display on error.
+   */
+  isString<T>(value: T, message?: string): void;
+
+  /**
+   * Asserts that value is not a string.
+   *
+   * T   Type of value.
+   * @param value   Actual value.
+   * @param message   Message to display on error.
+   */
+  isNotString<T>(value: T, message?: string): void;
+
+  /**
+   * Asserts that value is a number.
+   *
+   * T   Type of value.
+   * @param value   Actual value.
+   * @param message   Message to display on error.
+   */
+  isNumber<T>(value: T, message?: string): void;
+
+  /**
+   * Asserts that value is not a number.
+   *
+   * T   Type of value.
+   * @param value   Actual value.
+   * @param message   Message to display on error.
+   */
+  isNotNumber<T>(value: T, message?: string): void;
+
+  /**
+   * Asserts that value is a finite number.
+   * Unlike `.isNumber`, this will fail for `NaN` and `Infinity`.
+   *
+   * T   Type of value
+   * @param value    Actual value
+   * @param message   Message to display on error.
+   */
+  isFinite<T>(value: T, message?: string): void;
+
+  /**
+   * Asserts that value is a boolean.
+   *
+   * T   Type of value.
+   * @param value   Actual value.
+   * @param message   Message to display on error.
+   */
+  isBoolean<T>(value: T, message?: string): void;
+
+  /**
+   * Asserts that value is not a boolean.
+   *
+   * T   Type of value.
+   * @param value   Actual value.
+   * @param message   Message to display on error.
+   */
+  isNotBoolean<T>(value: T, message?: string): void;
+
+  /**
+   * Asserts that value's type is name, as determined by Object.prototype.toString.
+   *
+   * T   Type of value.
+   * @param value   Actual value.
+   * @param name   Potential expected type name of value.
+   * @param message   Message to display on error.
+   */
+  typeOf<T>(value: T, name: string, message?: string): void;
+
+  /**
+   * Asserts that value's type is not name, as determined by Object.prototype.toString.
+   *
+   * T   Type of value.
+   * @param value   Actual value.
+   * @param name   Potential expected type name of value.
+   * @param message   Message to display on error.
+   */
+  notTypeOf<T>(value: T, name: string, message?: string): void;
+
+  /**
+   * Asserts that value is an instance of constructor.
+   *
+   * T   Expected type of value.
+   * @param value   Actual value.
+   * @param constructor   Potential expected contructor of value.
+   * @param message   Message to display on error.
+   */
+  instanceOf<T>(
+    value: unknown,
+    constructor: Constructor<T>,
+    message?: string
+  ): asserts value is T;
+
+  /**
+   * Asserts that value is not an instance of constructor.
+   *
+   * T   Type of value.
+   * U   Type that value shouldn't be an instance of.
+   * @param value   Actual value.
+   * @param constructor   Potential expected contructor of value.
+   * @param message   Message to display on error.
+   */
+  notInstanceOf<T, U>(
+    value: T,
+    type: Constructor<U>,
+    message?: string
+  ): asserts value is Exclude<T, U>;
+
+  /**
+   * Asserts that haystack includes needle.
+   *
+   * @param haystack   Container string.
+   * @param needle   Potential substring of haystack.
+   * @param message   Message to display on error.
+   */
+  include(haystack: string, needle: string, message?: string): void;
+
+  /**
+   * Asserts that haystack includes needle.
+   *
+   * T   Type of values in haystack.
+   * @param haystack   Container array, set or map.
+   * @param needle   Potential value contained in haystack.
+   * @param message   Message to display on error.
+   */
+  include<T>(
+    haystack: readonly T[] | ReadonlySet<T> | ReadonlyMap<any, T>,
+    needle: T,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that haystack includes needle.
+   *
+   * T   Type of values in haystack.
+   * @param haystack   WeakSet container.
+   * @param needle   Potential value contained in haystack.
+   * @param message   Message to display on error.
+   */
+  include<T extends object>(
+    haystack: WeakSet<T>,
+    needle: T,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that haystack includes needle.
+   *
+   * T   Type of haystack.
+   * @param haystack   Object.
+   * @param needle   Potential subset of the haystack's properties.
+   * @param message   Message to display on error.
+   */
+  include<T>(haystack: T, needle: Partial<T>, message?: string): void;
+
+  /**
+   * Asserts that haystack does not include needle.
+   *
+   * @param haystack   Container string.
+   * @param needle   Potential substring of haystack.
+   * @param message   Message to display on error.
+   */
+  notInclude(haystack: string, needle: string, message?: string): void;
+
+  /**
+   * Asserts that haystack does not include needle.
+   *
+   * T   Type of values in haystack.
+   * @param haystack   Container array, set or map.
+   * @param needle   Potential value contained in haystack.
+   * @param message   Message to display on error.
+   */
+  notInclude<T>(
+    haystack: readonly T[] | ReadonlySet<T> | ReadonlyMap<any, T>,
+    needle: T,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that haystack does not include needle.
+   *
+   * T   Type of values in haystack.
+   * @param haystack   WeakSet container.
+   * @param needle   Potential value contained in haystack.
+   * @param message   Message to display on error.
+   */
+  notInclude<T extends object>(
+    haystack: WeakSet<T>,
+    needle: T,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that haystack does not include needle.
+   *
+   * T   Type of haystack.
+   * @param haystack   Object.
+   * @param needle   Potential subset of the haystack's properties.
+   * @param message   Message to display on error.
+   */
+  notInclude<T>(haystack: T, needle: Partial<T>, message?: string): void;
+
+  /**
+   * Asserts that haystack includes needle. Deep equality is used.
+   *
+   * @param haystack   Container string.
+   * @param needle   Potential substring of haystack.
+   * @param message   Message to display on error.
+   *
+   * @deprecated Does not have any effect on string. Use {@link Assert#include} instead.
+   */
+  deepInclude(haystack: string, needle: string, message?: string): void;
+
+  /**
+   * Asserts that haystack includes needle. Deep equality is used.
+   *
+   * T   Type of values in haystack.
+   * @param haystack   Container array, set or map.
+   * @param needle   Potential value contained in haystack.
+   * @param message   Message to display on error.
+   */
+  deepInclude<T>(
+    haystack: readonly T[] | ReadonlySet<T> | ReadonlyMap<any, T>,
+    needle: T,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that haystack includes needle. Deep equality is used.
+   *
+   * T   Type of haystack.
+   * @param haystack   Object.
+   * @param needle   Potential subset of the haystack's properties.
+   * @param message   Message to display on error.
+   */
+  deepInclude<T>(
+    haystack: T,
+    needle: T extends WeakSet<any> ? never : Partial<T>,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that haystack does not include needle. Deep equality is used.
+   *
+   * @param haystack   Container string.
+   * @param needle   Potential substring of haystack.
+   * @param message   Message to display on error.
+   *
+   * @deprecated Does not have any effect on string. Use {@link Assert#notInclude} instead.
+   */
+  notDeepInclude(haystack: string, needle: string, message?: string): void;
+
+  /**
+   * Asserts that haystack does not include needle. Deep equality is used.
+   *
+   * T   Type of values in haystack.
+   * @param haystack   Container array, set or map.
+   * @param needle   Potential value contained in haystack.
+   * @param message   Message to display on error.
+   */
+  notDeepInclude<T>(
+    haystack: readonly T[] | ReadonlySet<T> | ReadonlyMap<any, T>,
+    needle: T,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that haystack does not include needle. Deep equality is used.
+   *
+   * T   Type of haystack.
+   * @param haystack   Object.
+   * @param needle   Potential subset of the haystack's properties.
+   * @param message   Message to display on error.
+   */
+  notDeepInclude<T>(
+    haystack: T,
+    needle: T extends WeakSet<any> ? never : Partial<T>,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that ‘haystack’ includes ‘needle’. Can be used to assert the inclusion of a subset of properties in an object.
+   *
+   * Enables the use of dot- and bracket-notation for referencing nested properties.
+   * ‘[]’ and ‘.’ in property names can be escaped using double backslashes.Asserts that ‘haystack’ includes ‘needle’.
+   * Can be used to assert the inclusion of a subset of properties in an object.
+   * Enables the use of dot- and bracket-notation for referencing nested properties.
+   * ‘[]’ and ‘.’ in property names can be escaped using double backslashes.
+   *
+   * @param haystack
+   * @param needle
+   * @param message   Message to display on error.
+   */
+  nestedInclude(haystack: any, needle: any, message?: string): void;
+
+  /**
+   * Asserts that ‘haystack’ does not include ‘needle’. Can be used to assert the absence of a subset of properties in an object.
+   *
+   * Enables the use of dot- and bracket-notation for referencing nested properties.
+   * ‘[]’ and ‘.’ in property names can be escaped using double backslashes.Asserts that ‘haystack’ includes ‘needle’.
+   * Can be used to assert the inclusion of a subset of properties in an object.
+   * Enables the use of dot- and bracket-notation for referencing nested properties.
+   * ‘[]’ and ‘.’ in property names can be escaped using double backslashes.
+   *
+   * @param haystack
+   * @param needle
+   * @param message   Message to display on error.
+   */
+  notNestedInclude(haystack: any, needle: any, message?: string): void;
+
+  /**
+   * Asserts that ‘haystack’ includes ‘needle’. Can be used to assert the inclusion of a subset of properties in an object while checking for deep equality
+   *
+   * Enables the use of dot- and bracket-notation for referencing nested properties.
+   * ‘[]’ and ‘.’ in property names can be escaped using double backslashes.Asserts that ‘haystack’ includes ‘needle’.
+   * Can be used to assert the inclusion of a subset of properties in an object.
+   * Enables the use of dot- and bracket-notation for referencing nested properties.
+   * ‘[]’ and ‘.’ in property names can be escaped using double backslashes.
+   *
+   * @param haystack
+   * @param needle
+   * @param message   Message to display on error.
+   */
+  deepNestedInclude(haystack: any, needle: any, message?: string): void;
+
+  /**
+   * Asserts that ‘haystack’ does not include ‘needle’. Can be used to assert the absence of a subset of properties in an object while checking for deep equality.
+   *
+   * Enables the use of dot- and bracket-notation for referencing nested properties.
+   * ‘[]’ and ‘.’ in property names can be escaped using double backslashes.Asserts that ‘haystack’ includes ‘needle’.
+   * Can be used to assert the inclusion of a subset of properties in an object.
+   * Enables the use of dot- and bracket-notation for referencing nested properties.
+   * ‘[]’ and ‘.’ in property names can be escaped using double backslashes.
+   *
+   * @param haystack
+   * @param needle
+   * @param message   Message to display on error.
+   */
+  notDeepNestedInclude(haystack: any, needle: any, message?: string): void;
+
+  /**
+   * Asserts that ‘haystack’ includes ‘needle’. Can be used to assert the inclusion of a subset of properties in an object while ignoring inherited properties.
+   *
+   * @param haystack
+   * @param needle
+   * @param message   Message to display on error.
+   */
+  ownInclude(haystack: any, needle: any, message?: string): void;
+
+  /**
+   * Asserts that ‘haystack’ includes ‘needle’. Can be used to assert the absence of a subset of properties in an object while ignoring inherited properties.
+   *
+   * @param haystack
+   * @param needle
+   * @param message   Message to display on error.
+   */
+  notOwnInclude(haystack: any, needle: any, message?: string): void;
+
+  /**
+   * Asserts that ‘haystack’ includes ‘needle’. Can be used to assert the inclusion of a subset of properties in an object while ignoring inherited properties and checking for deep
+   *
+   * @param haystack
+   * @param needle
+   * @param message   Message to display on error.
+   */
+  deepOwnInclude(haystack: any, needle: any, message?: string): void;
+
+  /**
+   * Asserts that ‘haystack’ includes ‘needle’. Can be used to assert the absence of a subset of properties in an object while ignoring inherited properties and checking for deep equality.
+   *
+   * @param haystack
+   * @param needle
+   * @param message   Message to display on error.
+   */
+  notDeepOwnInclude(haystack: any, needle: any, message?: string): void;
+
+  /**
+   * Asserts that value matches the regular expression regexp.
+   *
+   * @param value   Actual value.
+   * @param regexp   Potential match of value.
+   * @param message   Message to display on error.
+   */
+  match(value: string, regexp: RegExp, message?: string): void;
+
+  /**
+   * Asserts that value does not match the regular expression regexp.
+   *
+   * @param value   Actual value.
+   * @param regexp   Potential match of value.
+   * @param message   Message to display on error.
+   */
+  notMatch(expected: any, regexp: RegExp, message?: string): void;
+
+  /**
+   * Asserts that object has a property named by property.
+   *
+   * T   Type of object.
+   * @param object   Container object.
+   * @param property   Potential contained property of object.
+   * @param message   Message to display on error.
+   */
+  property<T>(
+    object: T,
+    property: string,
+    /* keyof T */ message?: string
+  ): void;
+
+  /**
+   * Asserts that object does not have a property named by property.
+   *
+   * T   Type of object.
+   * @param object   Container object.
+   * @param property   Potential contained property of object.
+   * @param message   Message to display on error.
+   */
+  notProperty<T>(
+    object: T,
+    property: string,
+    /* keyof T */ message?: string
+  ): void;
+
+  /**
+   * Asserts that object has a property named by property, which can be a string
+   * using dot- and bracket-notation for deep reference.
+   *
+   * T   Type of object.
+   * @param object   Container object.
+   * @param property   Potential contained property of object.
+   * @param message   Message to display on error.
+   */
+  deepProperty<T>(object: T, property: string, message?: string): void;
+
+  /**
+   * Asserts that object does not have a property named by property, which can be a
+   * string using dot- and bracket-notation for deep reference.
+   *
+   * T   Type of object.
+   * @param object   Container object.
+   * @param property   Potential contained property of object.
+   * @param message   Message to display on error.
+   */
+  notDeepProperty<T>(object: T, property: string, message?: string): void;
+
+  /**
+   * Asserts that object has a property named by property with value given by value.
+   *
+   * T   Type of object.
+   * V   Type of value.
+   * @param object   Container object.
+   * @param property   Potential contained property of object.
+   * @param value   Potential expected property value.
+   * @param message   Message to display on error.
+   */
+  propertyVal<T, V>(
+    object: T,
+    property: string,
+    /* keyof T */ value: V,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that object has a property named by property with value given by value.
+   *
+   * T   Type of object.
+   * V   Type of value.
+   * @param object   Container object.
+   * @param property   Potential contained property of object.
+   * @param value   Potential expected property value.
+   * @param message   Message to display on error.
+   */
+  notPropertyVal<T, V>(
+    object: T,
+    property: string,
+    /* keyof T */ value: V,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that object has a property named by property, which can be a string
+   * using dot- and bracket-notation for deep reference.
+   *
+   * T   Type of object.
+   * V   Type of value.
+   * @param object   Container object.
+   * @param property   Potential contained property of object.
+   * @param value   Potential expected property value.
+   * @param message   Message to display on error.
+   */
+  deepPropertyVal<T, V>(
+    object: T,
+    property: string,
+    value: V,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that object does not have a property named by property, which can be a
+   * string using dot- and bracket-notation for deep reference.
+   *
+   * T   Type of object.
+   * V   Type of value.
+   * @param object   Container object.
+   * @param property   Potential contained property of object.
+   * @param value   Potential expected property value.
+   * @param message   Message to display on error.
+   */
+  notDeepPropertyVal<T, V>(
+    object: T,
+    property: string,
+    value: V,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that object has a length property with the expected value.
+   *
+   * T   Type of object.
+   * @param object   Container object.
+   * @param length   Potential expected length of object.
+   * @param message   Message to display on error.
+   */
+  lengthOf<
+    T extends
+      | {readonly length?: number | undefined}
+      | {readonly size?: number | undefined}
+  >(
+    object: T,
+    length: number,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that fn will throw an error.
+   *
+   * @param fn   Function that may throw.
+   * @param errMsgMatcher   Expected error message matcher.
+   * @param ignored   Ignored parameter.
+   * @param message   Message to display on error.
+   */
+  throw(
+    fn: () => void,
+    errMsgMatcher?: RegExp | string,
+    ignored?: any,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that fn will throw an error.
+   *
+   * @param fn   Function that may throw.
+   * @param errorLike   Expected error constructor or error instance.
+   * @param errMsgMatcher   Expected error message matcher.
+   * @param message   Message to display on error.
+   */
+  throw(
+    fn: () => void,
+    errorLike?: ErrorConstructor | Error | null,
+    errMsgMatcher?: RegExp | string | null,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that fn will throw an error.
+   *
+   * @param fn   Function that may throw.
+   * @param errMsgMatcher   Expected error message matcher.
+   * @param ignored   Ignored parameter.
+   * @param message   Message to display on error.
+   */
+  throws(
+    fn: () => void,
+    errMsgMatcher?: RegExp | string,
+    ignored?: any,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that fn will throw an error.
+   *
+   * @param fn   Function that may throw.
+   * @param errorLike   Expected error constructor or error instance.
+   * @param errMsgMatcher   Expected error message matcher.
+   * @param message   Message to display on error.
+   */
+  throws(
+    fn: () => void,
+    errorLike?: ErrorConstructor | Error | null,
+    errMsgMatcher?: RegExp | string | null,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that fn will throw an error.
+   *
+   * @param fn   Function that may throw.
+   * @param errMsgMatcher   Expected error message matcher.
+   * @param ignored   Ignored parameter.
+   * @param message   Message to display on error.
+   */
+  Throw(
+    fn: () => void,
+    errMsgMatcher?: RegExp | string,
+    ignored?: any,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that fn will throw an error.
+   *
+   * @param fn   Function that may throw.
+   * @param errorLike   Expected error constructor or error instance.
+   * @param errMsgMatcher   Expected error message matcher.
+   * @param message   Message to display on error.
+   */
+  Throw(
+    fn: () => void,
+    errorLike?: ErrorConstructor | Error | null,
+    errMsgMatcher?: RegExp | string | null,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that fn will not throw an error.
+   *
+   * @param fn   Function that may throw.
+   * @param errMsgMatcher   Expected error message matcher.
+   * @param ignored   Ignored parameter.
+   * @param message   Message to display on error.
+   */
+  doesNotThrow(
+    fn: () => void,
+    errMsgMatcher?: RegExp | string,
+    ignored?: any,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that fn will not throw an error.
+   *
+   * @param fn   Function that may throw.
+   * @param errorLike   Expected error constructor or error instance.
+   * @param errMsgMatcher   Expected error message matcher.
+   * @param message   Message to display on error.
+   */
+  doesNotThrow(
+    fn: () => void,
+    errorLike?: ErrorConstructor | Error | null,
+    errMsgMatcher?: RegExp | string | null,
+    message?: string
+  ): void;
+
+  /**
+   * Compares two values using operator.
+   *
+   * @param val1   Left value during comparison.
+   * @param operator   Comparison operator.
+   * @param val2   Right value during comparison.
+   * @param message   Message to display on error.
+   */
+  operator(
+    val1: OperatorComparable,
+    operator: Operator,
+    val2: OperatorComparable,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that the target is equal to expected, to within a +/- delta range.
+   *
+   * @param actual   Actual value
+   * @param expected   Potential expected value.
+   * @param delta   Maximum differenced between values.
+   * @param message   Message to display on error.
+   */
+  closeTo(
+    actual: number,
+    expected: number,
+    delta: number,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that the target is equal to expected, to within a +/- delta range.
+   *
+   * @param actual   Actual value
+   * @param expected   Potential expected value.
+   * @param delta   Maximum differenced between values.
+   * @param message   Message to display on error.
+   */
+  approximately(
+    act: number,
+    exp: number,
+    delta: number,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that set1 and set2 have the same members. Order is not take into account.
+   *
+   * T   Type of set values.
+   * @param set1   Actual set of values.
+   * @param set2   Potential expected set of values.
+   * @param message   Message to display on error.
+   */
+  sameMembers<T>(set1: T[], set2: T[], message?: string): void;
+
+  /**
+   * Asserts that set1 and set2 have the same members using deep equality checking.
+   * Order is not take into account.
+   *
+   * T   Type of set values.
+   * @param set1   Actual set of values.
+   * @param set2   Potential expected set of values.
+   * @param message   Message to display on error.
+   */
+  sameDeepMembers<T>(set1: T[], set2: T[], message?: string): void;
+
+  /**
+   * Asserts that `set1` and `set2` don't have the same members in any order.
+   * Uses a deep equality check.
+   *
+   *  T   Type of set values.
+   * @param set1
+   * @param set2
+   * @param message
+   */
+  notSameDeepMembers<T>(set1: T[], set2: T[], message?: string): void;
+
+  /**
+   * Asserts that set1 and set2 have the same members in the same order.
+   * Uses a strict equality check (===).
+   *
+   * T   Type of set values.
+   * @param set1   Actual set of values.
+   * @param set2   Potential expected set of values.
+   * @param message   Message to display on error.
+   */
+  sameOrderedMembers<T>(set1: T[], set2: T[], message?: string): void;
+
+  /**
+   * Asserts that set1 and set2 don’t have the same members in the same order.
+   * Uses a strict equality check (===).
+   *
+   * T   Type of set values.
+   * @param set1   Actual set of values.
+   * @param set2   Potential expected set of values.
+   * @param message   Message to display on error.
+   */
+  notSameOrderedMembers<T>(set1: T[], set2: T[], message?: string): void;
+
+  /**
+   * Asserts that set1 and set2 have the same members in the same order.
+   * Uses a deep equality check.
+   *
+   * T   Type of set values.
+   * @param set1   Actual set of values.
+   * @param set2   Potential expected set of values.
+   * @param message   Message to display on error.
+   */
+  sameDeepOrderedMembers<T>(set1: T[], set2: T[], message?: string): void;
+
+  /**
+   * Asserts that set1 and set2 don’t have the same members in the same order.
+   * Uses a deep equality check.
+   *
+   * T   Type of set values.
+   * @param set1   Actual set of values.
+   * @param set2   Potential expected set of values.
+   * @param message   Message to display on error.
+   */
+  notSameDeepOrderedMembers<T>(set1: T[], set2: T[], message?: string): void;
+
+  /**
+   * Asserts that subset is included in superset in the same order beginning with the first element in superset.
+   * Uses a strict equality check (===).
+   *
+   * T   Type of set values.
+   * @param superset   Actual set of values.
+   * @param subset   Potential contained set of values.
+   * @param message   Message to display on error.
+   */
+  includeOrderedMembers<T>(superset: T[], subset: T[], message?: string): void;
+
+  /**
+   * Asserts that subset isn’t included in superset in the same order beginning with the first element in superset.
+   * Uses a strict equality check (===).
+   *
+   * T   Type of set values.
+   * @param superset   Actual set of values.
+   * @param subset   Potential contained set of values.
+   * @param message   Message to display on error.
+   */
+  notIncludeOrderedMembers<T>(
+    superset: T[],
+    subset: T[],
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that subset is included in superset in the same order beginning with the first element in superset.
+   * Uses a deep equality check.
+   *
+   * T   Type of set values.
+   * @param superset   Actual set of values.
+   * @param subset   Potential contained set of values.
+   * @param message   Message to display on error.
+   */
+  includeDeepOrderedMembers<T>(
+    superset: T[],
+    subset: T[],
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that subset isn’t included in superset in the same order beginning with the first element in superset.
+   * Uses a deep equality check.
+   *
+   * T   Type of set values.
+   * @param superset   Actual set of values.
+   * @param subset   Potential contained set of values.
+   * @param message   Message to display on error.
+   */
+  notIncludeDeepOrderedMembers<T>(
+    superset: T[],
+    subset: T[],
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that subset is included in superset. Order is not take into account.
+   *
+   * T   Type of set values.
+   * @param superset   Actual set of values.
+   * @param subset   Potential contained set of values.
+   * @param message   Message to display on error.
+   */
+  includeMembers<T>(superset: T[], subset: T[], message?: string): void;
+
+  /**
+   * Asserts that subset isn’t included in superset in any order.
+   * Uses a strict equality check (===). Duplicates are ignored.
+   *
+   * T   Type of set values.
+   * @param superset   Actual set of values.
+   * @param subset   Potential not contained set of values.
+   * @param message   Message to display on error.
+   */
+  notIncludeMembers<T>(superset: T[], subset: T[], message?: string): void;
+
+  /**
+   * Asserts that subset is included in superset using deep equality checking.
+   * Order is not take into account.
+   *
+   * T   Type of set values.
+   * @param superset   Actual set of values.
+   * @param subset   Potential contained set of values.
+   * @param message   Message to display on error.
+   */
+  includeDeepMembers<T>(superset: T[], subset: T[], message?: string): void;
+
+  /**
+   * Asserts that `subset` isn't included in `superset` in any order. Uses a
+   * deep equality check. Duplicates are ignored.
+   *
+   * assert.notIncludeDeepMembers([ { a: 1 }, { b: 2 }, { c: 3 } ], [ { b: 2 }, { f: 5 } ], 'not include deep members');
+   *
+   * T   Type of set values.
+   * @param superset   Actual set of values.
+   * @param subset   Potential contained set of values.
+   * @param message   Message to display on error.
+   */
+  notIncludeDeepMembers<T>(superset: T[], subset: T[], message?: string): void;
+
+  /**
+   * Asserts that non-object, non-array value inList appears in the flat array list.
+   *
+   * T   Type of list values.
+   * @param inList   Value expected to be in the list.
+   * @param list   List of values.
+   * @param message   Message to display on error.
+   */
+  oneOf<T>(inList: T, list: T[], message?: string): void;
+
+  /**
+   * Asserts that a function changes the value of a property.
+   *
+   * T   Type of object.
+   * @param modifier   Function to run.
+   * @param object   Container object.
+   * @param property   Property of object expected to be modified.
+   * @param message   Message to display on error.
+   */
+  changes<T>(
+    modifier: (...args: any[]) => any,
+    object: T,
+    property: string,
+    /* keyof T */ message?: string
+  ): void;
+
+  /**
+   * Asserts that a function changes the value of a property by an amount (delta).
+   *
+   * @param modifier function
+   * @param object or getter function
+   * @param property name _optional_
+   * @param change amount (delta)
+   * @param message _optional_
+   */
+  changesBy<ObjectType>(
+    modifier: (...args: any[]) => any,
+    object: ObjectType,
+    property: string,
+    /* keyof T */ change: number,
+    message?: string
+  ): void;
+  changesBy<ObjectType>(
+    modifier: (...args: any[]) => any,
+    object: ObjectType,
+    change: number,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that a function does not change the value of a property.
+   *
+   * T   Type of object.
+   * @param modifier   Function to run.
+   * @param object   Container object.
+   * @param property   Property of object expected not to be modified.
+   * @param message   Message to display on error.
+   */
+  doesNotChange<T>(
+    modifier: Function,
+    object: T,
+    property: string,
+    /* keyof T */ message?: string
+  ): void;
+
+  /**
+   * Asserts that a function increases an object property.
+   *
+   * T   Type of object.
+   * @param modifier   Function to run.
+   * @param object   Container object.
+   * @param property   Property of object expected to be increased.
+   * @param message   Message to display on error.
+   */
+  increases<T>(
+    modifier: Function,
+    object: T,
+    property: string,
+    /* keyof T */ message?: string
+  ): void;
+
+  /**
+   * Asserts that a function increases a numeric object property or a function's return value by an amount (delta).
+   *
+   * T   Type of object or function.
+   * @param modifier function
+   * @param object or getter function
+   * @param property name _optional_
+   * @param change amount (delta)
+   * @param message _optional_
+   */
+  increasesBy<T>(
+    modifier: Function,
+    object: T,
+    property: string,
+    /* keyof T */ change: number,
+    message?: string
+  ): void;
+  increasesBy<T>(
+    modifier: Function,
+    object: T,
+    change: number,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that a function does not increase an object property.
+   *
+   * T   Type of object.
+   * @param modifier   Function to run.
+   * @param object   Container object.
+   * @param property   Property of object expected not to be increased.
+   * @param message   Message to display on error.
+   */
+  doesNotIncrease<T>(
+    modifier: Function,
+    object: T,
+    property: string,
+    /* keyof T */ message?: string
+  ): void;
+
+  /**
+   * Asserts that a function does not increase a numeric object property or function's return value by an amount (delta).
+   *
+   * T   Type of object or function.
+   * @param modifier function
+   * @param object or getter function
+   * @param property name _optional_
+   * @param change amount (delta)
+   * @param message _optional_
+   */
+
+  increasesButNotBy<T>(
+    modifier: Function,
+    object: T,
+    property: string,
+    /* keyof T */ change: number,
+    message?: string
+  ): void;
+  increasesButNotBy<T>(
+    modifier: Function,
+    object: T,
+    change: number,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that a function decreases an object property.
+   *
+   * T   Type of object.
+   * @param modifier   Function to run.
+   * @param object   Container object.
+   * @param property   Property of object expected to be decreased.
+   * @param message   Message to display on error.
+   */
+  decreases<T>(
+    modifier: Function,
+    object: T,
+    property: string,
+    /* keyof T */ message?: string
+  ): void;
+
+  /**
+   * Asserts that a function decreases a numeric object property or a function's return value by an amount (delta)
+   *
+   * T   Type of object or function.
+   * @param modifier function
+   * @param object or getter function
+   * @param property name _optional_
+   * @param change amount (delta)
+   * @param message _optional_
+   */
+
+  decreasesBy<T>(
+    modifier: Function,
+    object: T,
+    property: string,
+    /* keyof T */ change: number,
+    message?: string
+  ): void;
+  decreasesBy<T>(
+    modifier: Function,
+    object: T,
+    change: number,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that a function does not decrease an object property.
+   *
+   * T   Type of object.
+   * @param modifier   Function to run.
+   * @param object   Container object.
+   * @param property   Property of object expected not to be decreased.
+   * @param message   Message to display on error.
+   */
+  doesNotDecrease<T>(
+    modifier: Function,
+    object: T,
+    property: string,
+    /* keyof T */ message?: string
+  ): void;
+
+  /**
+   * Asserts that a function does not decreases a numeric object property or a function's return value by an amount (delta)
+   *
+   * T   Type of object or function.
+   * @param modifier function
+   * @param object or getter function
+   * @param property name _optional_
+   * @param change amount (delta)
+   * @param message _optional_
+   */
+
+  doesNotDecreaseBy<T>(
+    modifier: Function,
+    object: T,
+    property: string,
+    /* keyof T */ change: number,
+    message?: string
+  ): void;
+  doesNotDecreaseBy<T>(
+    modifier: Function,
+    object: T,
+    change: number,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that a function does not decreases a numeric object property or a function's return value by an amount (delta)
+   *
+   * T   Type of object or function.
+   * @param modifier function
+   * @param object or getter function
+   * @param property name _optional_
+   * @param change amount (delta)
+   * @param message _optional_
+   */
+
+  decreasesButNotBy<T>(
+    modifier: Function,
+    object: T,
+    property: string,
+    /* keyof T */ change: number,
+    message?: string
+  ): void;
+  decreasesButNotBy<T>(
+    modifier: Function,
+    object: T,
+    change: number,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts if value is not a false value, and throws if it is a true value.
+   *
+   * T   Type of object.
+   * @param object   Actual value.
+   * @param message   Message to display on error.
+   * @remarks This is added to allow for chai to be a drop-in replacement for
+   *          Node’s assert class.
+   */
+  ifError<T>(object: T, message?: string): void;
+
+  /**
+   * Asserts that object is extensible (can have new properties added to it).
+   *
+   * T   Type of object
+   * @param object   Actual value.
+   * @param message   Message to display on error.
+   */
+  isExtensible<T>(object: T, message?: string): void;
+
+  /**
+   * Asserts that object is extensible (can have new properties added to it).
+   *
+   * T   Type of object
+   * @param object   Actual value.
+   * @param message   Message to display on error.
+   */
+  extensible<T>(object: T, message?: string): void;
+
+  /**
+   * Asserts that object is not extensible.
+   *
+   * T   Type of object
+   * @param object   Actual value.
+   * @param message   Message to display on error.
+   */
+  isNotExtensible<T>(object: T, message?: string): void;
+
+  /**
+   * Asserts that object is not extensible.
+   *
+   * T   Type of object
+   * @param object   Actual value.
+   * @param message   Message to display on error.
+   */
+  notExtensible<T>(object: T, message?: string): void;
+
+  /**
+   * Asserts that object is sealed (can have new properties added to it
+   * and its existing properties cannot be removed).
+   *
+   * T   Type of object
+   * @param object   Actual value.
+   * @param message   Message to display on error.
+   */
+  isSealed<T>(object: T, message?: string): void;
+
+  /**
+   * Asserts that object is sealed (can have new properties added to it
+   * and its existing properties cannot be removed).
+   *
+   * T   Type of object
+   * @param object   Actual value.
+   * @param message   Message to display on error.
+   */
+  sealed<T>(object: T, message?: string): void;
+
+  /**
+   * Asserts that object is not sealed.
+   *
+   * T   Type of object
+   * @param object   Actual value.
+   * @param message   Message to display on error.
+   */
+  isNotSealed<T>(object: T, message?: string): void;
+
+  /**
+   * Asserts that object is not sealed.
+   *
+   * T   Type of object
+   * @param object   Actual value.
+   * @param message   Message to display on error.
+   */
+  notSealed<T>(object: T, message?: string): void;
+
+  /**
+   * Asserts that object is frozen (cannot have new properties added to it
+   * and its existing properties cannot be removed).
+   *
+   * T   Type of object
+   * @param object   Actual value.
+   * @param message   Message to display on error.
+   */
+  isFrozen<T>(object: T, message?: string): void;
+
+  /**
+   * Asserts that object is frozen (cannot have new properties added to it
+   * and its existing properties cannot be removed).
+   *
+   * T   Type of object
+   * @param object   Actual value.
+   * @param message   Message to display on error.
+   */
+  frozen<T>(object: T, message?: string): void;
+
+  /**
+   * Asserts that object is not frozen (cannot have new properties added to it
+   * and its existing properties cannot be removed).
+   *
+   * T   Type of object
+   * @param object   Actual value.
+   * @param message   Message to display on error.
+   */
+  isNotFrozen<T>(object: T, message?: string): void;
+
+  /**
+   * Asserts that object is not frozen (cannot have new properties added to it
+   * and its existing properties cannot be removed).
+   *
+   * T   Type of object
+   * @param object   Actual value.
+   * @param message   Message to display on error.
+   */
+  notFrozen<T>(object: T, message?: string): void;
+
+  /**
+   * Asserts that the target does not contain any values. For arrays and
+   * strings, it checks the length property. For Map and Set instances, it
+   * checks the size property. For non-function objects, it gets the count
+   * of own enumerable string keys.
+   *
+   * T   Type of object
+   * @param object   Actual value.
+   * @param message   Message to display on error.
+   */
+  isEmpty<T>(object: T, message?: string): void;
+
+  /**
+   * Asserts that the target contains values. For arrays and strings, it checks
+   * the length property. For Map and Set instances, it checks the size property.
+   * For non-function objects, it gets the count of own enumerable string keys.
+   *
+   * T   Type of object.
+   * @param object   Object to test.
+   * @param message    Message to display on error.
+   */
+  isNotEmpty<T>(object: T, message?: string): void;
+
+  /**
+   * Asserts that `object` has at least one of the `keys` provided.
+   * You can also provide a single object instead of a `keys` array and its keys
+   * will be used as the expected set of keys.
+   *
+   * T   Type of object.
+   * @param object   Object to test.
+   * @param keys   Keys to check
+   * @param message    Message to display on error.
+   */
+  hasAnyKeys<T>(
+    object: T,
+    keys: Array<Object | string> | {[key: string]: any},
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that `object` has all and only all of the `keys` provided.
+   * You can also provide a single object instead of a `keys` array and its keys
+   * will be used as the expected set of keys.
+   *
+   * T   Type of object.
+   * @param object   Object to test.
+   * @param keys   Keys to check
+   * @param message    Message to display on error.
+   */
+  hasAllKeys<T>(
+    object: T,
+    keys: Array<Object | string> | {[key: string]: any},
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that `object` has all of the `keys` provided but may have more keys not listed.
+   * You can also provide a single object instead of a `keys` array and its keys
+   * will be used as the expected set of keys.
+   *
+   * T   Type of object.
+   * @param object   Object to test.
+   * @param keys   Keys to check
+   * @param message    Message to display on error.
+   */
+  containsAllKeys<T>(
+    object: T,
+    keys: Array<Object | string> | {[key: string]: any},
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that `object` has none of the `keys` provided.
+   * You can also provide a single object instead of a `keys` array and its keys
+   * will be used as the expected set of keys.
+   *
+   * T   Type of object.
+   * @param object   Object to test.
+   * @param keys   Keys to check
+   * @param message    Message to display on error.
+   */
+  doesNotHaveAnyKeys<T>(
+    object: T,
+    keys: Array<Object | string> | {[key: string]: any},
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that `object` does not have at least one of the `keys` provided.
+   * You can also provide a single object instead of a `keys` array and its keys
+   * will be used as the expected set of keys.
+   *
+   * T   Type of object.
+   * @param object   Object to test.
+   * @param keys   Keys to check
+   * @param message    Message to display on error.
+   */
+  doesNotHaveAllKeys<T>(
+    object: T,
+    keys: Array<Object | string> | {[key: string]: any},
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that `object` has at least one of the `keys` provided.
+   * Since Sets and Maps can have objects as keys you can use this assertion to perform
+   * a deep comparison.
+   * You can also provide a single object instead of a `keys` array and its keys
+   * will be used as the expected set of keys.
+   *
+   * T   Type of object.
+   * @param object   Object to test.
+   * @param keys   Keys to check
+   * @param message    Message to display on error.
+   */
+  hasAnyDeepKeys<T>(
+    object: T,
+    keys: Array<Object | string> | {[key: string]: any},
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that `object` has all and only all of the `keys` provided.
+   * Since Sets and Maps can have objects as keys you can use this assertion to perform
+   * a deep comparison.
+   * You can also provide a single object instead of a `keys` array and its keys
+   * will be used as the expected set of keys.
+   *
+   * T   Type of object.
+   * @param object   Object to test.
+   * @param keys   Keys to check
+   * @param message    Message to display on error.
+   */
+  hasAllDeepKeys<T>(
+    object: T,
+    keys: Array<Object | string> | {[key: string]: any},
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that `object` contains all of the `keys` provided.
+   * Since Sets and Maps can have objects as keys you can use this assertion to perform
+   * a deep comparison.
+   * You can also provide a single object instead of a `keys` array and its keys
+   * will be used as the expected set of keys.
+   *
+   * T   Type of object.
+   * @param object   Object to test.
+   * @param keys   Keys to check
+   * @param message    Message to display on error.
+   */
+  containsAllDeepKeys<T>(
+    object: T,
+    keys: Array<Object | string> | {[key: string]: any},
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that `object` contains all of the `keys` provided.
+   * Since Sets and Maps can have objects as keys you can use this assertion to perform
+   * a deep comparison.
+   * You can also provide a single object instead of a `keys` array and its keys
+   * will be used as the expected set of keys.
+   *
+   * T   Type of object.
+   * @param object   Object to test.
+   * @param keys   Keys to check
+   * @param message    Message to display on error.
+   */
+  doesNotHaveAnyDeepKeys<T>(
+    object: T,
+    keys: Array<Object | string> | {[key: string]: any},
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that `object` contains all of the `keys` provided.
+   * Since Sets and Maps can have objects as keys you can use this assertion to perform
+   * a deep comparison.
+   * You can also provide a single object instead of a `keys` array and its keys
+   * will be used as the expected set of keys.
+   *
+   * T   Type of object.
+   * @param object   Object to test.
+   * @param keys   Keys to check
+   * @param message    Message to display on error.
+   */
+  doesNotHaveAllDeepKeys<T>(
+    object: T,
+    keys: Array<Object | string> | {[key: string]: any},
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that object has a direct or inherited property named by property,
+   * which can be a string using dot- and bracket-notation for nested reference.
+   *
+   * T   Type of object.
+   * @param object   Object to test.
+   * @param property    Property to test.
+   * @param message    Message to display on error.
+   */
+  nestedProperty<T>(object: T, property: string, message?: string): void;
+
+  /**
+   * Asserts that object does not have a property named by property,
+   * which can be a string using dot- and bracket-notation for nested reference.
+   * The property cannot exist on the object nor anywhere in its prototype chain.
+   *
+   * T   Type of object.
+   * @param object   Object to test.
+   * @param property    Property to test.
+   * @param message    Message to display on error.
+   */
+  notNestedProperty<T>(object: T, property: string, message?: string): void;
+
+  /**
+   * Asserts that object has a property named by property with value given by value.
+   * property can use dot- and bracket-notation for nested reference. Uses a strict equality check (===).
+   *
+   * T   Type of object.
+   * @param object   Object to test.
+   * @param property    Property to test.
+   * @param value    Value to test.
+   * @param message    Message to display on error.
+   */
+  nestedPropertyVal<T>(
+    object: T,
+    property: string,
+    value: any,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that object does not have a property named by property with value given by value.
+   * property can use dot- and bracket-notation for nested reference. Uses a strict equality check (===).
+   *
+   * T   Type of object.
+   * @param object   Object to test.
+   * @param property    Property to test.
+   * @param value    Value to test.
+   * @param message    Message to display on error.
+   */
+  notNestedPropertyVal<T>(
+    object: T,
+    property: string,
+    value: any,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that object has a property named by property with a value given by value.
+   * property can use dot- and bracket-notation for nested reference. Uses a deep equality check.
+   *
+   * T   Type of object.
+   * @param object   Object to test.
+   * @param property    Property to test.
+   * @param value    Value to test.
+   * @param message    Message to display on error.
+   */
+  deepNestedPropertyVal<T>(
+    object: T,
+    property: string,
+    value: any,
+    message?: string
+  ): void;
+
+  /**
+   * Asserts that object does not have a property named by property with value given by value.
+   * property can use dot- and bracket-notation for nested reference. Uses a deep equality check.
+   *
+   * T   Type of object.
+   * @param object   Object to test.
+   * @param property    Property to test.
+   * @param value    Value to test.
+   * @param message    Message to display on error.
+   */
+  notDeepNestedPropertyVal<T>(
+    object: T,
+    property: string,
+    value: any,
+    message?: string
+  ): void;
+}
 
 /**
  * ### assert(expression, message)
@@ -17,15 +1932,15 @@ import {flag, inspect} from '../utils/index.js';
  *     assert('foo' !== 'bar', 'foo is not bar');
  *     assert(Array.isArray([]), 'empty arrays are arrays');
  *
- * @param {unknown} express - expression to test for truthiness
- * @param {string} errmsg - message to display on error
+ * @param {unknown} expression - expression to test for truthiness
+ * @param {string} message - message to display on error
  * @name assert
  * @namespace Assert
  * @public
  */
-export function assert(express: unknown, errmsg: string) {
-  let test = new Assertion(null, null, chai.assert, true);
-  test.assert(express, errmsg, '[ negation message unavailable ]');
+export function assert(expression: any, message?: string): asserts expression {
+  const test = new Assertion(null, undefined, chai.assert, true);
+  test.assert(expression, message, '[ negation message unavailable ]');
 }
 
 /**
@@ -49,22 +1964,26 @@ export function assert(express: unknown, errmsg: string) {
  * @namespace Assert
  * @public
  */
-assert.fail = function (
-  actual: unknown,
-  expected: unknown,
-  message: string,
-  operator: string
+assert.fail = function <T>(
+  actual: T,
+  expected: T,
+  message?: string,
+  operator?: Operator
 ) {
-  if (arguments.length < 2) {
-    // Comply with Node's fail([message]) interface
+  const doWeHaveLessThanTwoArguments =
+    message == null && operator == null && arguments.length < 2;
 
-    message = actual;
-    actual = undefined;
-  }
+  // if (message == null && operator == null && arguments.length < 2) {
+  //   // Comply with Node's fail([message]) interface
 
-  message = message || 'assert.fail()';
+  //   message = actual;
+  //   actual = undefined;
+  // }
+
+  const errorMessage =
+    (doWeHaveLessThanTwoArguments ? actual : message) || 'assert.fail()';
   throw new AssertionError(
-    message,
+    errorMessage as string,
     {
       actual,
       expected,
@@ -84,13 +2003,13 @@ assert.fail = function (
  *
  * @name isOk
  * @alias ok
- * @param {unknown} val object to test
- * @param {string} msg
+ * @param {unknown} value object to test
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isOk = function (val: unknown, msg: string) {
-  new Assertion(val, msg, assert.isOk, true).is.ok;
+assert.isOk = function (value: unknown, message: string): asserts value {
+  new Assertion(value, message, assert.isOk, true).is.ok;
 };
 
 /**
@@ -103,13 +2022,13 @@ assert.isOk = function (val: unknown, msg: string) {
  *
  * @name isNotOk
  * @alias notOk
- * @param {unknown} val object to test
- * @param {string} msg
+ * @param {unknown} value object to test
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isNotOk = function (val: unknown, msg: string) {
-  new Assertion(val, msg, assert.isNotOk, true).is.not.ok;
+assert.isNotOk = function (value: unknown, message: string) {
+  new Assertion(value, message, assert.isNotOk, true).is.not.ok;
 };
 
 /**
@@ -120,21 +2039,21 @@ assert.isNotOk = function (val: unknown, msg: string) {
  *     assert.equal(3, '3', '== coerces values to strings');
  *
  * @name equal
- * @param {unknown} act
- * @param {unknown} exp
- * @param {string} msg
+ * @param {unknown} actual
+ * @param {unknown} expected
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.equal = function (act: unknown, exp: unknown, msg: string) {
-  let test = new Assertion(act, msg, assert.equal, true);
+assert.equal = function (actual: unknown, expected: unknown, message: string) {
+  let test = new Assertion(actual, message, assert.equal, true);
 
   test.assert(
-    exp == flag(test, 'object'),
+    expected == flag(test, 'object'),
     'expected #{this} to equal #{exp}',
     'expected #{this} to not equal #{act}',
-    exp,
-    act,
+    expected,
+    actual,
     true
   );
 };
@@ -147,21 +2066,25 @@ assert.equal = function (act: unknown, exp: unknown, msg: string) {
  *     assert.notEqual(3, 4, 'these numbers are not equal');
  *
  * @name notEqual
- * @param {unknown} act
- * @param {unknown} exp
- * @param {string} msg
+ * @param {unknown} actual
+ * @param {unknown} expression
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.notEqual = function (act: unknown, exp: unknown, msg: string) {
-  const test = new Assertion(act, msg, assert.notEqual, true);
+assert.notEqual = function (
+  actual: unknown,
+  expression: unknown,
+  message: string
+) {
+  const test = new Assertion(actual, message, assert.notEqual, true);
 
   test.assert(
-    exp != flag(test, 'object'),
+    expression != flag(test, 'object'),
     'expected #{this} to not equal #{exp}',
     'expected #{this} to equal #{act}',
-    exp,
-    act,
+    expression,
+    actual,
     true
   );
 };
@@ -174,14 +2097,18 @@ assert.notEqual = function (act: unknown, exp: unknown, msg: string) {
  *     assert.strictEqual(true, true, 'these booleans are strictly equal');
  *
  * @name strictEqual
- * @param {unknown} act
- * @param {unknown} exp
- * @param {string} msg
+ * @param {unknown} actual
+ * @param {unknown} expression
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.strictEqual = function (act: unknown, exp: unknown, msg: string) {
-  new Assertion(act, msg, assert.strictEqual, true).to.equal(exp);
+assert.strictEqual = function (
+  actual: unknown,
+  expression: unknown,
+  message: string
+) {
+  new Assertion(actual, message, assert.strictEqual, true).to.equal(expression);
 };
 
 /**
@@ -192,14 +2119,20 @@ assert.strictEqual = function (act: unknown, exp: unknown, msg: string) {
  *     assert.notStrictEqual(3, '3', 'no coercion for strict equality');
  *
  * @name notStrictEqual
- * @param {unknown} act
- * @param {unknown} exp
- * @param {string} msg
+ * @param {unknown} actual
+ * @param {unknown} expression
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.notStrictEqual = function (act: unknown, exp: unknown, msg: string) {
-  new Assertion(act, msg, assert.notStrictEqual, true).to.not.equal(exp);
+assert.notStrictEqual = function (
+  actual: unknown,
+  expression: unknown,
+  message: string
+) {
+  new Assertion(actual, message, assert.notStrictEqual, true).to.not.equal(
+    expression
+  );
 };
 
 /**
@@ -210,19 +2143,19 @@ assert.notStrictEqual = function (act: unknown, exp: unknown, msg: string) {
  *     assert.deepEqual({ tea: 'green' }, { tea: 'green' });
  *
  * @name deepEqual
- * @param {unknown} act
- * @param {unknown} exp
- * @param {string} msg
+ * @param {unknown} actual
+ * @param {unknown} expression
+ * @param {string} message
  * @alias deepStrictEqual
  * @namespace Assert
  * @public
  */
 assert.deepEqual = assert.deepStrictEqual = function (
-  act: unknown,
-  exp: unknown,
-  msg: string
+  actual: unknown,
+  expression: unknown,
+  message: string
 ) {
-  new Assertion(act, msg, assert.deepEqual, true).to.eql(exp);
+  new Assertion(actual, message, assert.deepEqual, true).to.eql(expression);
 };
 
 /**
@@ -233,14 +2166,20 @@ assert.deepEqual = assert.deepStrictEqual = function (
  *     assert.notDeepEqual({ tea: 'green' }, { tea: 'jasmine' });
  *
  * @name notDeepEqual
- * @param {unknown} act
- * @param {unknown} exp
- * @param {string} msg
+ * @param {unknown} actual
+ * @param {unknown} expression
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.notDeepEqual = function (act: unknown, exp: unknown, msg: string) {
-  new Assertion(act, msg, assert.notDeepEqual, true).to.not.eql(exp);
+assert.notDeepEqual = function (
+  actual: unknown,
+  expression: unknown,
+  message: string
+) {
+  new Assertion(actual, message, assert.notDeepEqual, true).to.not.eql(
+    expression
+  );
 };
 
 /**
@@ -251,14 +2190,20 @@ assert.notDeepEqual = function (act: unknown, exp: unknown, msg: string) {
  *     assert.isAbove(5, 2, '5 is strictly greater than 2');
  *
  * @name isAbove
- * @param {unknown} val
- * @param {unknown} abv
- * @param {string} msg
+ * @param {unknown} valueToCheck
+ * @param {unknown} valueToBeAbove
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isAbove = function (val: unknown, abv: unknown, msg: string) {
-  new Assertion(val, msg, assert.isAbove, true).to.be.above(abv);
+assert.isAbove = function (
+  valueToCheck: number,
+  valueToBeAbove: number,
+  message?: string
+): void {
+  new Assertion(valueToCheck, message, assert.isAbove, true).to.be.above(
+    valueToBeAbove
+  );
 };
 
 /**
@@ -270,14 +2215,20 @@ assert.isAbove = function (val: unknown, abv: unknown, msg: string) {
  *     assert.isAtLeast(3, 3, '3 is greater or equal to 3');
  *
  * @name isAtLeast
- * @param {unknown} val
- * @param {unknown} atlst
- * @param {string} msg
+ * @param {unknown} valueToCheck
+ * @param {unknown} valueToBeAtLeast
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isAtLeast = function (val: unknown, atlst: unknown, msg: string) {
-  new Assertion(val, msg, assert.isAtLeast, true).to.be.least(atlst);
+assert.isAtLeast = function (
+  valueToCheck: number,
+  valueToBeAtLeast: number,
+  message?: string
+): void {
+  new Assertion(valueToCheck, message, assert.isAtLeast, true).to.be.least(
+    valueToBeAtLeast
+  );
 };
 
 /**
@@ -288,14 +2239,20 @@ assert.isAtLeast = function (val: unknown, atlst: unknown, msg: string) {
  *     assert.isBelow(3, 6, '3 is strictly less than 6');
  *
  * @name isBelow
- * @param {unknown} val
- * @param {unknown} blw
- * @param {string} msg
+ * @param {unknown} valueToCheck
+ * @param {unknown} valueToBeBelow
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isBelow = function (val: unknown, blw: unknown, msg: string) {
-  new Assertion(val, msg, assert.isBelow, true).to.be.below(blw);
+assert.isBelow = function (
+  valueToCheck: number,
+  valueToBeBelow: number,
+  message?: string
+) {
+  new Assertion(valueToCheck, message, assert.isBelow, true).to.be.below(
+    valueToBeBelow
+  );
 };
 
 /**
@@ -307,14 +2264,20 @@ assert.isBelow = function (val: unknown, blw: unknown, msg: string) {
  *     assert.isAtMost(4, 4, '4 is less than or equal to 4');
  *
  * @name isAtMost
- * @param {unknown} val
- * @param {unknown} atmst
- * @param {string} msg
+ * @param {unknown} valueToCheck
+ * @param {unknown} valueToBeAtMost
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isAtMost = function (val: unknown, atmst: unknown, msg: string) {
-  new Assertion(val, msg, assert.isAtMost, true).to.be.most(atmst);
+assert.isAtMost = function (
+  valueToCheck: number,
+  valueToBeAtMost: number,
+  message?: string
+) {
+  new Assertion(valueToCheck, message, assert.isAtMost, true).to.be.most(
+    valueToBeAtMost
+  );
 };
 
 /**
@@ -326,13 +2289,13 @@ assert.isAtMost = function (val: unknown, atmst: unknown, msg: string) {
  *     assert.isTrue(teaServed, 'the tea has been served');
  *
  * @name isTrue
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isTrue = function (val: unknown, msg: string) {
-  new Assertion(val, msg, assert.isTrue, true).is['true'];
+assert.isTrue = function (value: unknown, message: string) {
+  new Assertion(value, message, assert.isTrue, true).is['true'];
 };
 
 /**
@@ -344,13 +2307,13 @@ assert.isTrue = function (val: unknown, msg: string) {
  *     assert.isNotTrue(tea, 'great, time for tea!');
  *
  * @name isNotTrue
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isNotTrue = function (val: unknown, msg: string) {
-  new Assertion(val, msg, assert.isNotTrue, true).to.not.equal(true);
+assert.isNotTrue = function (value: unknown, message: string) {
+  new Assertion(value, message, assert.isNotTrue, true).to.not.equal(true);
 };
 
 /**
@@ -362,13 +2325,13 @@ assert.isNotTrue = function (val: unknown, msg: string) {
  *     assert.isFalse(teaServed, 'no tea yet? hmm...');
  *
  * @name isFalse
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isFalse = function (val: unknown, msg: string) {
-  new Assertion(val, msg, assert.isFalse, true).is['false'];
+assert.isFalse = function (value: unknown, message: string) {
+  new Assertion(value, message, assert.isFalse, true).is['false'];
 };
 
 /**
@@ -380,13 +2343,13 @@ assert.isFalse = function (val: unknown, msg: string) {
  *     assert.isNotFalse(tea, 'great, time for tea!');
  *
  * @name isNotFalse
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isNotFalse = function (val: unknown, msg: string) {
-  new Assertion(val, msg, assert.isNotFalse, true).to.not.equal(false);
+assert.isNotFalse = function (value: unknown, message: string) {
+  new Assertion(value, message, assert.isNotFalse, true).to.not.equal(false);
 };
 
 /**
@@ -397,13 +2360,13 @@ assert.isNotFalse = function (val: unknown, msg: string) {
  *     assert.isNull(err, 'there was no error');
  *
  * @name isNull
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isNull = function (val: unknown, msg: string) {
-  new Assertion(val, msg, assert.isNull, true).to.equal(null);
+assert.isNull = function (value: unknown, message: string) {
+  new Assertion(value, message, assert.isNull, true).to.equal(null);
 };
 
 /**
@@ -415,13 +2378,13 @@ assert.isNull = function (val: unknown, msg: string) {
  *     assert.isNotNull(tea, 'great, time for tea!');
  *
  * @name isNotNull
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isNotNull = function (val: unknown, msg: string) {
-  new Assertion(val, msg, assert.isNotNull, true).to.not.equal(null);
+assert.isNotNull = function (value: unknown, message: string) {
+  new Assertion(value, message, assert.isNotNull, true).to.not.equal(null);
 };
 
 /**
@@ -432,13 +2395,13 @@ assert.isNotNull = function (val: unknown, msg: string) {
  *     assert.isNaN(NaN, 'NaN is NaN');
  *
  * @name isNaN
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isNaN = function (val: unknown, msg: string) {
-  new Assertion(val, msg, assert.isNaN, true).to.be.NaN;
+assert.isNaN = function (value: unknown, message: string) {
+  new Assertion(value, message, assert.isNaN, true).to.be.NaN;
 };
 
 /**
@@ -467,13 +2430,13 @@ assert.isNotNaN = function (value: unknown, message: string) {
  *     assert.exists(foo, 'foo is neither `null` nor `undefined`');
  *
  * @name exists
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.exists = function (val: unknown, msg: string) {
-  new Assertion(val, msg, assert.exists, true).to.exist;
+assert.exists = function (value: unknown, message: string) {
+  new Assertion(value, message, assert.exists, true).to.exist;
 };
 
 /**
@@ -488,13 +2451,13 @@ assert.exists = function (val: unknown, msg: string) {
  *     assert.notExists(baz, 'baz is either null or undefined');
  *
  * @name notExists
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.notExists = function (val: unknown, msg: string) {
-  new Assertion(val, msg, assert.notExists, true).to.not.exist;
+assert.notExists = function (value: unknown, message: string) {
+  new Assertion(value, message, assert.notExists, true).to.not.exist;
 };
 
 /**
@@ -506,13 +2469,13 @@ assert.notExists = function (val: unknown, msg: string) {
  *     assert.isUndefined(tea, 'no tea defined');
  *
  * @name isUndefined
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isUndefined = function (val: unknown, msg: string) {
-  new Assertion(val, msg, assert.isUndefined, true).to.equal(undefined);
+assert.isUndefined = function (value: unknown, message: string) {
+  new Assertion(value, message, assert.isUndefined, true).to.equal(undefined);
 };
 
 /**
@@ -524,13 +2487,13 @@ assert.isUndefined = function (val: unknown, msg: string) {
  *     assert.isDefined(tea, 'tea has been defined');
  *
  * @name isDefined
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isDefined = function (val: unknown, msg: string) {
-  new Assertion(val, msg, assert.isDefined, true).to.not.equal(undefined);
+assert.isDefined = function (value: unknown, message: string) {
+  new Assertion(value, message, assert.isDefined, true).to.not.equal(undefined);
 };
 
 /**
@@ -579,13 +2542,13 @@ assert.isNotCallable = function (value: unknown, message: string) {
  *     assert.isObject(selection, 'tea selection is an object');
  *
  * @name isObject
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isObject = function (val: unknown, msg: string) {
-  new Assertion(val, msg, assert.isObject, true).to.be.a('object');
+assert.isObject = function (value: unknown, message: string) {
+  new Assertion(value, message, assert.isObject, true).to.be.a('object');
 };
 
 /**
@@ -598,13 +2561,13 @@ assert.isObject = function (val: unknown, msg: string) {
  *     assert.isNotObject(null, 'null is not an object');
  *
  * @name isNotObject
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isNotObject = function (val: unknown, msg: string) {
-  new Assertion(val, msg, assert.isNotObject, true).to.not.be.a('object');
+assert.isNotObject = function (value: unknown, message: string) {
+  new Assertion(value, message, assert.isNotObject, true).to.not.be.a('object');
 };
 
 /**
@@ -616,13 +2579,13 @@ assert.isNotObject = function (val: unknown, msg: string) {
  *     assert.isArray(menu, 'what kind of tea do we want?');
  *
  * @name isArray
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isArray = function (val: unknown, msg: string) {
-  new Assertion(val, msg, assert.isArray, true).to.be.an('array');
+assert.isArray = function (value: unknown, message: string) {
+  new Assertion(value, message, assert.isArray, true).to.be.an('array');
 };
 
 /**
@@ -634,13 +2597,13 @@ assert.isArray = function (val: unknown, msg: string) {
  *     assert.isNotArray(menu, 'what kind of tea do we want?');
  *
  * @name isNotArray
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isNotArray = function (val: unknown, msg: string) {
-  new Assertion(val, msg, assert.isNotArray, true).to.not.be.an('array');
+assert.isNotArray = function (value: unknown, message: string) {
+  new Assertion(value, message, assert.isNotArray, true).to.not.be.an('array');
 };
 
 /**
@@ -652,13 +2615,13 @@ assert.isNotArray = function (val: unknown, msg: string) {
  *     assert.isString(teaOrder, 'order placed');
  *
  * @name isString
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isString = function (val: unknown, msg: string) {
-  new Assertion(val, msg, assert.isString, true).to.be.a('string');
+assert.isString = function (value: unknown, message: string) {
+  new Assertion(value, message, assert.isString, true).to.be.a('string');
 };
 
 /**
@@ -670,13 +2633,13 @@ assert.isString = function (val: unknown, msg: string) {
  *     assert.isNotString(teaOrder, 'order placed');
  *
  * @name isNotString
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isNotString = function (val: unknown, msg: string) {
-  new Assertion(val, msg, assert.isNotString, true).to.not.be.a('string');
+assert.isNotString = function (value: unknown, message: string) {
+  new Assertion(value, message, assert.isNotString, true).to.not.be.a('string');
 };
 
 /**
@@ -688,13 +2651,13 @@ assert.isNotString = function (val: unknown, msg: string) {
  *     assert.isNumber(cups, 'how many cups');
  *
  * @name isNumber
- * @param {number} val
- * @param {string} msg
+ * @param {number} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isNumber = function (val: number, msg: string) {
-  new Assertion(val, msg, assert.isNumber, true).to.be.a('number');
+assert.isNumber = function (value: number, message: string) {
+  new Assertion(value, message, assert.isNumber, true).to.be.a('number');
 };
 
 /**
@@ -706,13 +2669,13 @@ assert.isNumber = function (val: number, msg: string) {
  *     assert.isNotNumber(cups, 'how many cups');
  *
  * @name isNotNumber
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isNotNumber = function (val: unknown, msg: string) {
-  new Assertion(val, msg, assert.isNotNumber, true).to.not.be.a('number');
+assert.isNotNumber = function (value: unknown, message: string) {
+  new Assertion(value, message, assert.isNotNumber, true).to.not.be.a('number');
 };
 
 /**
@@ -727,13 +2690,13 @@ assert.isNotNumber = function (val: unknown, msg: string) {
  *     assert.isNumeric(cups, 'how many cups');
  *
  * @name isNumeric
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isNumeric = function (val: unknown, msg: string) {
-  new Assertion(val, msg, assert.isNumeric, true).is.numeric;
+assert.isNumeric = function (value: unknown, message: string) {
+  new Assertion(value, message, assert.isNumeric, true).is.numeric;
 };
 
 /**
@@ -745,13 +2708,13 @@ assert.isNumeric = function (val: unknown, msg: string) {
  *     assert.isNotNumeric(cups, 'how many cups');
  *
  * @name isNotNumeric
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isNotNumeric = function (val: unknown, msg: string) {
-  new Assertion(val, msg, assert.isNotNumeric, true).is.not.numeric;
+assert.isNotNumeric = function (value: unknown, message: string) {
+  new Assertion(value, message, assert.isNotNumeric, true).is.not.numeric;
 };
 
 /**
@@ -764,13 +2727,13 @@ assert.isNotNumeric = function (val: unknown, msg: string) {
  *     assert.isFinite(NaN); // throws
  *
  * @name isFinite
- * @param {number} val
- * @param {string} msg
+ * @param {number} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isFinite = function (val: number, msg: string) {
-  new Assertion(val, msg, assert.isFinite, true).to.be.finite;
+assert.isFinite = function (value: number, message: string) {
+  new Assertion(value, message, assert.isFinite, true).to.be.finite;
 };
 
 /**
@@ -785,13 +2748,13 @@ assert.isFinite = function (val: number, msg: string) {
  *     assert.isBoolean(teaServed, 'has tea been served');
  *
  * @name isBoolean
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isBoolean = function (val: unknown, msg: string) {
-  new Assertion(val, msg, assert.isBoolean, true).to.be.a('boolean');
+assert.isBoolean = function (value: unknown, message: string) {
+  new Assertion(value, message, assert.isBoolean, true).to.be.a('boolean');
 };
 
 /**
@@ -806,13 +2769,15 @@ assert.isBoolean = function (val: unknown, msg: string) {
  *     assert.isNotBoolean(teaServed, 'has tea been served');
  *
  * @name isNotBoolean
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.isNotBoolean = function (val: unknown, msg: string) {
-  new Assertion(val, msg, assert.isNotBoolean, true).to.not.be.a('boolean');
+assert.isNotBoolean = function (value: unknown, message: string) {
+  new Assertion(value, message, assert.isNotBoolean, true).to.not.be.a(
+    'boolean'
+  );
 };
 
 /**
@@ -829,14 +2794,14 @@ assert.isNotBoolean = function (val: unknown, msg: string) {
  *     assert.typeOf(undefined, 'undefined', 'we have an undefined');
  *
  * @name typeOf
- * @param {unknown} val
+ * @param {unknown} value
  * @param {string} type
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.typeOf = function (val: unknown, type: string, msg: string) {
-  new Assertion(val, msg, assert.typeOf, true).to.be.a(type);
+assert.typeOf = function (value: unknown, type: string, message: string) {
+  new Assertion(value, message, assert.typeOf, true).to.be.a(type);
 };
 
 /**
@@ -869,14 +2834,14 @@ assert.notTypeOf = function (value: unknown, type: string, message: string) {
  *     assert.instanceOf(chai, Tea, 'chai is an instance of tea');
  *
  * @name instanceOf
- * @param {object} val
+ * @param {object} value
  * @param {object} type
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.instanceOf = function (val: object, type: object, msg: string) {
-  new Assertion(val, msg, assert.instanceOf, true).to.be.instanceOf(type);
+assert.instanceOf = function (value: object, type: object, message: string) {
+  new Assertion(value, message, assert.instanceOf, true).to.be.instanceOf(type);
 };
 
 /**
@@ -890,16 +2855,19 @@ assert.instanceOf = function (val: object, type: object, msg: string) {
  *     assert.notInstanceOf(chai, Tea, 'chai is not an instance of tea');
  *
  * @name notInstanceOf
- * @param {object} val
+ * @param {object} value
  * @param {object} type
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.notInstanceOf = function (val: object, type: object, msg: string) {
-  new Assertion(val, msg, assert.notInstanceOf, true).to.not.be.instanceOf(
-    type
-  );
+assert.notInstanceOf = function (value: object, type: object, message: string) {
+  new Assertion(
+    value,
+    message,
+    assert.notInstanceOf,
+    true
+  ).to.not.be.instanceOf(type);
 };
 
 /**
@@ -926,18 +2894,18 @@ assert.notInstanceOf = function (val: object, type: object, msg: string) {
  *     assert.include({foo: obj1, bar: obj2}, {foo: obj1, bar: obj2});
  *
  * @name include
- * @param {Array | string} exp
+ * @param {Array | string} expression
  * @param {unknown} inc
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.include = function (
-  exp: Array<any> | string,
+  expression: Array<any> | string,
   inc: unknown,
-  msg: string
+  message: string
 ) {
-  new Assertion(exp, msg, assert.include, true).include(inc);
+  new Assertion(expression, message, assert.include, true).include(inc);
 };
 
 /**
@@ -965,18 +2933,18 @@ assert.include = function (
  *     assert.notInclude({foo: obj1, bar: obj2}, {foo: obj1, bar: {b: 2}});
  *
  * @name notInclude
- * @param {Array | string} exp
+ * @param {Array | string} expression
  * @param {unknown} inc
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.notInclude = function (
-  exp: Array<any> | string,
+  expression: Array<any> | string,
   inc: unknown,
-  msg: string
+  message: string
 ) {
-  new Assertion(exp, msg, assert.notInclude, true).not.include(inc);
+  new Assertion(expression, message, assert.notInclude, true).not.include(inc);
 };
 
 /**
@@ -993,18 +2961,20 @@ assert.notInclude = function (
  *     assert.deepInclude({foo: obj1, bar: obj2}, {foo: {a: 1}, bar: {b: 2}});
  *
  * @name deepInclude
- * @param {Array | string} exp
+ * @param {Array | string} expression
  * @param {unknown} inc
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.deepInclude = function (
-  exp: Array<any> | string,
+  expression: Array<any> | string,
   inc: unknown,
-  msg: string
+  message: string
 ) {
-  new Assertion(exp, msg, assert.deepInclude, true).deep.include(inc);
+  new Assertion(expression, message, assert.deepInclude, true).deep.include(
+    inc
+  );
 };
 
 /**
@@ -1021,18 +2991,23 @@ assert.deepInclude = function (
  *     assert.notDeepInclude({foo: obj1, bar: obj2}, {foo: {a: 1}, bar: {b: 9}});
  *
  * @name notDeepInclude
- * @param {Array | string} exp
+ * @param {Array | string} expression
  * @param {unknown} inc
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.notDeepInclude = function (
-  exp: Array<any> | string,
+  expression: Array<any> | string,
   inc: unknown,
-  msg: string
+  message: string
 ) {
-  new Assertion(exp, msg, assert.notDeepInclude, true).not.deep.include(inc);
+  new Assertion(
+    expression,
+    message,
+    assert.notDeepInclude,
+    true
+  ).not.deep.include(inc);
 };
 
 /**
@@ -1049,14 +3024,20 @@ assert.notDeepInclude = function (
  *     assert.nestedInclude({'a': {'[b]': 'x'}}, {'a.\\[b\\]': 'x'});
  *
  * @name nestedInclude
- * @param {object} exp
+ * @param {object} expression
  * @param {object} inc
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.nestedInclude = function (exp: object, inc: object, msg: string) {
-  new Assertion(exp, msg, assert.nestedInclude, true).nested.include(inc);
+assert.nestedInclude = function (
+  expression: object,
+  inc: object,
+  message: string
+) {
+  new Assertion(expression, message, assert.nestedInclude, true).nested.include(
+    inc
+  );
 };
 
 /**
@@ -1073,16 +3054,23 @@ assert.nestedInclude = function (exp: object, inc: object, msg: string) {
  *     assert.notNestedInclude({'a': {'[b]': 'x'}}, {'a.\\[b\\]': 'y'});
  *
  * @name notNestedInclude
- * @param {object} exp
+ * @param {object} expression
  * @param {object} inc
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.notNestedInclude = function (exp: object, inc: object, msg: string) {
-  new Assertion(exp, msg, assert.notNestedInclude, true).not.nested.include(
-    inc
-  );
+assert.notNestedInclude = function (
+  expression: object,
+  inc: object,
+  message: string
+) {
+  new Assertion(
+    expression,
+    message,
+    assert.notNestedInclude,
+    true
+  ).not.nested.include(inc);
 };
 
 /**
@@ -1099,16 +3087,23 @@ assert.notNestedInclude = function (exp: object, inc: object, msg: string) {
  *     assert.deepNestedInclude({'.a': {'[b]': {x: 1}}}, {'\\.a.\\[b\\]': {x: 1}});
  *
  * @name deepNestedInclude
- * @param {object} exp
+ * @param {object} expression
  * @param {object} inc
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.deepNestedInclude = function (exp: object, inc: object, msg: string) {
-  new Assertion(exp, msg, assert.deepNestedInclude, true).deep.nested.include(
-    inc
-  );
+assert.deepNestedInclude = function (
+  expression: object,
+  inc: object,
+  message: string
+) {
+  new Assertion(
+    expression,
+    message,
+    assert.deepNestedInclude,
+    true
+  ).deep.nested.include(inc);
 };
 
 /**
@@ -1125,16 +3120,20 @@ assert.deepNestedInclude = function (exp: object, inc: object, msg: string) {
  *     assert.notDeepNestedInclude({'.a': {'[b]': {x: 1}}}, {'\\.a.\\[b\\]': {y: 2}});
  *
  * @name notDeepNestedInclude
- * @param {object} exp
+ * @param {object} expression
  * @param {object} inc
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.notDeepNestedInclude = function (exp: object, inc: object, msg: string) {
+assert.notDeepNestedInclude = function (
+  expression: object,
+  inc: object,
+  message: string
+) {
   new Assertion(
-    exp,
-    msg,
+    expression,
+    message,
     assert.notDeepNestedInclude,
     true
   ).not.deep.nested.include(inc);
@@ -1150,14 +3149,18 @@ assert.notDeepNestedInclude = function (exp: object, inc: object, msg: string) {
  *     assert.ownInclude({ a: 1 }, { a: 1 });
  *
  * @name ownInclude
- * @param {object} exp
+ * @param {object} expression
  * @param {object} inc
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.ownInclude = function (exp: object, inc: object, msg: string) {
-  new Assertion(exp, msg, assert.ownInclude, true).own.include(inc);
+assert.ownInclude = function (
+  expression: object,
+  inc: object,
+  message: string
+) {
+  new Assertion(expression, message, assert.ownInclude, true).own.include(inc);
 };
 
 /**
@@ -1171,14 +3174,23 @@ assert.ownInclude = function (exp: object, inc: object, msg: string) {
  *     assert.notOwnInclude({ a: 1 }, { b: 2 });
  *
  * @name notOwnInclude
- * @param {object} exp
+ * @param {object} expression
  * @param {object} inc
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.notOwnInclude = function (exp: object, inc: object, msg: string) {
-  new Assertion(exp, msg, assert.notOwnInclude, true).not.own.include(inc);
+assert.notOwnInclude = function (
+  expression: object,
+  inc: object,
+  message: string
+) {
+  new Assertion(
+    expression,
+    message,
+    assert.notOwnInclude,
+    true
+  ).not.own.include(inc);
 };
 
 /**
@@ -1191,14 +3203,23 @@ assert.notOwnInclude = function (exp: object, inc: object, msg: string) {
  *     assert.deepOwnInclude({a: {b: 2}}, {a: {b: 2}});
  *
  * @name deepOwnInclude
- * @param {object} exp
+ * @param {object} expression
  * @param {object} inc
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.deepOwnInclude = function (exp: object, inc: object, msg: string) {
-  new Assertion(exp, msg, assert.deepOwnInclude, true).deep.own.include(inc);
+assert.deepOwnInclude = function (
+  expression: object,
+  inc: object,
+  message: string
+) {
+  new Assertion(
+    expression,
+    message,
+    assert.deepOwnInclude,
+    true
+  ).deep.own.include(inc);
 };
 
 /**
@@ -1211,16 +3232,23 @@ assert.deepOwnInclude = function (exp: object, inc: object, msg: string) {
  *     assert.notDeepOwnInclude({a: {b: 2}}, {a: {c: 3}});
  *
  * @name notDeepOwnInclude
- * @param {object} exp
+ * @param {object} expression
  * @param {object} inc
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.notDeepOwnInclude = function (exp: object, inc: object, msg: string) {
-  new Assertion(exp, msg, assert.notDeepOwnInclude, true).not.deep.own.include(
-    inc
-  );
+assert.notDeepOwnInclude = function (
+  expression: object,
+  inc: object,
+  message: string
+) {
+  new Assertion(
+    expression,
+    message,
+    assert.notDeepOwnInclude,
+    true
+  ).not.deep.own.include(inc);
 };
 
 /**
@@ -1231,14 +3259,14 @@ assert.notDeepOwnInclude = function (exp: object, inc: object, msg: string) {
  *     assert.match('foobar', /^foo/, 'regexp matches');
  *
  * @name match
- * @param {unknown} exp
+ * @param {unknown} expression
  * @param {RegExp} re
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.match = function (exp: unknown, re: RegExp, msg: string) {
-  new Assertion(exp, msg, assert.match, true).to.match(re);
+assert.match = function (expression: unknown, re: RegExp, message: string) {
+  new Assertion(expression, message, assert.match, true).to.match(re);
 };
 
 /**
@@ -1249,14 +3277,14 @@ assert.match = function (exp: unknown, re: RegExp, msg: string) {
  *     assert.notMatch('foobar', /^foo/, 'regexp does not match');
  *
  * @name notMatch
- * @param {unknown} exp
+ * @param {unknown} expression
  * @param {RegExp} re
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.notMatch = function (exp: unknown, re: RegExp, msg: string) {
-  new Assertion(exp, msg, assert.notMatch, true).to.not.match(re);
+assert.notMatch = function (expression: unknown, re: RegExp, message: string) {
+  new Assertion(expression, message, assert.notMatch, true).to.not.match(re);
 };
 
 /**
@@ -1271,12 +3299,12 @@ assert.notMatch = function (exp: unknown, re: RegExp, msg: string) {
  * @name property
  * @param {object} obj
  * @param {string} prop
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.property = function (obj: object, prop: string, msg: string) {
-  new Assertion(obj, msg, assert.property, true).to.have.property(prop);
+assert.property = function (obj: object, prop: string, message: string) {
+  new Assertion(obj, message, assert.property, true).to.have.property(prop);
 };
 
 /**
@@ -1290,12 +3318,14 @@ assert.property = function (obj: object, prop: string, msg: string) {
  * @name notProperty
  * @param {object} obj
  * @param {string} prop
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.notProperty = function (obj: object, prop: string, msg: string) {
-  new Assertion(obj, msg, assert.notProperty, true).to.not.have.property(prop);
+assert.notProperty = function (obj: object, prop: string, message: string) {
+  new Assertion(obj, message, assert.notProperty, true).to.not.have.property(
+    prop
+  );
 };
 
 /**
@@ -1310,18 +3340,21 @@ assert.notProperty = function (obj: object, prop: string, msg: string) {
  * @name propertyVal
  * @param {object} obj
  * @param {string} prop
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.propertyVal = function (
   obj: object,
   prop: string,
-  val: unknown,
-  msg: string
+  value: unknown,
+  message: string
 ) {
-  new Assertion(obj, msg, assert.propertyVal, true).to.have.property(prop, val);
+  new Assertion(obj, message, assert.propertyVal, true).to.have.property(
+    prop,
+    value
+  );
 };
 
 /**
@@ -1337,20 +3370,20 @@ assert.propertyVal = function (
  * @name notPropertyVal
  * @param {object} obj
  * @param {string} prop
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.notPropertyVal = function (
   obj: object,
   prop: string,
-  val: unknown,
-  msg: string
+  value: unknown,
+  message: string
 ) {
-  new Assertion(obj, msg, assert.notPropertyVal, true).to.not.have.property(
+  new Assertion(obj, message, assert.notPropertyVal, true).to.not.have.property(
     prop,
-    val
+    value
   );
 };
 
@@ -1365,21 +3398,23 @@ assert.notPropertyVal = function (
  * @name deepPropertyVal
  * @param {object} obj
  * @param {string} prop
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.deepPropertyVal = function (
   obj: object,
   prop: string,
-  val: unknown,
-  msg: string
+  value: unknown,
+  message: string
 ) {
-  new Assertion(obj, msg, assert.deepPropertyVal, true).to.have.deep.property(
-    prop,
-    val
-  );
+  new Assertion(
+    obj,
+    message,
+    assert.deepPropertyVal,
+    true
+  ).to.have.deep.property(prop, value);
 };
 
 /**
@@ -1395,23 +3430,23 @@ assert.deepPropertyVal = function (
  * @name notDeepPropertyVal
  * @param {object} obj
  * @param {string} prop
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.notDeepPropertyVal = function (
   obj: object,
   prop: string,
-  val: unknown,
-  msg: string
+  value: unknown,
+  message: string
 ) {
   new Assertion(
     obj,
-    msg,
+    message,
     assert.notDeepPropertyVal,
     true
-  ).to.not.have.deep.property(prop, val);
+  ).to.not.have.deep.property(prop, value);
 };
 
 /**
@@ -1425,11 +3460,13 @@ assert.notDeepPropertyVal = function (
  * @name ownProperty
  * @param {object} obj
  * @param {string} prop
- * @param {string} msg
+ * @param {string} message
  * @public
  */
-assert.ownProperty = function (obj: object, prop: string, msg: string) {
-  new Assertion(obj, msg, assert.ownProperty, true).to.have.own.property(prop);
+assert.ownProperty = function (obj: object, prop: string, message: string) {
+  new Assertion(obj, message, assert.ownProperty, true).to.have.own.property(
+    prop
+  );
 };
 
 /**
@@ -1444,13 +3481,16 @@ assert.ownProperty = function (obj: object, prop: string, msg: string) {
  * @name notOwnProperty
  * @param {object} obj
  * @param {string} prop
- * @param {string} msg
+ * @param {string} message
  * @public
  */
-assert.notOwnProperty = function (obj: object, prop: string, msg: string) {
-  new Assertion(obj, msg, assert.notOwnProperty, true).to.not.have.own.property(
-    prop
-  );
+assert.notOwnProperty = function (obj: object, prop: string, message: string) {
+  new Assertion(
+    obj,
+    message,
+    assert.notOwnProperty,
+    true
+  ).to.not.have.own.property(prop);
 };
 
 /**
@@ -1466,16 +3506,16 @@ assert.notOwnProperty = function (obj: object, prop: string, msg: string) {
  * @param {object} obj
  * @param {string} prop
  * @param {unknown} value
- * @param {string} msg
+ * @param {string} message
  * @public
  */
 assert.ownPropertyVal = function (
   obj: object,
   prop: string,
   value: unknown,
-  msg: string
+  message: string
 ) {
-  new Assertion(obj, msg, assert.ownPropertyVal, true).to.have.own.property(
+  new Assertion(obj, message, assert.ownPropertyVal, true).to.have.own.property(
     prop,
     value
   );
@@ -1495,18 +3535,18 @@ assert.ownPropertyVal = function (
  * @param {object} obj
  * @param {string} prop
  * @param {unknown} value
- * @param {string} msg
+ * @param {string} message
  * @public
  */
 assert.notOwnPropertyVal = function (
   obj: object,
   prop: string,
   value: unknown,
-  msg: string
+  message: string
 ) {
   new Assertion(
     obj,
-    msg,
+    message,
     assert.notOwnPropertyVal,
     true
   ).to.not.have.own.property(prop, value);
@@ -1525,18 +3565,18 @@ assert.notOwnPropertyVal = function (
  * @param {object} obj
  * @param {string} prop
  * @param {unknown} value
- * @param {string} msg
+ * @param {string} message
  * @public
  */
 assert.deepOwnPropertyVal = function (
   obj: object,
   prop: string,
   value: unknown,
-  msg: string
+  message: string
 ) {
   new Assertion(
     obj,
-    msg,
+    message,
     assert.deepOwnPropertyVal,
     true
   ).to.have.deep.own.property(prop, value);
@@ -1558,18 +3598,18 @@ assert.deepOwnPropertyVal = function (
  * @param {object} obj
  * @param {string} prop
  * @param {unknown} value
- * @param {string} msg
+ * @param {string} message
  * @public
  */
 assert.notDeepOwnPropertyVal = function (
   obj: object,
   prop: string,
   value: unknown,
-  msg: string
+  message: string
 ) {
   new Assertion(
     obj,
-    msg,
+    message,
     assert.notDeepOwnPropertyVal,
     true
   ).to.not.have.deep.own.property(prop, value);
@@ -1587,14 +3627,17 @@ assert.notDeepOwnPropertyVal = function (
  * @name nestedProperty
  * @param {object} obj
  * @param {string} prop
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.nestedProperty = function (obj: object, prop: string, msg: string) {
-  new Assertion(obj, msg, assert.nestedProperty, true).to.have.nested.property(
-    prop
-  );
+assert.nestedProperty = function (obj: object, prop: string, message: string) {
+  new Assertion(
+    obj,
+    message,
+    assert.nestedProperty,
+    true
+  ).to.have.nested.property(prop);
 };
 
 /**
@@ -1609,14 +3652,18 @@ assert.nestedProperty = function (obj: object, prop: string, msg: string) {
  * @name notNestedProperty
  * @param {object} obj
  * @param {string} prop
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.notNestedProperty = function (obj: object, prop: string, msg: string) {
+assert.notNestedProperty = function (
+  obj: object,
+  prop: string,
+  message: string
+) {
   new Assertion(
     obj,
-    msg,
+    message,
     assert.notNestedProperty,
     true
   ).to.not.have.nested.property(prop);
@@ -1634,23 +3681,23 @@ assert.notNestedProperty = function (obj: object, prop: string, msg: string) {
  * @name nestedPropertyVal
  * @param {object} obj
  * @param {string} prop
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.nestedPropertyVal = function (
   obj: object,
   prop: string,
-  val: unknown,
-  msg: string
+  value: unknown,
+  message: string
 ) {
   new Assertion(
     obj,
-    msg,
+    message,
     assert.nestedPropertyVal,
     true
-  ).to.have.nested.property(prop, val);
+  ).to.have.nested.property(prop, value);
 };
 
 /**
@@ -1666,23 +3713,23 @@ assert.nestedPropertyVal = function (
  * @name notNestedPropertyVal
  * @param {object} obj
  * @param {string} prop
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.notNestedPropertyVal = function (
   obj: object,
   prop: string,
-  val: unknown,
-  msg: string
+  value: unknown,
+  message: string
 ) {
   new Assertion(
     obj,
-    msg,
+    message,
     assert.notNestedPropertyVal,
     true
-  ).to.not.have.nested.property(prop, val);
+  ).to.not.have.nested.property(prop, value);
 };
 
 /**
@@ -1697,23 +3744,23 @@ assert.notNestedPropertyVal = function (
  * @name deepNestedPropertyVal
  * @param {object} obj
  * @param {string} prop
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.deepNestedPropertyVal = function (
   obj: object,
   prop: string,
-  val: unknown,
-  msg: string
+  value: unknown,
+  message: string
 ) {
   new Assertion(
     obj,
-    msg,
+    message,
     assert.deepNestedPropertyVal,
     true
-  ).to.have.deep.nested.property(prop, val);
+  ).to.have.deep.nested.property(prop, value);
 };
 
 /**
@@ -1730,23 +3777,23 @@ assert.deepNestedPropertyVal = function (
  * @name notDeepNestedPropertyVal
  * @param {object} obj
  * @param {string} prop
- * @param {unknown} val
- * @param {string} msg
+ * @param {unknown} value
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.notDeepNestedPropertyVal = function (
   obj: object,
   prop: string,
-  val: unknown,
-  msg: string
+  value: unknown,
+  message: string
 ) {
   new Assertion(
     obj,
-    msg,
+    message,
     assert.notDeepNestedPropertyVal,
     true
-  ).to.not.have.deep.nested.property(prop, val);
+  ).to.not.have.deep.nested.property(prop, value);
 };
 
 /**
@@ -1760,14 +3807,16 @@ assert.notDeepNestedPropertyVal = function (
  *     assert.lengthOf(new Map([['a',1],['b',2],['c',3]]), 3, 'map has size of 3');
  *
  * @name lengthOf
- * @param {unknown} exp
+ * @param {unknown} expression
  * @param {number} len
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.lengthOf = function (exp: unknown, len: number, msg: string) {
-  new Assertion(exp, msg, assert.lengthOf, true).to.have.lengthOf(len);
+assert.lengthOf = function (expression: unknown, len: number, message: string) {
+  new Assertion(expression, message, assert.lengthOf, true).to.have.lengthOf(
+    len
+  );
 };
 
 /**
@@ -1785,16 +3834,16 @@ assert.lengthOf = function (exp: unknown, len: number, msg: string) {
  * @name hasAnyKeys
  * @param {unknown} obj
  * @param {Array | object} keys
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.hasAnyKeys = function (
   obj: unknown,
   keys: Array<any> | object,
-  msg: string
+  message: string
 ) {
-  new Assertion(obj, msg, assert.hasAnyKeys, true).to.have.any.keys(keys);
+  new Assertion(obj, message, assert.hasAnyKeys, true).to.have.any.keys(keys);
 };
 
 /**
@@ -1812,12 +3861,12 @@ assert.hasAnyKeys = function (
  * @name hasAllKeys
  * @param {unknown} obj
  * @param {string[]} keys
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.hasAllKeys = function (obj: unknown, keys: string[], msg: string) {
-  new Assertion(obj, msg, assert.hasAllKeys, true).to.have.all.keys(keys);
+assert.hasAllKeys = function (obj: unknown, keys: string[], message: string) {
+  new Assertion(obj, message, assert.hasAllKeys, true).to.have.all.keys(keys);
 };
 
 /**
@@ -1839,12 +3888,16 @@ assert.hasAllKeys = function (obj: unknown, keys: string[], msg: string) {
  * @name containsAllKeys
  * @param {unknown} obj
  * @param {string[]} keys
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.containsAllKeys = function (obj: unknown, keys: string[], msg: string) {
-  new Assertion(obj, msg, assert.containsAllKeys, true).to.contain.all.keys(
+assert.containsAllKeys = function (
+  obj: unknown,
+  keys: string[],
+  message: string
+) {
+  new Assertion(obj, message, assert.containsAllKeys, true).to.contain.all.keys(
     keys
   );
 };
@@ -1864,18 +3917,21 @@ assert.containsAllKeys = function (obj: unknown, keys: string[], msg: string) {
  * @name doesNotHaveAnyKeys
  * @param {unknown} obj
  * @param {string[]} keys
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.doesNotHaveAnyKeys = function (
   obj: unknown,
   keys: string[],
-  msg: string
+  message: string
 ) {
-  new Assertion(obj, msg, assert.doesNotHaveAnyKeys, true).to.not.have.any.keys(
-    keys
-  );
+  new Assertion(
+    obj,
+    message,
+    assert.doesNotHaveAnyKeys,
+    true
+  ).to.not.have.any.keys(keys);
 };
 
 /**
@@ -1893,18 +3949,21 @@ assert.doesNotHaveAnyKeys = function (
  * @name doesNotHaveAllKeys
  * @param {unknown} obj
  * @param {string[]} keys
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.doesNotHaveAllKeys = function (
   obj: unknown,
   keys: string[],
-  msg: string
+  message: string
 ) {
-  new Assertion(obj, msg, assert.doesNotHaveAllKeys, true).to.not.have.all.keys(
-    keys
-  );
+  new Assertion(
+    obj,
+    message,
+    assert.doesNotHaveAllKeys,
+    true
+  ).to.not.have.all.keys(keys);
 };
 
 /**
@@ -1926,18 +3985,21 @@ assert.doesNotHaveAllKeys = function (
  * @name hasAnyDeepKeys
  * @param {unknown} obj
  * @param {Array | object} keys
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.hasAnyDeepKeys = function (
   obj: unknown,
   keys: Array<any> | object,
-  msg: string
+  message: string
 ) {
-  new Assertion(obj, msg, assert.hasAnyDeepKeys, true).to.have.any.deep.keys(
-    keys
-  );
+  new Assertion(
+    obj,
+    message,
+    assert.hasAnyDeepKeys,
+    true
+  ).to.have.any.deep.keys(keys);
 };
 
 /**
@@ -1957,18 +4019,21 @@ assert.hasAnyDeepKeys = function (
  * @name hasAllDeepKeys
  * @param {unknown} obj
  * @param {Array | object} keys
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.hasAllDeepKeys = function (
   obj: unknown,
   keys: Array<any> | object,
-  msg: string
+  message: string
 ) {
-  new Assertion(obj, msg, assert.hasAllDeepKeys, true).to.have.all.deep.keys(
-    keys
-  );
+  new Assertion(
+    obj,
+    message,
+    assert.hasAllDeepKeys,
+    true
+  ).to.have.all.deep.keys(keys);
 };
 
 /**
@@ -1988,18 +4053,18 @@ assert.hasAllDeepKeys = function (
  * @name containsAllDeepKeys
  * @param {unknown} obj
  * @param {Array | object} keys
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.containsAllDeepKeys = function (
   obj: unknown,
   keys: Array<any> | object,
-  msg: string
+  message: string
 ) {
   new Assertion(
     obj,
-    msg,
+    message,
     assert.containsAllDeepKeys,
     true
   ).to.contain.all.deep.keys(keys);
@@ -2022,18 +4087,18 @@ assert.containsAllDeepKeys = function (
  * @name doesNotHaveAnyDeepKeys
  * @param {unknown} obj
  * @param {Array | object} keys
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.doesNotHaveAnyDeepKeys = function (
   obj: unknown,
   keys: Array<any> | object,
-  msg: string
+  message: string
 ) {
   new Assertion(
     obj,
-    msg,
+    message,
     assert.doesNotHaveAnyDeepKeys,
     true
   ).to.not.have.any.deep.keys(keys);
@@ -2056,18 +4121,18 @@ assert.doesNotHaveAnyDeepKeys = function (
  * @name doesNotHaveAllDeepKeys
  * @param {unknown} obj
  * @param {Array | object} keys
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.doesNotHaveAllDeepKeys = function (
   obj: unknown,
   keys: Array<any> | object,
-  msg: string
+  message: string
 ) {
   new Assertion(
     obj,
-    msg,
+    message,
     assert.doesNotHaveAllDeepKeys,
     true
   ).to.not.have.all.deep.keys(keys);
@@ -2083,12 +4148,12 @@ assert.doesNotHaveAllDeepKeys = function (
  * If `errMsgMatcher` is provided, it also asserts that the error thrown will have a
  * message matching `errMsgMatcher`.
  *
- *     assert.throws(fn, 'Error thrown must have this msg');
- *     assert.throws(fn, /Error thrown must have a msg that matches this/);
+ *     assert.throws(fn, 'Error thrown must have this message');
+ *     assert.throws(fn, /Error thrown must have a message that matches this/);
  *     assert.throws(fn, ReferenceError);
  *     assert.throws(fn, errorInstance);
- *     assert.throws(fn, ReferenceError, 'Error thrown must be a ReferenceError and have this msg');
- *     assert.throws(fn, errorInstance, 'Error thrown must be the same errorInstance and have this msg');
+ *     assert.throws(fn, ReferenceError, 'Error thrown must be a ReferenceError and have this message');
+ *     assert.throws(fn, errorInstance, 'Error thrown must be the same errorInstance and have this message');
  *     assert.throws(fn, ReferenceError, /Error thrown must be a ReferenceError and match this/);
  *     assert.throws(fn, errorInstance, /Error thrown must be the same errorInstance and match this/);
  *
@@ -2098,26 +4163,26 @@ assert.doesNotHaveAllDeepKeys = function (
  * @param {Function} fn
  * @param {Error} errorLike
  * @param {RegExp | string} errMsgMatcher
- * @param {string} msg
+ * @param {string} message
  * @returns {unknown}
  * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Error#Error_types
  * @namespace Assert
  * @public
  */
 assert.throws = function (
-  fn: Function,
-  errorLike: Error,
-  errMsgMatcher: RegExp | string,
-  msg: string
+  fn: () => void,
+  errorLike?: ErrorConstructor | Error | null,
+  errMsgMatcher?: RegExp | string | null,
+  message?: string
 ): unknown {
   if ('string' === typeof errorLike || errorLike instanceof RegExp) {
     errMsgMatcher = errorLike;
     errorLike = null;
   }
 
-  let assertErr = new Assertion(fn, msg, assert.throws, true).to.throw(
-    errorLike,
-    errMsgMatcher
+  const assertErr = new Assertion(fn, message, assert.throws, true).to.throw(
+    errorLike!,
+    errMsgMatcher!
   );
   return flag(assertErr, 'object');
 };
@@ -2151,10 +4216,10 @@ assert.throws = function (
  * @public
  */
 assert.doesNotThrow = function (
-  fn: Function,
-  errorLike: Error,
-  errMsgMatcher: RegExp | string,
-  message: string
+  fn: () => void,
+  errorLike?: ErrorConstructor | Error | null,
+  errMsgMatcher?: RegExp | string | null,
+  message?: string
 ) {
   if ('string' === typeof errorLike || errorLike instanceof RegExp) {
     errMsgMatcher = errorLike;
@@ -2162,8 +4227,8 @@ assert.doesNotThrow = function (
   }
 
   new Assertion(fn, message, assert.doesNotThrow, true).to.not.throw(
-    errorLike,
-    errMsgMatcher
+    errorLike!,
+    errMsgMatcher!
   );
 };
 
@@ -2176,58 +4241,63 @@ assert.doesNotThrow = function (
  *     assert.operator(1, '>', 2, 'this will fail');
  *
  * @name operator
- * @param {unknown} val
+ * @param {unknown} value
  * @param {string} operator
  * @param {unknown} val2
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.operator = function (
-  val: unknown,
-  operator: string,
-  val2: unknown,
-  msg: string
+  value: OperatorComparable,
+  operator: Operator,
+  val2: OperatorComparable,
+  message?: string
 ) {
   let ok;
   switch (operator) {
     case '==':
-      ok = val == val2;
+      ok = value == val2;
       break;
     case '===':
-      ok = val === val2;
+      ok = value === val2;
       break;
     case '>':
-      ok = val > val2;
+      ok = (value as number) > (val2 as number);
       break;
     case '>=':
-      ok = val >= val2;
+      ok = (value as number) >= (val2 as number);
       break;
     case '<':
-      ok = val < val2;
+      ok = (value as number) < (val2 as number);
       break;
     case '<=':
-      ok = val <= val2;
+      ok = (value as number) <= (val2 as number);
       break;
     case '!=':
-      ok = val != val2;
+      ok = value != val2;
       break;
     case '!==':
-      ok = val !== val2;
+      ok = value !== val2;
       break;
     default:
-      msg = msg ? msg + ': ' : msg;
+      message = message ? message + ': ' : message;
       throw new AssertionError(
-        msg + 'Invalid operator "' + operator + '"',
+        message + 'Invalid operator "' + operator + '"',
         undefined,
         assert.operator
       );
   }
-  let test = new Assertion(ok, msg, assert.operator, true);
+  let test = new Assertion(ok, message, assert.operator, true);
   test.assert(
     true === flag(test, 'object'),
-    'expected ' + inspect(val) + ' to be ' + operator + ' ' + inspect(val2),
-    'expected ' + inspect(val) + ' to not be ' + operator + ' ' + inspect(val2)
+    'expected ' + inspect(value) + ' to be ' + operator + ' ' + inspect(val2),
+    'expected ' +
+      inspect(value) +
+      ' to not be ' +
+      operator +
+      ' ' +
+      inspect(val2)
   );
 };
 
@@ -2239,20 +4309,23 @@ assert.operator = function (
  *     assert.closeTo(1.5, 1, 0.5, 'numbers are close');
  *
  * @name closeTo
- * @param {number} act
- * @param {number} exp
+ * @param {number} actual
+ * @param {number} expression
  * @param {number} delta
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.closeTo = function (
-  act: number,
-  exp: number,
+  actual: number,
+  expression: number,
   delta: number,
-  msg: string
+  message: string
 ) {
-  new Assertion(act, msg, assert.closeTo, true).to.be.closeTo(exp, delta);
+  new Assertion(actual, message, assert.closeTo, true).to.be.closeTo(
+    expression,
+    delta
+  );
 };
 
 /**
@@ -2263,23 +4336,25 @@ assert.closeTo = function (
  *     assert.approximately(1.5, 1, 0.5, 'numbers are close');
  *
  * @name approximately
- * @param {number} act
- * @param {number} exp
+ * @param {number} actual
+ * @param {number} expression
  * @param {number} delta
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.approximately = function (
-  act: number,
-  exp: number,
+  actual: number,
+  expression: number,
   delta: number,
-  msg: string
+  message: string
 ) {
-  new Assertion(act, msg, assert.approximately, true).to.be.approximately(
-    exp,
-    delta
-  );
+  new Assertion(
+    actual,
+    message,
+    assert.approximately,
+    true
+  ).to.be.approximately(expression, delta);
 };
 
 /**
@@ -2293,16 +4368,18 @@ assert.approximately = function (
  * @name sameMembers
  * @param {Array} set1
  * @param {Array} set2
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.sameMembers = function (
   set1: Array<any>,
   set2: Array<any>,
-  msg: string
+  message: string
 ) {
-  new Assertion(set1, msg, assert.sameMembers, true).to.have.same.members(set2);
+  new Assertion(set1, message, assert.sameMembers, true).to.have.same.members(
+    set2
+  );
 };
 
 /**
@@ -2316,18 +4393,18 @@ assert.sameMembers = function (
  * @name notSameMembers
  * @param {Array} set1
  * @param {Array} set2
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.notSameMembers = function (
   set1: Array<any>,
   set2: Array<any>,
-  msg: string
+  message: string
 ) {
   new Assertion(
     set1,
-    msg,
+    message,
     assert.notSameMembers,
     true
   ).to.not.have.same.members(set2);
@@ -2344,18 +4421,18 @@ assert.notSameMembers = function (
  * @name sameDeepMembers
  * @param {Array} set1
  * @param {Array} set2
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.sameDeepMembers = function (
   set1: Array<any>,
   set2: Array<any>,
-  msg: string
+  message: string
 ) {
   new Assertion(
     set1,
-    msg,
+    message,
     assert.sameDeepMembers,
     true
   ).to.have.same.deep.members(set2);
@@ -2372,18 +4449,18 @@ assert.sameDeepMembers = function (
  * @name notSameDeepMembers
  * @param {Array} set1
  * @param {Array} set2
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.notSameDeepMembers = function (
   set1: Array<any>,
   set2: Array<any>,
-  msg: string
+  message: string
 ) {
   new Assertion(
     set1,
-    msg,
+    message,
     assert.notSameDeepMembers,
     true
   ).to.not.have.same.deep.members(set2);
@@ -2400,18 +4477,18 @@ assert.notSameDeepMembers = function (
  * @name sameOrderedMembers
  * @param {Array} set1
  * @param {Array} set2
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.sameOrderedMembers = function (
   set1: Array<any>,
   set2: Array<any>,
-  msg: string
+  message: string
 ) {
   new Assertion(
     set1,
-    msg,
+    message,
     assert.sameOrderedMembers,
     true
   ).to.have.same.ordered.members(set2);
@@ -2428,18 +4505,18 @@ assert.sameOrderedMembers = function (
  * @name notSameOrderedMembers
  * @param {Array} set1
  * @param {Array} set2
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.notSameOrderedMembers = function (
   set1: Array<any>,
   set2: Array<any>,
-  msg: string
+  message: string
 ) {
   new Assertion(
     set1,
-    msg,
+    message,
     assert.notSameOrderedMembers,
     true
   ).to.not.have.same.ordered.members(set2);
@@ -2456,18 +4533,18 @@ assert.notSameOrderedMembers = function (
  * @name sameDeepOrderedMembers
  * @param {Array} set1
  * @param {Array} set2
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.sameDeepOrderedMembers = function (
   set1: Array<any>,
   set2: Array<any>,
-  msg: string
+  message: string
 ) {
   new Assertion(
     set1,
-    msg,
+    message,
     assert.sameDeepOrderedMembers,
     true
   ).to.have.same.deep.ordered.members(set2);
@@ -2485,18 +4562,18 @@ assert.sameDeepOrderedMembers = function (
  * @name notSameDeepOrderedMembers
  * @param {Array} set1
  * @param {Array} set2
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.notSameDeepOrderedMembers = function (
   set1: Array<any>,
   set2: Array<any>,
-  msg: string
+  message: string
 ) {
   new Assertion(
     set1,
-    msg,
+    message,
     assert.notSameDeepOrderedMembers,
     true
   ).to.not.have.same.deep.ordered.members(set2);
@@ -2513,18 +4590,21 @@ assert.notSameDeepOrderedMembers = function (
  * @name includeMembers
  * @param {Array} superset
  * @param {Array} subset
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.includeMembers = function (
   superset: Array<any>,
   subset: Array<any>,
-  msg: string
+  message: string
 ) {
-  new Assertion(superset, msg, assert.includeMembers, true).to.include.members(
-    subset
-  );
+  new Assertion(
+    superset,
+    message,
+    assert.includeMembers,
+    true
+  ).to.include.members(subset);
 };
 
 /**
@@ -2538,18 +4618,18 @@ assert.includeMembers = function (
  * @name notIncludeMembers
  * @param {Array} superset
  * @param {Array} subset
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.notIncludeMembers = function (
   superset: Array<any>,
   subset: Array<any>,
-  msg: string
+  message: string
 ) {
   new Assertion(
     superset,
-    msg,
+    message,
     assert.notIncludeMembers,
     true
   ).to.not.include.members(subset);
@@ -2566,18 +4646,18 @@ assert.notIncludeMembers = function (
  * @name includeDeepMembers
  * @param {Array} superset
  * @param {Array} subset
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.includeDeepMembers = function (
   superset: Array<any>,
   subset: Array<any>,
-  msg: string
+  message: string
 ) {
   new Assertion(
     superset,
-    msg,
+    message,
     assert.includeDeepMembers,
     true
   ).to.include.deep.members(subset);
@@ -2594,18 +4674,18 @@ assert.includeDeepMembers = function (
  * @name notIncludeDeepMembers
  * @param {Array} superset
  * @param {Array} subset
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.notIncludeDeepMembers = function (
   superset: Array<any>,
   subset: Array<any>,
-  msg: string
+  message: string
 ) {
   new Assertion(
     superset,
-    msg,
+    message,
     assert.notIncludeDeepMembers,
     true
   ).to.not.include.deep.members(subset);
@@ -2623,18 +4703,18 @@ assert.notIncludeDeepMembers = function (
  * @name includeOrderedMembers
  * @param {Array} superset
  * @param {Array} subset
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.includeOrderedMembers = function (
   superset: Array<any>,
   subset: Array<any>,
-  msg: string
+  message: string
 ) {
   new Assertion(
     superset,
-    msg,
+    message,
     assert.includeOrderedMembers,
     true
   ).to.include.ordered.members(subset);
@@ -2653,18 +4733,18 @@ assert.includeOrderedMembers = function (
  * @name notIncludeOrderedMembers
  * @param {Array} superset
  * @param {Array} subset
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.notIncludeOrderedMembers = function (
   superset: Array<any>,
   subset: Array<any>,
-  msg: string
+  message: string
 ) {
   new Assertion(
     superset,
-    msg,
+    message,
     assert.notIncludeOrderedMembers,
     true
   ).to.not.include.ordered.members(subset);
@@ -2682,18 +4762,18 @@ assert.notIncludeOrderedMembers = function (
  * @name includeDeepOrderedMembers
  * @param {Array} superset
  * @param {Array} subset
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.includeDeepOrderedMembers = function (
   superset: Array<any>,
   subset: Array<any>,
-  msg: string
+  message: string
 ) {
   new Assertion(
     superset,
-    msg,
+    message,
     assert.includeDeepOrderedMembers,
     true
   ).to.include.deep.ordered.members(subset);
@@ -2713,18 +4793,18 @@ assert.includeDeepOrderedMembers = function (
  * @name notIncludeDeepOrderedMembers
  * @param {Array} superset
  * @param {Array} subset
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
 assert.notIncludeDeepOrderedMembers = function (
   superset: Array<any>,
   subset: Array<any>,
-  msg: string
+  message: string
 ) {
   new Assertion(
     superset,
-    msg,
+    message,
     assert.notIncludeDeepOrderedMembers,
     true
   ).to.not.include.deep.ordered.members(subset);
@@ -2740,12 +4820,12 @@ assert.notIncludeDeepOrderedMembers = function (
  * @name oneOf
  * @param {*} inList
  * @param {Array<*>} list
- * @param {string} msg
+ * @param {string} message
  * @namespace Assert
  * @public
  */
-assert.oneOf = function (inList: any, list: Array<any>, msg: string) {
-  new Assertion(inList, msg, assert.oneOf, true).to.be.oneOf(list);
+assert.oneOf = function (inList: any, list: Array<any>, message: string) {
+  new Assertion(inList, message, assert.oneOf, true).to.be.oneOf(list);
 };
 
 /**
@@ -2757,17 +4837,18 @@ assert.oneOf = function (inList: any, list: Array<any>, msg: string) {
  *     assert.isIterable([1, 2]);
  *
  * @param {unknown} obj
- * @param {string} [msg]
+ * @param {string} [message]
  * @namespace Assert
  * @public
  */
-assert.isIterable = function (obj: unknown, msg: string) {
-  if (obj == undefined || !obj[Symbol.iterator]) {
-    msg = msg
-      ? `${msg} expected ${inspect(obj)} to be an iterable`
+// TODO: Add to interface
+assert.isIterable = function (obj: unknown, message: string) {
+  if (obj == undefined || !(obj as Iterable<any>)[Symbol.iterator]) {
+    message = message
+      ? `${message} expected ${inspect(obj)} to be an iterable`
       : `expected ${inspect(obj)} to be an iterable`;
 
-    throw new AssertionError(msg, undefined, assert.isIterable);
+    throw new AssertionError(message, undefined, assert.isIterable);
   }
 };
 
@@ -2776,30 +4857,33 @@ assert.isIterable = function (obj: unknown, msg: string) {
  *
  * Asserts that a function changes the value of a property.
  *
- *     var obj = { val: 10 };
- *     var fn = function() { obj.val = 22 };
- *     assert.changes(fn, obj, 'val');
+ *     var obj = { value: 10 };
+ *     var fn = function() { obj.value = 22 };
+ *     assert.changes(fn, obj, 'value');
  *
  * @name changes
- * @param {Function} fn modifier function
- * @param {object} obj object or getter function
- * @param {string} prop property name _optional_
- * @param {string} msg _optional_
+ * @param {Function} modifier modifier function
+ * @param {object} object object or getter function
+ * @param {string} property property name _optional_
+ * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
-assert.changes = function (
-  fn: Function,
-  obj: object,
-  prop: string,
-  msg: string
+assert.changes = function <T>(
+  modifier: (...args: any[]) => any,
+  object: T,
+  property: (Record<string, never> & string) | keyof T,
+  message?: string
 ) {
-  if (arguments.length === 3 && typeof obj === 'function') {
-    msg = prop;
-    prop = null;
+  if (arguments.length === 3 && typeof object === 'function') {
+    message = property as string;
+    property = null!;
   }
 
-  new Assertion(fn, msg, assert.changes, true).to.change(obj, prop);
+  new Assertion(modifier, message, assert.changes, true).to.change(
+    object,
+    property
+  );
 };
 
 /**
@@ -2807,36 +4891,38 @@ assert.changes = function (
  *
  * Asserts that a function changes the value of a property by an amount (delta).
  *
- *     var obj = { val: 10 };
- *     var fn = function() { obj.val += 2 };
- *     assert.changesBy(fn, obj, 'val', 2);
+ *     var obj = { value: 10 };
+ *     var fn = function() { obj.value += 2 };
+ *     assert.changesBy(fn, obj, 'value', 2);
  *
  * @name changesBy
- * @param {Function} fn modifier function
- * @param {object} obj object or getter function
- * @param {string} prop property name _optional_
- * @param {number} delta msg change amount (delta)
- * @param {string} msg _optional_
+ * @param {Function} modifier modifier function
+ * @param {object} object object or getter function
+ * @param {string} property property name _optional_
+ * @param {number} delta message change amount (delta)
+ * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
-assert.changesBy = function (
-  fn: Function,
-  obj: object,
-  prop: string,
+assert.changesBy = function <ObjectType>(
+  modifier: (...args: any[]) => any,
+  object: object,
+  property: (Record<string, never> & string) | keyof ObjectType,
   delta: number,
-  msg: string
+  message?: string
 ) {
-  if (arguments.length === 4 && typeof obj === 'function') {
-    let tmpMsg = delta;
-    delta = prop;
-    msg = tmpMsg;
+  if (arguments.length === 4 && typeof object === 'function') {
+    const tmpMsg = delta;
+    delta = property;
+    message = tmpMsg;
   } else if (arguments.length === 3) {
-    delta = prop;
-    prop = null;
+    delta = property;
+    property = null;
   }
 
-  new Assertion(fn, msg, assert.changesBy, true).to.change(obj, prop).by(delta);
+  new Assertion(modifier, message, assert.changesBy, true).to
+    .change(object, property)
+    .by(delta);
 };
 
 /**
@@ -2844,15 +4930,15 @@ assert.changesBy = function (
  *
  * Asserts that a function does not change the value of a property.
  *
- *   var obj = { val: 10 };
+ *   var obj = { value: 10 };
  *   var fn = function() { console.log('foo'); };
- *   assert.doesNotChange(fn, obj, 'val');
+ *   assert.doesNotChange(fn, obj, 'value');
  *
  * @name doesNotChange
  * @param {Function} fn modifier function
  * @param {object} obj object or getter function
  * @param {string} prop property name _optional_
- * @param {string} msg _optional_
+ * @param {string} message _optional_
  * @returns {unknown}
  * @namespace Assert
  * @public
@@ -2861,14 +4947,14 @@ assert.doesNotChange = function (
   fn: Function,
   obj: object,
   prop: string,
-  msg: string
+  message: string
 ): unknown {
   if (arguments.length === 3 && typeof obj === 'function') {
-    msg = prop;
+    message = prop;
     prop = null;
   }
 
-  return new Assertion(fn, msg, assert.doesNotChange, true).to.not.change(
+  return new Assertion(fn, message, assert.doesNotChange, true).to.not.change(
     obj,
     prop
   );
@@ -2879,16 +4965,16 @@ assert.doesNotChange = function (
  *
  * Asserts that a function does not change the value of a property or of a function's return value by an amount (delta)
  *
- *     var obj = { val: 10 };
- *     var fn = function() { obj.val += 10 };
- *     assert.changesButNotBy(fn, obj, 'val', 5);
+ *     var obj = { value: 10 };
+ *     var fn = function() { obj.value += 10 };
+ *     assert.changesButNotBy(fn, obj, 'value', 5);
  *
  * @name changesButNotBy
  * @param {Function} fn - modifier function
  * @param {object} obj - object or getter function
  * @param {string} prop - property name _optional_
  * @param {number} delta - change amount (delta)
- * @param {string} msg - message _optional_
+ * @param {string} message - message _optional_
  * @namespace Assert
  * @public
  */
@@ -2897,18 +4983,18 @@ assert.changesButNotBy = function (
   obj: object,
   prop: string,
   delta: number,
-  msg: string
+  message: string
 ) {
   if (arguments.length === 4 && typeof obj === 'function') {
     let tmpMsg = delta;
     delta = prop;
-    msg = tmpMsg;
+    message = tmpMsg;
   } else if (arguments.length === 3) {
     delta = prop;
     prop = null;
   }
 
-  new Assertion(fn, msg, assert.changesButNotBy, true).to
+  new Assertion(fn, message, assert.changesButNotBy, true).to
     .change(obj, prop)
     .but.not.by(delta);
 };
@@ -2918,9 +5004,9 @@ assert.changesButNotBy = function (
  *
  * Asserts that a function increases a numeric object property.
  *
- *     var obj = { val: 10 };
- *     var fn = function() { obj.val = 13 };
- *     assert.increases(fn, obj, 'val');
+ *     var obj = { value: 10 };
+ *     var fn = function() { obj.value = 13 };
+ *     assert.increases(fn, obj, 'value');
  *
  * @public
  * @namespace Assert
@@ -2928,21 +5014,24 @@ assert.changesButNotBy = function (
  * @param {Function} fn - modifier function
  * @param {object} obj - object or getter function
  * @param {string} prop - property name _optional_
- * @param {string} msg - message _optional_
+ * @param {string} message - message _optional_
  * @returns {unknown}
  */
 assert.increases = function (
   fn: Function,
   obj: object,
   prop: string,
-  msg: string
+  message: string
 ): unknown {
   if (arguments.length === 3 && typeof obj === 'function') {
-    msg = prop;
+    message = prop;
     prop = null;
   }
 
-  return new Assertion(fn, msg, assert.increases, true).to.increase(obj, prop);
+  return new Assertion(fn, message, assert.increases, true).to.increase(
+    obj,
+    prop
+  );
 };
 
 /**
@@ -2950,9 +5039,9 @@ assert.increases = function (
  *
  * Asserts that a function increases a numeric object property or a function's return value by an amount (delta).
  *
- *     var obj = { val: 10 };
- *     var fn = function() { obj.val += 10 };
- *     assert.increasesBy(fn, obj, 'val', 10);
+ *     var obj = { value: 10 };
+ *     var fn = function() { obj.value += 10 };
+ *     assert.increasesBy(fn, obj, 'value', 10);
  *
  * @public
  * @name increasesBy
@@ -2961,25 +5050,25 @@ assert.increases = function (
  * @param {object} obj - object or getter function
  * @param {string} prop - property name _optional_
  * @param {number} delta - change amount (delta)
- * @param {string} msg - message _optional_
+ * @param {string} message - message _optional_
  */
 assert.increasesBy = function (
   fn: Function,
   obj: object,
   prop: string,
   delta: number,
-  msg: string
+  message: string
 ) {
   if (arguments.length === 4 && typeof obj === 'function') {
     let tmpMsg = delta;
     delta = prop;
-    msg = tmpMsg;
+    message = tmpMsg;
   } else if (arguments.length === 3) {
     delta = prop;
     prop = null;
   }
 
-  new Assertion(fn, msg, assert.increasesBy, true).to
+  new Assertion(fn, message, assert.increasesBy, true).to
     .increase(obj, prop)
     .by(delta);
 };
@@ -2989,16 +5078,16 @@ assert.increasesBy = function (
  *
  * Asserts that a function does not increase a numeric object property.
  *
- *     var obj = { val: 10 };
- *     var fn = function() { obj.val = 8 };
- *     assert.doesNotIncrease(fn, obj, 'val');
+ *     var obj = { value: 10 };
+ *     var fn = function() { obj.value = 8 };
+ *     assert.doesNotIncrease(fn, obj, 'value');
  *
  * @name doesNotIncrease
  * @param {Function} fn modifier function
  * @param {object} obj object or getter function
  * @param {string} prop property name _optional_
  * @returns {Assertion}
- * @param {string} msg _optional_
+ * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
@@ -3006,17 +5095,19 @@ assert.doesNotIncrease = function (
   fn: Function,
   obj: object,
   prop: string,
-  msg: string
+  message: string
 ): Assertion {
   if (arguments.length === 3 && typeof obj === 'function') {
-    msg = prop;
+    message = prop;
     prop = null;
   }
 
-  return new Assertion(fn, msg, assert.doesNotIncrease, true).to.not.increase(
-    obj,
-    prop
-  );
+  return new Assertion(
+    fn,
+    message,
+    assert.doesNotIncrease,
+    true
+  ).to.not.increase(obj, prop);
 };
 
 /**
@@ -3024,16 +5115,16 @@ assert.doesNotIncrease = function (
  *
  * Asserts that a function does not increase a numeric object property or function's return value by an amount (delta).
  *
- *     var obj = { val: 10 };
- *     var fn = function() { obj.val = 15 };
- *     assert.increasesButNotBy(fn, obj, 'val', 10);
+ *     var obj = { value: 10 };
+ *     var fn = function() { obj.value = 15 };
+ *     assert.increasesButNotBy(fn, obj, 'value', 10);
  *
  * @name increasesButNotBy
  * @param {Function} fn modifier function
  * @param {object} obj object or getter function
  * @param {string} prop property name _optional_
  * @param {number} delta change amount (delta)
- * @param {string} msg _optional_
+ * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
@@ -3042,18 +5133,18 @@ assert.increasesButNotBy = function (
   obj: object,
   prop: string,
   delta: number,
-  msg: string
+  message: string
 ) {
   if (arguments.length === 4 && typeof obj === 'function') {
     let tmpMsg = delta;
     delta = prop;
-    msg = tmpMsg;
+    message = tmpMsg;
   } else if (arguments.length === 3) {
     delta = prop;
     prop = null;
   }
 
-  new Assertion(fn, msg, assert.increasesButNotBy, true).to
+  new Assertion(fn, message, assert.increasesButNotBy, true).to
     .increase(obj, prop)
     .but.not.by(delta);
 };
@@ -3063,16 +5154,16 @@ assert.increasesButNotBy = function (
  *
  * Asserts that a function decreases a numeric object property.
  *
- *     var obj = { val: 10 };
- *     var fn = function() { obj.val = 5 };
- *     assert.decreases(fn, obj, 'val');
+ *     var obj = { value: 10 };
+ *     var fn = function() { obj.value = 5 };
+ *     assert.decreases(fn, obj, 'value');
  *
  * @name decreases
  * @param {Function} fn modifier function
  * @param {object} obj object or getter function
  * @param {string} prop property name _optional_
  * @returns {Assertion}
- * @param {string} msg _optional_
+ * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
@@ -3080,14 +5171,17 @@ assert.decreases = function (
   fn: Function,
   obj: object,
   prop: string,
-  msg: string
+  message: string
 ): Assertion {
   if (arguments.length === 3 && typeof obj === 'function') {
-    msg = prop;
+    message = prop;
     prop = null;
   }
 
-  return new Assertion(fn, msg, assert.decreases, true).to.decrease(obj, prop);
+  return new Assertion(fn, message, assert.decreases, true).to.decrease(
+    obj,
+    prop
+  );
 };
 
 /**
@@ -3095,16 +5189,16 @@ assert.decreases = function (
  *
  * Asserts that a function decreases a numeric object property or a function's return value by an amount (delta)
  *
- *     var obj = { val: 10 };
- *     var fn = function() { obj.val -= 5 };
- *     assert.decreasesBy(fn, obj, 'val', 5);
+ *     var obj = { value: 10 };
+ *     var fn = function() { obj.value -= 5 };
+ *     assert.decreasesBy(fn, obj, 'value', 5);
  *
  * @name decreasesBy
  * @param {Function} fn modifier function
  * @param {object} obj object or getter function
  * @param {string} prop property name _optional_
  * @param {number} delta change amount (delta)
- * @param {string} msg _optional_
+ * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
@@ -3113,18 +5207,18 @@ assert.decreasesBy = function (
   obj: object,
   prop: string,
   delta: number,
-  msg: string
+  message: string
 ) {
   if (arguments.length === 4 && typeof obj === 'function') {
     let tmpMsg = delta;
     delta = prop;
-    msg = tmpMsg;
+    message = tmpMsg;
   } else if (arguments.length === 3) {
     delta = prop;
     prop = null;
   }
 
-  new Assertion(fn, msg, assert.decreasesBy, true).to
+  new Assertion(fn, message, assert.decreasesBy, true).to
     .decrease(obj, prop)
     .by(delta);
 };
@@ -3134,16 +5228,16 @@ assert.decreasesBy = function (
  *
  * Asserts that a function does not decreases a numeric object property.
  *
- *     var obj = { val: 10 };
- *     var fn = function() { obj.val = 15 };
- *     assert.doesNotDecrease(fn, obj, 'val');
+ *     var obj = { value: 10 };
+ *     var fn = function() { obj.value = 15 };
+ *     assert.doesNotDecrease(fn, obj, 'value');
  *
  * @name doesNotDecrease
  * @param {Function} fn modifier function
  * @param {object} obj object or getter function
  * @param {string} prop property name _optional_
  * @returns {Assertion}
- * @param {string} msg _optional_
+ * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
@@ -3151,17 +5245,19 @@ assert.doesNotDecrease = function (
   fn: Function,
   obj: object,
   prop: string,
-  msg: string
+  message: string
 ): Assertion {
   if (arguments.length === 3 && typeof obj === 'function') {
-    msg = prop;
+    message = prop;
     prop = null;
   }
 
-  return new Assertion(fn, msg, assert.doesNotDecrease, true).to.not.decrease(
-    obj,
-    prop
-  );
+  return new Assertion(
+    fn,
+    message,
+    assert.doesNotDecrease,
+    true
+  ).to.not.decrease(obj, prop);
 };
 
 /**
@@ -3169,9 +5265,9 @@ assert.doesNotDecrease = function (
  *
  * Asserts that a function does not decreases a numeric object property or a function's return value by an amount (delta)
  *
- *     var obj = { val: 10 };
- *     var fn = function() { obj.val = 5 };
- *     assert.doesNotDecreaseBy(fn, obj, 'val', 1);
+ *     var obj = { value: 10 };
+ *     var fn = function() { obj.value = 5 };
+ *     assert.doesNotDecreaseBy(fn, obj, 'value', 1);
  *
  * @name doesNotDecreaseBy
  * @param {Function} fn modifier function
@@ -3179,7 +5275,7 @@ assert.doesNotDecrease = function (
  * @param {string} prop property name _optional_
  * @param {number} delta change amount (delta)
  * @returns {Assertion}
- * @param {string} msg _optional_
+ * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
@@ -3188,18 +5284,18 @@ assert.doesNotDecreaseBy = function (
   obj: object,
   prop: string,
   delta: number,
-  msg: string
+  message: string
 ): Assertion {
   if (arguments.length === 4 && typeof obj === 'function') {
     let tmpMsg = delta;
     delta = prop;
-    msg = tmpMsg;
+    message = tmpMsg;
   } else if (arguments.length === 3) {
     delta = prop;
     prop = null;
   }
 
-  return new Assertion(fn, msg, assert.doesNotDecreaseBy, true).to.not
+  return new Assertion(fn, message, assert.doesNotDecreaseBy, true).to.not
     .decrease(obj, prop)
     .by(delta);
 };
@@ -3209,16 +5305,16 @@ assert.doesNotDecreaseBy = function (
  *
  * Asserts that a function does not decreases a numeric object property or a function's return value by an amount (delta)
  *
- *     var obj = { val: 10 };
- *     var fn = function() { obj.val = 5 };
- *     assert.decreasesButNotBy(fn, obj, 'val', 1);
+ *     var obj = { value: 10 };
+ *     var fn = function() { obj.value = 5 };
+ *     assert.decreasesButNotBy(fn, obj, 'value', 1);
  *
  * @name decreasesButNotBy
  * @param {Function} fn modifier function
  * @param {object} obj object or getter function
  * @param {string} prop property name _optional_
  * @param {number} delta change amount (delta)
- * @param {string} msg _optional_
+ * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
@@ -3227,18 +5323,18 @@ assert.decreasesButNotBy = function (
   obj: object,
   prop: string,
   delta: number,
-  msg: string
+  message: string
 ) {
   if (arguments.length === 4 && typeof obj === 'function') {
     let tmpMsg = delta;
     delta = prop;
-    msg = tmpMsg;
+    message = tmpMsg;
   } else if (arguments.length === 3) {
     delta = prop;
     prop = null;
   }
 
-  new Assertion(fn, msg, assert.decreasesButNotBy, true).to
+  new Assertion(fn, message, assert.decreasesButNotBy, true).to
     .decrease(obj, prop)
     .but.not.by(delta);
 };
@@ -3254,13 +5350,13 @@ assert.decreasesButNotBy = function (
  *     assert.ifError(err); // Rethrows err!
  *
  * @name ifError
- * @param {object} val
+ * @param {object} value
  * @namespace Assert
  * @public
  */
-assert.ifError = function (val: object) {
-  if (val) {
-    throw val;
+assert.ifError = function (value: object) {
+  if (value) {
+    throw value;
   }
 };
 
@@ -3274,12 +5370,12 @@ assert.ifError = function (val: object) {
  * @name isExtensible
  * @alias extensible
  * @param {object} obj
- * @param {string} msg _optional_
+ * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
-assert.isExtensible = function (obj: object, msg: string) {
-  new Assertion(obj, msg, assert.isExtensible, true).to.be.extensible;
+assert.isExtensible = function (obj: object, message: string) {
+  new Assertion(obj, message, assert.isExtensible, true).to.be.extensible;
 };
 
 /**
@@ -3298,12 +5394,13 @@ assert.isExtensible = function (obj: object, msg: string) {
  * @name isNotExtensible
  * @alias notExtensible
  * @param {object} obj
- * @param {string} msg _optional_
+ * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
-assert.isNotExtensible = function (obj: object, msg: string) {
-  new Assertion(obj, msg, assert.isNotExtensible, true).to.not.be.extensible;
+assert.isNotExtensible = function (obj: object, message: string) {
+  new Assertion(obj, message, assert.isNotExtensible, true).to.not.be
+    .extensible;
 };
 
 /**
@@ -3321,12 +5418,12 @@ assert.isNotExtensible = function (obj: object, msg: string) {
  * @name isSealed
  * @alias sealed
  * @param {object} obj
- * @param {string} msg _optional_
+ * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
-assert.isSealed = function (obj: object, msg: string) {
-  new Assertion(obj, msg, assert.isSealed, true).to.be.sealed;
+assert.isSealed = function (obj: object, message: string) {
+  new Assertion(obj, message, assert.isSealed, true).to.be.sealed;
 };
 
 /**
@@ -3339,12 +5436,12 @@ assert.isSealed = function (obj: object, msg: string) {
  * @name isNotSealed
  * @alias notSealed
  * @param {object} obj
- * @param {string} msg _optional_
+ * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
-assert.isNotSealed = function (obj: object, msg: string) {
-  new Assertion(obj, msg, assert.isNotSealed, true).to.not.be.sealed;
+assert.isNotSealed = function (obj: object, message: string) {
+  new Assertion(obj, message, assert.isNotSealed, true).to.not.be.sealed;
 };
 
 /**
@@ -3359,12 +5456,12 @@ assert.isNotSealed = function (obj: object, msg: string) {
  * @name isFrozen
  * @alias frozen
  * @param {object} obj
- * @param {string} msg _optional_
+ * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
-assert.isFrozen = function (obj: object, msg: string) {
-  new Assertion(obj, msg, assert.isFrozen, true).to.be.frozen;
+assert.isFrozen = function (obj: object, message: string) {
+  new Assertion(obj, message, assert.isFrozen, true).to.be.frozen;
 };
 
 /**
@@ -3377,12 +5474,12 @@ assert.isFrozen = function (obj: object, msg: string) {
  * @name isNotFrozen
  * @alias notFrozen
  * @param {object} obj
- * @param {string} msg _optional_
+ * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
-assert.isNotFrozen = function (obj: object, msg: string) {
-  new Assertion(obj, msg, assert.isNotFrozen, true).to.not.be.frozen;
+assert.isNotFrozen = function (obj: object, message: string) {
+  new Assertion(obj, message, assert.isNotFrozen, true).to.not.be.frozen;
 };
 
 /**
@@ -3401,16 +5498,16 @@ assert.isNotFrozen = function (obj: object, msg: string) {
  *
  * @name isEmpty
  * @alias empty
- * @param {object | Array | string | Map | Set} val
- * @param {string} msg _optional_
+ * @param {object | Array | string | Map | Set} value
+ * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
 assert.isEmpty = function (
-  val: object | Array<any> | string | Map | Set,
-  msg: string
+  value: object | Array<any> | string | Map<any, any> | Set<any>,
+  message: string
 ) {
-  new Assertion(val, msg, assert.isEmpty, true).to.be.empty;
+  new Assertion(value, message, assert.isEmpty, true).to.be.empty;
 };
 
 /**
@@ -3429,16 +5526,16 @@ assert.isEmpty = function (
  *
  * @name isNotEmpty
  * @alias notEmpty
- * @param {object | Array | string | Map | Set} val
- * @param {string} msg _optional_
+ * @param {object | Array | string | Map | Set} value
+ * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
 assert.isNotEmpty = function (
-  val: object | Array<any> | string | Map | Set,
-  msg: string
+  value: object | Array<any> | string | Map<any, any> | Set<any>,
+  message: string
 ) {
-  new Assertion(val, msg, assert.isNotEmpty, true).to.not.be.empty;
+  new Assertion(value, message, assert.isNotEmpty, true).to.not.be.empty;
 };
 
 /**
@@ -3457,14 +5554,18 @@ assert.isNotEmpty = function (
  *
  * @name containsSubset
  * @alias containSubset
- * @param {unknown} val
- * @param {unknown} exp
- * @param {string} msg _optional_
+ * @param {unknown} value
+ * @param {unknown} expression
+ * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
-assert.containsSubset = function (val: unknown, exp: unknown, msg: string) {
-  new Assertion(val, msg).to.containSubset(exp);
+assert.containsSubset = function (
+  value: unknown,
+  expression: unknown,
+  message: string
+) {
+  new Assertion(value, message).to.containSubset(expression);
 };
 
 /**
@@ -3473,18 +5574,18 @@ assert.containsSubset = function (val: unknown, exp: unknown, msg: string) {
  * The negation of assert.containsSubset.
  *
  * @name doesNotContainSubset
- * @param {unknown} val
- * @param {unknown} exp
- * @param {string} msg _optional_
+ * @param {unknown} value
+ * @param {unknown} expression
+ * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
 assert.doesNotContainSubset = function (
-  val: unknown,
-  exp: unknown,
-  msg: string
+  value: unknown,
+  expression: unknown,
+  message: string
 ) {
-  new Assertion(val, msg).to.not.containSubset(exp);
+  new Assertion(value, message).to.not.containSubset(expression);
 };
 
 /**
@@ -3510,7 +5611,9 @@ const aliases = [
   ['isCallable', 'isFunction'],
   ['isNotCallable', 'isNotFunction'],
   ['containsSubset', 'containSubset']
-];
+] as const;
 for (const [name, as] of aliases) {
-  assert[as] = assert[name];
+  (assert as AssertStatic)[as] = assert[name];
 }
+
+// export {assert as AssertStatic}

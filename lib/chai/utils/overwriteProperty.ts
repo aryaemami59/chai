@@ -4,7 +4,6 @@
  * MIT Licensed
  */
 
-import type {AssertionStatic} from '../../types.js';
 import {Assertion} from '../assertion.js';
 import {flag} from './flag.js';
 import {transferFlags} from './transferFlags.js';
@@ -45,7 +44,7 @@ export function overwriteProperty(
   this: Assertion,
   ctx: object,
   name: string,
-  getter: (this: AssertionStatic, _super: any) => any
+  getter: (this: Assertion, _super: any) => any
 ) {
   const _get = Object.getOwnPropertyDescriptor(ctx, name);
   const _super =
@@ -56,7 +55,7 @@ export function overwriteProperty(
         };
 
   Object.defineProperty(ctx, name, {
-    get: function overwritingPropertyGetter(this: AssertionStatic) {
+    get: function overwritingPropertyGetter(this: Assertion) {
       // Setting the `ssfi` flag to `overwritingPropertyGetter` causes this
       // function to be the starting point for removing implementation frames
       // from the stack trace of a failed assertion.
