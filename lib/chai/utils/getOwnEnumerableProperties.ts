@@ -20,5 +20,7 @@ import {getOwnEnumerablePropertySymbols} from './getOwnEnumerablePropertySymbols
  * @public
  */
 export function getOwnEnumerableProperties(obj: object): (string | symbol)[] {
-  return Object.keys(obj).concat(getOwnEnumerablePropertySymbols(obj));
+  return (Object.keys(obj) as (string | symbol)[]).concat(
+    getOwnEnumerablePropertySymbols(obj)
+  );
 }

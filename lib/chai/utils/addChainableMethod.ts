@@ -66,13 +66,13 @@ let call = Function.prototype.call,
  */
 export function addChainableMethod<
   T extends {
-    __methods: {
+    __methods?: {
       [key: string]: {
         method?: (...args: any[]) => any;
         chainingBehavior: (...args: any[]) => any;
       };
     };
-  }
+  } & Assertion
 >(
   ctx: T,
   name: string,
@@ -150,7 +150,7 @@ export function addChainableMethod<
           }
 
           const pd = Object.getOwnPropertyDescriptor(ctx, asserterName);
-          Object.defineProperty(chainableMethodWrapper, asserterName, pd);
+          Object.defineProperty(chainableMethodWrapper, asserterName, pd!);
         });
       }
 

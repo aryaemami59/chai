@@ -65,7 +65,7 @@ export function overwriteChainableMethod<
 
   const _chainingBehavior = chainableBehavior.chainingBehavior;
   chainableBehavior.chainingBehavior =
-    function overwritingChainableMethodGetter() {
+    function overwritingChainableMethodGetter(this: Assertion) {
       const result = chainingBehavior?.(_chainingBehavior).call(this);
       if (result !== undefined) {
         return result;
@@ -76,14 +76,18 @@ export function overwriteChainableMethod<
       return newAssertion;
     };
 
-  let _method = chainableBehavior.method;
-  chainableBehavior.method = function overwritingChainableMethodWrapper() {
-    let result = method(_method).apply(this, arguments);
+  const _method = chainableBehavior.method;
+  chainableBehavior.method = function overwritingChainableMethodWrapper(
+    this: Assertion
+  ) {
+    const args = arguments as unknown as any[];
+
+    const result = method(_method).apply(this, args);
     if (result !== undefined) {
       return result;
     }
 
-    let newAssertion = new Assertion();
+    const newAssertion = new Assertion();
     transferFlags(this, newAssertion);
     return newAssertion;
   };

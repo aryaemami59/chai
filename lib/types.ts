@@ -1,29 +1,30 @@
 // import deepEqual = require("deep-eql");
 
 import type {AssertionError} from 'assertion-error';
+import type {Assertion} from './chai/assertion.js';
 import type {Should} from './chai/interface/should.js';
 
 // declare global {
 // export declare namespace Chai {
 export type Message = string | (() => string);
-type ObjectProperty = string | symbol | number;
+export type ObjectProperty = string | symbol | number;
 
-interface PathInfo {
+export interface PathInfo {
   parent: object;
   name: string;
   value?: any;
   exists: boolean;
 }
 
-interface Constructor<T> {
+export interface Constructor<T> {
   new (...args: any[]): T;
 }
 
-interface ErrorConstructor {
+export interface ErrorConstructor {
   new (...args: any[]): Error;
 }
 
-interface ChaiUtils {
+export interface ChaiUtils {
   addChainableMethod(
     // object to define the method on, e.g. chai.Assertion.prototype
     ctx: object,
@@ -37,8 +38,8 @@ interface ChaiUtils {
   overwriteChainableMethod(
     ctx: object,
     name: string,
-    method: (...args: any[]) => void,
-    chainingBehavior?: () => void
+    method: (...args: any[]) => (...args: any[]) => any,
+    chainingBehavior?: (...args: any[]) => (...args: any[]) => any
   ): void;
   addLengthGuard(
     fn: Function,
@@ -58,10 +59,9 @@ interface ChaiUtils {
   flag(obj: object, key: string, value?: any): any;
   getActual(obj: object, args: AssertionArgs): any;
   getProperties(obj: object): string[];
-  getEnumerableProperties(obj: object): string[];
   getOwnEnumerablePropertySymbols(obj: object): symbol[];
   getOwnEnumerableProperties(obj: object): Array<string | symbol>;
-  getMessage(errorLike: Error | string): string;
+  // getMessage(errorLike: Error | string): string;
   getMessage(obj: any, args: AssertionArgs): string;
   inspect(
     obj: any,
@@ -83,13 +83,13 @@ interface ChaiUtils {
     errorLike: Error | ErrorConstructor
   ): boolean;
   compatibleMessage(thrown: Error, errMatcher: string | RegExp): boolean;
-  getConstructorName(constructorFn: Function): string;
-  getFuncName(constructorFn: Function): string | null;
+  // getConstructorName(constructorFn: Function): string;
+  // getFuncName(constructorFn: Function): string | null;
 
   // Reexports from pathval:
   hasProperty(obj: object | undefined | null, name: ObjectProperty): boolean;
   getPathInfo(obj: object, path: string): PathInfo;
-  getPathValue(obj: object, path: string): object | undefined;
+  // getPathValue(obj: object, path: string): object | undefined;
 
   // eql: typeof deepEqual;
 }
@@ -141,7 +141,7 @@ export interface AssertionPrototype {
 
 export interface AssertionStatic extends AssertionPrototype {
   prototype: AssertionPrototype;
-  __flags: {};
+  __flags: {[key: PropertyKey]: unknown};
 
   new (
     target: any,
@@ -180,7 +180,16 @@ export interface AssertionStatic extends AssertionPrototype {
   ): void;
 }
 
-export type Operator = string; // "==" | "===" | ">" | ">=" | "<" | "<=" | "!=" | "!==";
+export type Operator =
+  | (string & Record<string, never>)
+  | '=='
+  | '==='
+  | '>'
+  | '>='
+  | '<'
+  | '<='
+  | '!='
+  | '!==';
 
 export type OperatorComparable =
   | boolean
@@ -197,7 +206,7 @@ export interface ShouldAssertion {
   exist(value: any, message?: string): void;
 }
 
-interface ShouldThrow {
+export interface ShouldThrow {
   (actual: Function, expected?: string | RegExp, message?: string): void;
   (
     actual: Function,
@@ -207,75 +216,75 @@ interface ShouldThrow {
   ): void;
 }
 
-export interface Assertion
-  extends LanguageChains,
-    NumericComparison,
-    TypeComparison {
-  not: Assertion;
-  deep: Deep;
-  ordered: Ordered;
-  nested: Nested;
-  own: Own;
-  any: KeyFilter;
-  all: KeyFilter;
-  a: Assertion;
-  an: Assertion;
-  include: Include;
-  includes: Include;
-  contain: Include;
-  contains: Include;
-  ok: Assertion;
-  true: Assertion;
-  false: Assertion;
-  null: Assertion;
-  undefined: Assertion;
-  NaN: Assertion;
-  exist: Assertion;
-  empty: Assertion;
-  arguments: Assertion;
-  Arguments: Assertion;
-  finite: Assertion;
-  equal: Equal;
-  equals: Equal;
-  eq: Equal;
-  eql: Equal;
-  eqls: Equal;
-  property: Property;
-  ownProperty: Property;
-  haveOwnProperty: Property;
-  ownPropertyDescriptor: OwnPropertyDescriptor;
-  haveOwnPropertyDescriptor: OwnPropertyDescriptor;
-  length: Length;
-  lengthOf: Length;
-  match: Match;
-  matches: Match;
-  string(string: string, message?: string): Assertion;
-  keys: Keys;
-  key(string: string): Assertion;
-  throw: Throw;
-  throws: Throw;
-  Throw: Throw;
-  respondTo: RespondTo;
-  respondsTo: RespondTo;
-  itself: Assertion;
-  satisfy: Satisfy;
-  satisfies: Satisfy;
-  closeTo: CloseTo;
-  approximately: CloseTo;
-  members: Members;
-  increase: PropertyChange;
-  increases: PropertyChange;
-  decrease: PropertyChange;
-  decreases: PropertyChange;
-  change: PropertyChange;
-  changes: PropertyChange;
-  extensible: Assertion;
-  sealed: Assertion;
-  frozen: Assertion;
-  oneOf: OneOf;
-}
+// export interface Assertion
+//   extends LanguageChains,
+//     NumericComparison,
+//     TypeComparison {
+//   not: Assertion;
+//   deep: Deep;
+//   ordered: Ordered;
+//   nested: Nested;
+//   own: Own;
+//   any: KeyFilter;
+//   all: KeyFilter;
+//   a: Assertion;
+//   an: Assertion;
+//   include: Include;
+//   includes: Include;
+//   contain: Include;
+//   contains: Include;
+//   ok: Assertion;
+//   true: Assertion;
+//   false: Assertion;
+//   null: Assertion;
+//   undefined: Assertion;
+//   NaN: Assertion;
+//   exist: Assertion;
+//   empty: Assertion;
+//   arguments: Assertion;
+//   Arguments: Assertion;
+//   finite: Assertion;
+//   equal: Equal;
+//   equals: Equal;
+//   eq: Equal;
+//   eql: Equal;
+//   eqls: Equal;
+//   property: Property;
+//   ownProperty: Property;
+//   haveOwnProperty: Property;
+//   ownPropertyDescriptor: OwnPropertyDescriptor;
+//   haveOwnPropertyDescriptor: OwnPropertyDescriptor;
+//   length: Length;
+//   lengthOf: Length;
+//   match: Match;
+//   matches: Match;
+//   string(string: string, message?: string): Assertion;
+//   keys: Keys;
+//   key(string: string): Assertion;
+//   throw: Throw;
+//   throws: Throw;
+//   Throw: Throw;
+//   respondTo: RespondTo;
+//   respondsTo: RespondTo;
+//   itself: Assertion;
+//   satisfy: Satisfy;
+//   satisfies: Satisfy;
+//   closeTo: CloseTo;
+//   approximately: CloseTo;
+//   members: Members;
+//   increase: PropertyChange;
+//   increases: PropertyChange;
+//   decrease: PropertyChange;
+//   decreases: PropertyChange;
+//   change: PropertyChange;
+//   changes: PropertyChange;
+//   extensible: Assertion;
+//   sealed: Assertion;
+//   frozen: Assertion;
+//   oneOf: OneOf;
+// }
 
-interface LanguageChains {
+export interface LanguageChains {
   to: Assertion;
   be: Assertion;
   been: Assertion;
@@ -293,7 +302,7 @@ interface LanguageChains {
   does: Assertion;
 }
 
-interface NumericComparison {
+export interface NumericComparison {
   above: NumberComparer;
   gt: NumberComparer;
   greaterThan: NumberComparer;
@@ -310,25 +319,25 @@ interface NumericComparison {
   within(start: Date, finish: Date, message?: string): Assertion;
 }
 
-interface NumberComparer {
+export interface NumberComparer {
   (value: number | Date, message?: string): Assertion;
 }
 
-interface TypeComparison {
+export interface TypeComparison {
   (type: string, message?: string): Assertion;
   instanceof: InstanceOf;
   instanceOf: InstanceOf;
 }
 
-interface InstanceOf {
+export interface InstanceOf {
   (constructor: any, message?: string): Assertion;
 }
 
-interface CloseTo {
+export interface CloseTo {
   (expected: number, delta: number, message?: string): Assertion;
 }
 
-interface Nested {
+export interface Nested {
   include: Include;
   includes: Include;
   contain: Include;
@@ -337,7 +346,7 @@ interface Nested {
   members: Members;
 }
 
-interface Own {
+export interface Own {
   include: Include;
   includes: Include;
   contain: Include;
@@ -345,7 +354,7 @@ interface Own {
   property: Property;
 }
 
-interface Deep extends KeyFilter {
+export interface Deep extends KeyFilter {
   be: Assertion;
   equal: Equal;
   equals: Equal;
@@ -361,25 +370,25 @@ interface Deep extends KeyFilter {
   own: Own;
 }
 
-interface Ordered {
+export interface Ordered {
   members: Members;
 }
 
-interface KeyFilter {
+export interface KeyFilter {
   keys: Keys;
   members: Members;
 }
 
-interface Equal {
+export interface Equal {
   (value: any, message?: string): Assertion;
 }
 
-interface Property {
+export interface Property {
   (name: string | symbol, value: any, message?: string): Assertion;
   (name: string | symbol, message?: string): Assertion;
 }
 
-interface OwnPropertyDescriptor {
+export interface OwnPropertyDescriptor {
   (
     name: string | symbol,
     descriptor: PropertyDescriptor,
@@ -388,11 +397,11 @@ interface OwnPropertyDescriptor {
   (name: string | symbol, message?: string): Assertion;
 }
 
-interface Length extends LanguageChains, NumericComparison {
+export interface Length extends LanguageChains, NumericComparison {
   (length: number, message?: string): Assertion;
 }
 
-interface Include {
+export interface Include {
   (value: any, message?: string): Assertion;
   keys: Keys;
   deep: Deep;
@@ -403,20 +412,20 @@ interface Include {
   oneOf: OneOf;
 }
 
-interface OneOf {
+export interface OneOf {
   (list: readonly unknown[], message?: string): Assertion;
 }
 
-interface Match {
+export interface Match {
   (regexp: RegExp, message?: string): Assertion;
 }
 
-interface Keys {
+export interface Keys {
   (...keys: string[]): Assertion;
   (keys: readonly any[] | Object): Assertion;
 }
 
-interface Throw {
+export interface Throw {
   (expected?: string | RegExp, message?: string): Assertion;
   (
     constructor: Error | Function,
@@ -425,23 +434,23 @@ interface Throw {
   ): Assertion;
 }
 
-interface RespondTo {
+export interface RespondTo {
   (method: string, message?: string): Assertion;
 }
 
-interface Satisfy {
+export interface Satisfy {
   (matcher: Function, message?: string): Assertion;
 }
 
-interface Members {
+export interface Members {
   (set: readonly any[], message?: string): Assertion;
 }
 
-interface PropertyChange {
+export interface PropertyChange {
   (object: Object, property?: string, message?: string): DeltaAssertion;
 }
 
-interface DeltaAssertion extends Assertion {
+export interface DeltaAssertion extends Assertion {
   by(delta: number, msg?: string): Assertion;
 }
 

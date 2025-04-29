@@ -13,6 +13,7 @@ export function type(obj: unknown): string {
 
   const stringTag = obj[Symbol.toStringTag as keyof typeof obj];
   if (typeof stringTag === 'string') {
+    console.log(stringTag)
     return stringTag;
   }
   const type = Object.prototype.toString.call(obj).slice(8, -1);

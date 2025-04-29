@@ -29,12 +29,12 @@ import {objDisplay} from './objDisplay.js';
  * @public
  */
 export function getMessage(obj: any, args: AssertionArgs): string {
-  let negate = flag(obj, 'negate');
-  let val = flag(obj, 'object');
-  let expected = args[3];
-  let actual = getActual(obj, args);
+  const negate = flag(obj, 'negate');
+  const val = flag(obj, 'object');
+  const expected = args[3];
+  const actual = getActual(obj, args);
   let msg = negate ? args[2] : args[1];
-  let flagMsg = flag(obj, 'message');
+  const flagMsg = flag(obj, 'message');
 
   if (typeof msg === 'function') msg = msg();
   msg = msg || '';

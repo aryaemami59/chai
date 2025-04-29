@@ -5,7 +5,7 @@
  */
 
 import {AssertionError} from 'assertion-error';
-import * as chai from '../../../index.js';
+import * as chai from '../../../lib/index.js';
 import type {Operator} from '../../types.js';
 import {Assertion} from '../assertion.js';
 
@@ -42,8 +42,8 @@ export {expect};
  * @public
  */
 expect.fail = function (
-  actual: any,
-  expected: any,
+  actual?: any,
+  expected?: any,
   message?: string,
   operator?: Operator
 ) {

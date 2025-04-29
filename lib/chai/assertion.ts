@@ -6,13 +6,110 @@
  */
 
 import {AssertionError} from 'assertion-error';
-import type {AssertionArgs, AssertionStatic, Message} from '../types.js';
+import type {
+  AssertionArgs,
+  AssertionPrototype,
+  AssertionStatic,
+  CloseTo,
+  Deep,
+  Equal,
+  Include,
+  KeyFilter,
+  Keys,
+  LanguageChains,
+  Length,
+  Match,
+  Members,
+  Message,
+  Nested,
+  NumericComparison,
+  OneOf,
+  Ordered,
+  Own,
+  OwnPropertyDescriptor,
+  Property,
+  PropertyChange,
+  RespondTo,
+  Satisfy,
+  Throw,
+  TypeComparison
+} from '../types.js';
 import {config} from './config.js';
 import * as util from './utils/index.js';
 
-// export type {Assertion} from '../types.js';
+export interface Assertion
+  extends LanguageChains,
+    NumericComparison,
+    TypeComparison {
+  not: Assertion;
+  deep: Deep;
+  ordered: Ordered;
+  nested: Nested;
+  own: Own;
+  any: KeyFilter;
+  all: KeyFilter;
+  a: Assertion;
+  an: Assertion;
+  include: Include;
+  includes: Include;
+  contain: Include;
+  contains: Include;
+  ok: Assertion;
+  true: Assertion;
+  false: Assertion;
+  null: Assertion;
+  undefined: Assertion;
+  NaN: Assertion;
+  exist: Assertion;
+  empty: Assertion;
+  arguments: Assertion;
+  Arguments: Assertion;
+  finite: Assertion;
+  equal: Equal;
+  equals: Equal;
+  eq: Equal;
+  eql: Equal;
+  eqls: Equal;
+  property: Property;
+  ownProperty: Property;
+  haveOwnProperty: Property;
+  ownPropertyDescriptor: OwnPropertyDescriptor;
+  haveOwnPropertyDescriptor: OwnPropertyDescriptor;
+  length: Length;
+  lengthOf: Length;
+  match: Match;
+  matches: Match;
+  string(string: string, message?: string): Assertion;
+  keys: Keys;
+  key(string: string): Assertion;
+  throw: Throw;
+  throws: Throw;
+  Throw: Throw;
+  respondTo: RespondTo;
+  respondsTo: RespondTo;
+  itself: Assertion;
+  satisfy: Satisfy;
+  satisfies: Satisfy;
+  closeTo: CloseTo;
+  approximately: CloseTo;
+  members: Members;
+  increase: PropertyChange;
+  increases: PropertyChange;
+  decrease: PropertyChange;
+  decreases: PropertyChange;
+  change: PropertyChange;
+  changes: PropertyChange;
+  extensible: Assertion;
+  sealed: Assertion;
+  frozen: Assertion;
+  oneOf: OneOf;
+}
+
+// export type {AssertionType as Assertion}
 
 export class Assertion {
+  declare prototype: AssertionPrototype;
+
   /** @type {{}} */
   __flags: {[key: PropertyKey]: unknown} = {};
 
@@ -158,6 +255,7 @@ export class Assertion {
    * @param {Function} chainingBehavior
    */
   static overwriteChainableMethod(
+    this: Assertion,
     name: string,
     method: (this: AssertionStatic, ...args: any[]) => void,
     chainingBehavior?: () => void

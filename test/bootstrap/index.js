@@ -1,4 +1,4 @@
-import * as chai from '../../index.js';
+import * as chai from '../../lib/index.js';
 
 var isStackSupported = false;
 if (typeof Error.captureStackTrace !== 'undefined') {
@@ -35,7 +35,9 @@ export function globalErr(fn, val, skipStackTest) {
     fn();
   } catch (err) {
     if (isStackSupported && !skipStackTest) {
-      chai.expect(err).to.have.property('stack')
+      chai
+        .expect(err)
+        .to.have.property('stack')
         .that.has.string('globalErr')
         .but.does.not.match(
           /at [a-zA-Z]*(Getter|Wrapper|(\.)*assert)/,
@@ -44,16 +46,20 @@ export function globalErr(fn, val, skipStackTest) {
     }
 
     switch (chai.util.type(val).toLowerCase()) {
-      case 'undefined': return;
-      case 'string': return chai.expect(err.message).to.equal(val);
-      case 'regexp': return chai.expect(err.message).to.match(val);
-      case 'object': return Object.keys(val).forEach(function (key) {
-        chai.expect(err).to.have.property(key).and.to.deep.equal(val[key]);
-      });
+      case 'undefined':
+        return;
+      case 'string':
+        return chai.expect(err.message).to.equal(val);
+      case 'regexp':
+        return chai.expect(err.message).to.match(val);
+      case 'object':
+        return Object.keys(val).forEach(function (key) {
+          chai.expect(err).to.have.property(key).and.to.deep.equal(val[key]);
+        });
     }
 
     throw new chai.AssertionError('Invalid val');
   }
 
   throw new chai.AssertionError('Expected an error');
-};
+}

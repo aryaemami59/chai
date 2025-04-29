@@ -1,3 +1,4 @@
+import type {Operator} from '../../types.js';
 import {flag} from './flag.js';
 import {type} from './type-detect.js';
 
@@ -28,29 +29,42 @@ function isObjectType(obj: unknown): obj is object {
  * @name getOperator
  * @public
  */
-export function getOperator(obj: object, args: unknown[]) {
-  let operator = flag(obj, 'operator');
-  let negate = flag(obj, 'negate');
-  let expected = args[3];
+export function getOperator(
+  obj: Record<string, any>,
+  args: unknown[]
+):
+  | Operator
+  | 'notDeepStrictEqual'
+  | 'notStrictEqual'
+  | 'deepStrictEqual'
+  | 'strictEqual'
+  | undefined {
+  const operator: Operator = flag(obj, 'operator');
+  console.log(operator);
+  const negate = flag(obj, 'negate');
+  const expected = args[3];
   let msg = negate ? args[2] : args[1];
 
   if (operator) {
     return operator;
   }
 
-  if (typeof msg === 'function') msg = msg();
+  if (typeof msg === 'function') {
+    msg = msg();
+  }
 
-  msg = msg || '';
-  if (!msg) {
+  const message = (msg || '') as string;
+
+  if (!message) {
     return undefined;
   }
 
-  if (/\shave\s/.test(msg)) {
+  if (/\shave\s/.test(message)) {
     return undefined;
   }
 
-  let isObject = isObjectType(expected);
-  if (/\snot\s/.test(msg)) {
+  const isObject = isObjectType(expected);
+  if (/\snot\s/.test(message)) {
     return isObject ? 'notDeepStrictEqual' : 'notStrictEqual';
   }
 

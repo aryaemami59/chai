@@ -18,8 +18,8 @@ import {flag} from './flag.js';
  * @namespace Utils
  * @name test
  */
-export function test(obj: object, args: AssertionArgs): unknown {
-  let negate = flag(obj, 'negate'),
-    expr = args[0];
+export function test(obj: object, args: AssertionArgs): boolean {
+  const negate = flag(obj, 'negate');
+  const expr = args[0];
   return negate ? !expr : expr;
 }

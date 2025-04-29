@@ -5,41 +5,46 @@
  */
 
 // Dependencies that are used for multiple exports are required here only once
-import * as checkError from 'check-error';
+import {
+  compatibleConstructor,
+  compatibleInstance,
+  compatibleMessage
+} from 'check-error';
+import type {ChaiUtils} from '../../types.js';
+export * as checkError from 'check-error';
 
 // test utility
-export {test} from './test.js';
-export {type};
+import {test} from './test.js';
 
 // type utility
-import {type} from './type-detect.js';
+export {type} from './type-detect.js';
 
 // expectTypes utility
-export {expectTypes} from './expectTypes.js';
+import {expectTypes} from './expectTypes.js';
 
 // message utility
 export {getMessage} from './getMessage.js';
 
 // actual utility
-export {getActual} from './getActual.js';
+import {getActual} from './getActual.js';
 
 // Inspect util
-export {inspect} from './inspect.js';
+import {inspect} from './inspect.js';
 
 // Object Display util
-export {objDisplay} from './objDisplay.js';
+import {objDisplay} from './objDisplay.js';
 
 // Flag utility
-export {flag} from './flag.js';
+import {flag} from './flag.js';
 
 // Flag transferring utility
-export {transferFlags} from './transferFlags.js';
+import {transferFlags} from './transferFlags.js';
 
 // Deep equal utility
 export {default as eql} from 'deep-eql';
 
 // Deep path info
-export {getPathInfo, hasProperty} from 'pathval';
+import {getPathInfo, hasProperty} from 'pathval';
 
 /**
  * Function name
@@ -52,43 +57,41 @@ export function getName(fn: (...args: any[]) => any): string {
 }
 
 // add Property
-export {addProperty} from './addProperty.js';
+import {addProperty} from './addProperty.js';
 
 // add Method
-export {addMethod} from './addMethod.js';
+import {addMethod} from './addMethod.js';
 
 // overwrite Property
-export {overwriteProperty} from './overwriteProperty.js';
+import {overwriteProperty} from './overwriteProperty.js';
 
 // overwrite Method
-export {overwriteMethod} from './overwriteMethod.js';
+import {overwriteMethod} from './overwriteMethod.js';
 
 // Add a chainable method
-export {addChainableMethod} from './addChainableMethod.js';
+import {addChainableMethod} from './addChainableMethod.js';
 
 // Overwrite chainable method
-export {overwriteChainableMethod} from './overwriteChainableMethod.js';
+import {overwriteChainableMethod} from './overwriteChainableMethod.js';
 
 // Compare by inspect method
-export {compareByInspect} from './compareByInspect.js';
+import {compareByInspect} from './compareByInspect.js';
 
 // Get own enumerable property symbols method
 export {getOwnEnumerablePropertySymbols} from './getOwnEnumerablePropertySymbols.js';
 
 // Get own enumerable properties method
-export {getOwnEnumerableProperties} from './getOwnEnumerableProperties.js';
-
-// Checks error against a given set of criteria
-export {checkError};
+import {getOwnEnumerableProperties} from './getOwnEnumerableProperties.js';
 
 // Proxify util
-export {proxify} from './proxify.js';
+import {proxify} from './proxify.js';
 
 // addLengthGuard util
-export {addLengthGuard} from './addLengthGuard.js';
+import {addLengthGuard} from './addLengthGuard.js';
 
 // isProxyEnabled helper
-export {isProxyEnabled} from './isProxyEnabled.js';
+import {isProxyEnabled} from './isProxyEnabled.js';
+import {type} from './type-detect.js';
 
 // isNaN method
 export {isNaN} from './isNaN.js';
@@ -116,3 +119,38 @@ export function isRegExp(obj: any): boolean {
 export function isNumeric(obj: unknown): boolean {
   return ['Number', 'BigInt'].includes(type(obj));
 }
+
+import {getProperties} from './getProperties.js';
+
+import {getMessage} from './getMessage.js';
+
+import {getOwnEnumerablePropertySymbols} from './getOwnEnumerablePropertySymbols.js';
+
+export const util = {
+  overwriteChainableMethod,
+  compareByInspect,
+  getOwnEnumerableProperties,
+  expectTypes,
+  getActual,
+  inspect,
+  objDisplay,
+  flag,
+  transferFlags,
+  getPathInfo,
+  hasProperty,
+  addProperty,
+  addMethod,
+  overwriteProperty,
+  overwriteMethod,
+  addChainableMethod,
+  proxify,
+  addLengthGuard,
+  isProxyEnabled,
+  getProperties,
+  getOwnEnumerablePropertySymbols,
+  getMessage,
+  compatibleInstance,
+  test,
+  compatibleConstructor,
+  compatibleMessage
+} satisfies ChaiUtils;

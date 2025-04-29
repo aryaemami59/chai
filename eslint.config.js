@@ -1,11 +1,11 @@
-import jsdoc from "eslint-plugin-jsdoc";
-import eslintjs from "@eslint/js";
+import eslintjs from '@eslint/js';
+import jsdoc from 'eslint-plugin-jsdoc';
 
 const {configs: eslintConfigs} = eslintjs;
 
 export default [
-  jsdoc.configs["flat/recommended"],
-  eslintConfigs["recommended"],
+  jsdoc.configs['flat/recommended'],
+  eslintConfigs.recommended,
   {
     languageOptions: {
       // if we ever use more globals than this, pull in the `globals` package
@@ -14,14 +14,17 @@ export default [
       }
     },
     rules: {
-      "no-var": "error",
-      "jsdoc/require-param-description": "off",
-      "jsdoc/require-returns-description": "off",
-      "jsdoc/tag-lines": ["error", "any", { startLines: 1 }],
-      "no-unused-vars": ["error", {
-        argsIgnorePattern: "^_",
-        caughtErrorsIgnorePattern: "^_"
-      }]
-    },
-  },
+      'no-var': 'error',
+      'jsdoc/require-param-description': 'off',
+      'jsdoc/require-returns-description': 'off',
+      'jsdoc/tag-lines': ['error', 'any', {startLines: 1}],
+      'no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_'
+        }
+      ]
+    }
+  }
 ];

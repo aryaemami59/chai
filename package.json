@@ -27,9 +27,35 @@
     "url": "https://github.com/chaijs/chai/issues"
   },
   "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "bun": {
+        "types": "./dist/index.d.ts",
+        "default": "./src/index.ts"
+      },
+      "module-sync": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "module": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "default": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
   "scripts": {
     "prebuild": "npm run clean",
-    "build": "npm run build:esm",
+    "build": "tsup --config=tsup.config.mts",
     "build:esm": "esbuild --bundle --format=esm --keep-names --outfile=chai.js index.js",
     "format": "prettier --write lib",
     "pretest": "npm run lint && npm run build",
@@ -39,8 +65,8 @@
     "lint": "npm run lint:js && npm run lint:format",
     "lint:js": "eslint lib/",
     "lint:format": "prettier --check lib",
-    "lint:types": "tsc",
-    "clean": "rm -rf chai.js coverage/"
+    "lint:types": "tsc --noEmit",
+    "clean": "rimraf chai.js coverage/ dist/"
   },
   "engines": {
     "node": ">=12"
@@ -53,6 +79,7 @@
     "pathval": "^2.0.0"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.4",
     "@eslint/js": "^9.17.0",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@types/check-error": "^1.0.3",
@@ -67,6 +94,8 @@
     "eslint-plugin-jsdoc": "^48.0.4",
     "mocha": "^10.2.0",
     "prettier": "^3.4.2",
+    "rimraf": "^6.0.1",
+    "tsup": "^8.4.0",
     "typescript": "^5.8.3"
   }
 }

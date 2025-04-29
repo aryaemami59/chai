@@ -37,9 +37,9 @@ function loadShould(): Should {
       (typeof Symbol === 'function' && this instanceof Symbol) ||
       (typeof BigInt === 'function' && this instanceof BigInt)
     ) {
-      return new Assertion(this.valueOf(), null, shouldGetter);
+      return new Assertion(this.valueOf(), undefined, shouldGetter);
     }
-    return new Assertion(this, null, shouldGetter);
+    return new Assertion(this, undefined, shouldGetter);
   }
   /**
    * @param {unknown} value

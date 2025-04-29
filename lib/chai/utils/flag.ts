@@ -24,11 +24,11 @@
  * @returns {unknown | undefined}
  * @private
  */
-export function flag<T extends {__flags?: {[key: PropertyKey]: unknown}}>(
-  obj: T,
+export function flag(
+  obj: object & Record<string, any>,
   key: string,
   value?: unknown
-): T | undefined {
+): any {
   const flags = obj.__flags || (obj.__flags = Object.create(null));
   if (arguments.length === 3) {
     flags[key] = value;
@@ -36,3 +36,14 @@ export function flag<T extends {__flags?: {[key: PropertyKey]: unknown}}>(
     return flags[key];
   }
 }
+// export function flag<
+//   T extends ({__flags?: {[key: PropertyKey]: unknown}} & Operator) |
+//     Record<string, any>
+// >(obj: T, key: string, value?: unknown): T | undefined {
+//   const flags = obj.__flags || (obj.__flags = Object.create(null));
+//   if (arguments.length === 3) {
+//     flags[key] = value;
+//   } else {
+//     return flags[key];
+//   }
+// }

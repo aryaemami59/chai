@@ -17,6 +17,9 @@ import type {AssertionArgs} from '../../types.js';
  * @namespace Utils
  * @name getActual
  */
-export function getActual(obj: object, args: AssertionArgs) {
+export function getActual(
+  obj: object & Record<string, any>,
+  args: AssertionArgs
+): unknown {
   return args.length > 4 ? args[4] : obj._obj;
 }

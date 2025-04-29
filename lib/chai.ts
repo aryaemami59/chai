@@ -5,14 +5,17 @@
  */
 
 import {AssertionError} from 'assertion-error';
+import packageJson from '../package.json' with {type: 'json'};
 import {Assertion} from './chai/assertion.js';
 import {config} from './chai/config.js';
 import './chai/core/assertions.js';
 import {assert} from './chai/interface/assert.js';
 import {expect} from './chai/interface/expect.js';
 import * as should from './chai/interface/should.js';
-import * as util from './chai/utils/index.js';
+import {util} from './chai/utils/index.js';
 import type {ChaiPlugin, ChaiStatic} from './types.js';
+
+const {version} = packageJson;
 
 const used: ChaiPlugin[] = [];
 
@@ -29,7 +32,7 @@ export {AssertionError};
  * @public
  */
 export function use(fn: ChaiPlugin): ChaiStatic {
-  const exports: ChaiStatic = {
+  const exports = {
     use,
     AssertionError,
     util,
@@ -37,6 +40,7 @@ export function use(fn: ChaiPlugin): ChaiStatic {
     expect,
     assert,
     Assertion,
+    version,
     ...should
   };
 

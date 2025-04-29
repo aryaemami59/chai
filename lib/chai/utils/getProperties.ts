@@ -16,8 +16,8 @@
  * @name getProperties
  * @public
  */
-export function getProperties(object: object) {
-  let result = Object.getOwnPropertyNames(object);
+export function getProperties(object: object): Array<any> {
+  const result = Object.getOwnPropertyNames(object);
 
   /**
    * @param {unknown} property

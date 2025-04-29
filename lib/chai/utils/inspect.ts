@@ -25,7 +25,7 @@ export function inspect(
   showHidden?: boolean,
   depth?: number,
   colors?: boolean
-) {
+): string {
   const options = {
     colors,
     depth: typeof depth === 'undefined' ? 2 : depth,
