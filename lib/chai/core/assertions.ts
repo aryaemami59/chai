@@ -6,7 +6,7 @@
  */
 
 import {AssertionError} from 'assertion-error';
-import type {AssertionPrototype, AssertionStatic} from '../../types.js';
+import type {AssertionPrototype} from '../../types.js';
 import {Assertion} from '../assertion.js';
 import {config} from '../config.js';
 import * as _ from '../utils/index.js';
@@ -542,7 +542,7 @@ function include(this: Assertion, val: any, message?: string) {
         );
       }
 
-      included = (obj as WeakSet<WeakKey>).has((val as WeakKey));
+      included = (obj as WeakSet<WeakKey>).has(val as WeakKey);
       break;
 
     case 'map':
@@ -592,7 +592,7 @@ function include(this: Assertion, val: any, message?: string) {
         );
       }
 
-      const props = Object.keys((val as object));
+      const props = Object.keys(val as object);
       let firstErr: Error | null = null;
       let numErrs = 0;
 
@@ -609,7 +609,9 @@ function include(this: Assertion, val: any, message?: string) {
         try {
           propAssertion.property(prop, val[prop]);
         } catch (err) {
-          if (!_.checkError.compatibleConstructor((err as Error), AssertionError)) {
+          if (
+            !_.checkError.compatibleConstructor(err as Error, AssertionError)
+          ) {
             throw err;
           }
           if (firstErr === null) firstErr = err as Error;
@@ -1058,7 +1060,7 @@ Assertion.addProperty('empty', function () {
  * @namespace BDD
  * @public
  */
-function checkArguments() {
+function checkArguments(this: Assertion) {
   let obj = flag(this, 'object'),
     type = _.type(obj);
   this.assert(
@@ -1115,7 +1117,7 @@ Assertion.addProperty('Arguments', checkArguments);
  * @namespace BDD
  * @public
  */
-function assertEqual(val, msg) {
+function assertEqual(this: Assertion, val: any, msg?: string) {
   if (msg) flag(this, 'message', msg);
   let obj = flag(this, 'object');
   if (flag(this, 'deep')) {
@@ -1179,7 +1181,7 @@ Assertion.addMethod('eq', assertEqual);
  * @namespace BDD
  * @public
  */
-function assertEql(obj, msg) {
+function assertEql(this: Assertion, obj: any, msg?: string) {
   if (msg) flag(this, 'message', msg);
   let eql = flag(this, 'eql');
   this.assert(
@@ -1237,7 +1239,7 @@ Assertion.addMethod('eqls', assertEql);
  * @namespace BDD
  * @public
  */
-function assertAbove(n, msg) {
+function assertAbove(this: Assertion, n: number, msg?: string) {
   if (msg) flag(this, 'message', msg);
   let obj = flag(this, 'object'),
     doLength = flag(this, 'doLength'),
@@ -1347,7 +1349,7 @@ Assertion.addMethod('greaterThan', assertAbove);
  * @namespace BDD
  * @public
  */
-function assertLeast(n, msg) {
+function assertLeast(this: Assertion, n: number, msg?: string) {
   if (msg) flag(this, 'message', msg);
   let obj = flag(this, 'object'),
     doLength = flag(this, 'doLength'),
@@ -1376,7 +1378,7 @@ function assertLeast(n, msg) {
   }
 
   if (shouldThrow) {
-    throw new AssertionError(errorMessage, undefined, ssfi);
+    throw new AssertionError(errorMessage!, undefined, ssfi);
   }
 
   if (doLength) {
@@ -1453,7 +1455,7 @@ Assertion.addMethod('greaterThanOrEqual', assertLeast);
  * @namespace BDD
  * @public
  */
-function assertBelow(n, msg) {
+function assertBelow(this: Assertion, n: number, msg?: string) {
   if (msg) flag(this, 'message', msg);
   let obj = flag(this, 'object'),
     doLength = flag(this, 'doLength'),
@@ -1482,7 +1484,7 @@ function assertBelow(n, msg) {
   }
 
   if (shouldThrow) {
-    throw new AssertionError(errorMessage, undefined, ssfi);
+    throw new AssertionError(errorMessage!, undefined, ssfi);
   }
 
   if (doLength) {
@@ -1560,7 +1562,7 @@ Assertion.addMethod('lessThan', assertBelow);
  * @namespace BDD
  * @public
  */
-function assertMost(n, msg) {
+function assertMost(this: Assertion, n: number, msg?: string) {
   if (msg) flag(this, 'message', msg);
   let obj = flag(this, 'object'),
     doLength = flag(this, 'doLength'),
@@ -1589,7 +1591,7 @@ function assertMost(n, msg) {
   }
 
   if (shouldThrow) {
-    throw new AssertionError(errorMessage, undefined, ssfi);
+    throw new AssertionError(errorMessage!, undefined, ssfi);
   }
 
   if (doLength) {
@@ -1707,7 +1709,7 @@ Assertion.addMethod('within', function (start, finish, msg) {
   }
 
   if (shouldThrow) {
-    throw new AssertionError(errorMessage, undefined, ssfi);
+    throw new AssertionError(errorMessage!, undefined, ssfi);
   }
 
   if (doLength) {
@@ -1771,7 +1773,7 @@ Assertion.addMethod('within', function (start, finish, msg) {
  * @namespace BDD
  * @public
  */
-function assertInstanceOf(constructor, msg) {
+function assertInstanceOf(this: Assertion, constructor: any, msg?: string) {
   if (msg) flag(this, 'message', msg);
 
   let target = flag(this, 'object');
@@ -1921,7 +1923,12 @@ Assertion.addMethod('instanceOf', assertInstanceOf);
  * @namespace BDD
  * @public
  */
-function assertProperty(name, val, msg) {
+function assertProperty(
+  this: Assertion,
+  name: string,
+  val?: any,
+  msg?: string
+) {
   if (msg) flag(this, 'message', msg);
 
   let isNested = flag(this, 'nested'),
@@ -1976,8 +1983,10 @@ function assertProperty(name, val, msg) {
   let isDeep = flag(this, 'deep'),
     negate = flag(this, 'negate'),
     pathInfo = isNested ? _.getPathInfo(obj, name) : null,
-    value = isNested ? pathInfo.value : obj[name],
-    isEql = isDeep ? flag(this, 'eql') : (val1, val2) => val1 === val2;
+    value = isNested ? pathInfo?.value : obj[name],
+    isEql = isDeep
+      ? flag(this, 'eql')
+      : (val1: any, val2: any) => val1 === val2;
 
   let descriptor = '';
   if (isDeep) descriptor += 'deep ';
@@ -1987,7 +1996,7 @@ function assertProperty(name, val, msg) {
 
   let hasProperty;
   if (isOwn) hasProperty = Object.prototype.hasOwnProperty.call(obj, name);
-  else if (isNested) hasProperty = pathInfo.exists;
+  else if (isNested) hasProperty = pathInfo?.exists;
   else hasProperty = _.hasProperty(obj, name);
 
   // When performing a negated assertion for both name and val, merely having
@@ -2029,9 +2038,14 @@ Assertion.addMethod('property', assertProperty);
  * @param {unknown} _value
  * @param {string} _msg
  */
-function assertOwnProperty(_name, _value, _msg) {
+function assertOwnProperty(
+  this: Assertion,
+  _name: string,
+  _value?: any,
+  _msg?: string
+) {
   flag(this, 'own', true);
-  assertProperty.apply(this, arguments);
+  assertProperty.apply(this, arguments as never);
 }
 
 Assertion.addMethod('ownProperty', assertOwnProperty);
@@ -2155,15 +2169,20 @@ Assertion.addMethod('haveOwnProperty', assertOwnProperty);
  * @namespace BDD
  * @public
  */
-function assertOwnPropertyDescriptor(name, descriptor, msg) {
+function assertOwnPropertyDescriptor(
+  this: Assertion,
+  name: string,
+  descriptor?: string,
+  msg?: string
+) {
   if (typeof descriptor === 'string') {
     msg = descriptor;
-    descriptor = null;
+    descriptor = null!;
   }
   if (msg) flag(this, 'message', msg);
-  let obj = flag(this, 'object');
-  let actualDescriptor = Object.getOwnPropertyDescriptor(Object(obj), name);
-  let eql = flag(this, 'eql');
+  const obj = flag(this, 'object');
+  const actualDescriptor = Object.getOwnPropertyDescriptor(Object(obj), name);
+  const eql = flag(this, 'eql');
   if (actualDescriptor && descriptor) {
     this.assert(
       eql(descriptor, actualDescriptor),
@@ -2197,7 +2216,7 @@ Assertion.addMethod('ownPropertyDescriptor', assertOwnPropertyDescriptor);
 Assertion.addMethod('haveOwnPropertyDescriptor', assertOwnPropertyDescriptor);
 
 /** */
-function assertLengthChain() {
+function assertLengthChain(this: Assertion) {
   flag(this, 'doLength', true);
 }
 
@@ -2258,7 +2277,7 @@ function assertLengthChain() {
  * @namespace BDD
  * @public
  */
-function assertLength(n, msg) {
+function assertLength(this: Assertion, n: number, msg?: string) {
   if (msg) flag(this, 'message', msg);
   let obj = flag(this, 'object'),
     objType = _.type(obj).toLowerCase(),
@@ -2317,7 +2336,7 @@ Assertion.addChainableMethod('lengthOf', assertLength, assertLengthChain);
  * @namespace BDD
  * @public
  */
-function assertMatch(re, msg) {
+function assertMatch(this: Assertion, re: RegExp, msg?: string) {
   if (msg) flag(this, 'message', msg);
   let obj = flag(this, 'object');
   this.assert(
@@ -2471,20 +2490,23 @@ Assertion.addMethod('string', function (str, msg) {
  * @namespace BDD
  * @public
  */
-function assertKeys(keys) {
-  let obj = flag(this, 'object'),
-    objType = _.type(obj),
-    keysType = _.type(keys),
-    ssfi = flag(this, 'ssfi'),
-    isDeep = flag(this, 'deep'),
-    str,
-    deepStr = '',
-    actual,
-    ok = true,
-    flagMsg = flag(this, 'message');
+function assertKeys(this: Assertion, keys: (string | Array<any> | object)[]) {
+  const obj: object | any[] | string | Map<any, any> | Set<any> = flag(
+    this,
+    'object'
+  );
+  const objType = _.type(obj);
+  const keysType = _.type(keys);
+  const ssfi = flag(this, 'ssfi');
+  const isDeep = flag(this, 'deep');
+  let str;
+  let deepStr = '';
+  let actual: any[];
+  let ok = true;
+  let flagMsg = flag(this, 'message');
 
   flagMsg = flagMsg ? flagMsg + ': ' : '';
-  let mixedArgsMsg =
+  const mixedArgsMsg =
     flagMsg +
     'when testing keys against an object or an array you must give a single Array|Object|String argument or multiple String arguments';
 
@@ -2493,7 +2515,7 @@ function assertKeys(keys) {
     actual = [];
 
     // Map and Set '.keys' aren't supported in IE 11. Therefore, use .forEach.
-    obj.forEach(function (val, key) {
+    (obj as Map<any, any> | Set<any>).forEach(function (val, key) {
       actual.push(key);
     });
 
@@ -2501,7 +2523,7 @@ function assertKeys(keys) {
       keys = Array.prototype.slice.call(arguments);
     }
   } else {
-    actual = _.getOwnEnumerableProperties(obj);
+    actual = _.getOwnEnumerableProperties(obj as object);
 
     switch (keysType) {
       case 'Array':
@@ -2533,7 +2555,9 @@ function assertKeys(keys) {
     any = flag(this, 'any'),
     all = flag(this, 'all'),
     expected = keys,
-    isEql = isDeep ? flag(this, 'eql') : (val1, val2) => val1 === val2;
+    isEql = isDeep
+      ? flag(this, 'eql')
+      : (val1: any, val2: any) => val1 === val2;
 
   if (!any && !all) {
     all = true;
@@ -2541,7 +2565,7 @@ function assertKeys(keys) {
 
   // Has any
   if (any) {
-    ok = expected.some(function (expectedKey) {
+    ok = expected.some(function (this: Assertion, expectedKey) {
       return actual.some(function (actualKey) {
         return isEql(expectedKey, actualKey);
       });
@@ -2551,7 +2575,7 @@ function assertKeys(keys) {
   // Has all
   if (all) {
     ok = expected.every(function (expectedKey) {
-      return actual.some(function (actualKey) {
+      return (actual as any[]).some(function (actualKey) {
         return isEql(expectedKey, actualKey);
       });
     });
@@ -2566,7 +2590,7 @@ function assertKeys(keys) {
     keys = keys.map(function (key) {
       return _.inspect(key);
     });
-    let last = keys.pop();
+    const last = keys.pop();
     if (all) {
       str = keys.join(', ') + ', and ' + last;
     }
@@ -2588,7 +2612,7 @@ function assertKeys(keys) {
     ok,
     'expected #{this} to ' + deepStr + str,
     'expected #{this} to not ' + deepStr + str,
-    expected.slice(0).sort(_.compareByInspect),
+    (expected as any[]).slice(0).sort(_.compareByInspect),
     actual.sort(_.compareByInspect),
     true
   );
@@ -2756,7 +2780,12 @@ Assertion.addMethod('key', assertKeys);
  * @namespace BDD
  * @public
  */
-function assertThrows(errorLike, errMsgMatcher, msg) {
+function assertThrows(
+  this: Assertion,
+  errorLike: Error | ((...args: any[]) => any) | string | RegExp,
+  errMsgMatcher?: string | RegExp,
+  msg?: string
+): void {
   if (msg) flag(this, 'message', msg);
   let obj = flag(this, 'object'),
     ssfi = flag(this, 'ssfi'),
@@ -2765,8 +2794,8 @@ function assertThrows(errorLike, errMsgMatcher, msg) {
   new Assertion(obj, flagMsg, ssfi, true).is.a('function');
 
   if (_.isRegExp(errorLike) || typeof errorLike === 'string') {
-    errMsgMatcher = errorLike;
-    errorLike = null;
+    errMsgMatcher = errorLike as string | RegExp;
+    errorLike = null!;
   }
 
   let caughtErr;
@@ -2796,7 +2825,7 @@ function assertThrows(errorLike, errMsgMatcher, msg) {
     if (errorLike instanceof Error) {
       errorLikeString = '#{exp}';
     } else if (errorLike) {
-      errorLikeString = _.checkError.getConstructorName(errorLike);
+      errorLikeString = _.checkError.getConstructorName(errorLike as never);
     }
 
     let actual = caughtErr;
@@ -2809,7 +2838,7 @@ function assertThrows(errorLike, errMsgMatcher, msg) {
       (typeof caughtErr === 'object' || typeof caughtErr === 'function')
     ) {
       try {
-        actual = _.checkError.getConstructorName(caughtErr);
+        actual = _.checkError.getConstructorName(caughtErr as never);
       } catch (_err) {
         // somehow wasn't a constructor, maybe we got a function thrown
         // or similar
@@ -2829,7 +2858,7 @@ function assertThrows(errorLike, errMsgMatcher, msg) {
     // We should compare instances only if `errorLike` is an instance of `Error`
     if (errorLike instanceof Error) {
       let isCompatibleInstance = _.checkError.compatibleInstance(
-        caughtErr,
+        caughtErr as never,
         errorLike
       );
 
@@ -2852,8 +2881,8 @@ function assertThrows(errorLike, errMsgMatcher, msg) {
     }
 
     let isCompatibleConstructor = _.checkError.compatibleConstructor(
-      caughtErr,
-      errorLike
+      caughtErr as never,
+      errorLike as never
     );
     if (isCompatibleConstructor === negate) {
       if (everyArgIsDefined && negate) {
@@ -2866,10 +2895,10 @@ function assertThrows(errorLike, errMsgMatcher, msg) {
             (caughtErr ? ' but #{act} was thrown' : ''),
           errorLike instanceof Error
             ? errorLike.toString()
-            : errorLike && _.checkError.getConstructorName(errorLike),
+            : errorLike && _.checkError.getConstructorName(errorLike as never),
           caughtErr instanceof Error
             ? caughtErr.toString()
-            : caughtErr && _.checkError.getConstructorName(caughtErr)
+            : caughtErr && _.checkError.getConstructorName(caughtErr as never)
         );
       }
     }
@@ -2883,7 +2912,7 @@ function assertThrows(errorLike, errMsgMatcher, msg) {
     }
 
     let isCompatibleMessage = _.checkError.compatibleMessage(
-      caughtErr,
+      caughtErr as never,
       errMsgMatcher
     );
     if (isCompatibleMessage === negate) {
@@ -2897,7 +2926,7 @@ function assertThrows(errorLike, errMsgMatcher, msg) {
             ' #{exp} but got #{act}',
           'expected #{this} to throw error not ' + placeholder + ' #{exp}',
           errMsgMatcher,
-          _.checkError.getMessage(caughtErr)
+          _.checkError.getMessage(caughtErr as never)
         );
       }
     }
@@ -2912,10 +2941,10 @@ function assertThrows(errorLike, errMsgMatcher, msg) {
         (caughtErr ? ' but #{act} was thrown' : ''),
       errorLike instanceof Error
         ? errorLike.toString()
-        : errorLike && _.checkError.getConstructorName(errorLike),
+        : errorLike && _.checkError.getConstructorName(errorLike as never),
       caughtErr instanceof Error
         ? caughtErr.toString()
-        : caughtErr && _.checkError.getConstructorName(caughtErr)
+        : caughtErr && _.checkError.getConstructorName(caughtErr as never)
     );
   }
 
@@ -2990,7 +3019,7 @@ Assertion.addMethod('Throw', assertThrows);
  * @namespace BDD
  * @public
  */
-function respondTo(method, msg) {
+function respondTo(this: Assertion, method: string, msg?: string) {
   if (msg) flag(this, 'message', msg);
   let obj = flag(this, 'object'),
     itself = flag(this, 'itself'),
@@ -3069,7 +3098,11 @@ Assertion.addProperty('itself', function () {
  * @namespace BDD
  * @public
  */
-function satisfy(matcher, msg) {
+function satisfy(
+  this: Assertion,
+  matcher: (...args: any[]) => any,
+  msg?: string
+) {
   if (msg) flag(this, 'message', msg);
   let obj = flag(this, 'object');
   let result = matcher(obj);
@@ -3122,11 +3155,16 @@ Assertion.addMethod('satisfies', satisfy);
  * @namespace BDD
  * @public
  */
-function closeTo(expected, delta, msg) {
+function closeTo(
+  this: Assertion,
+  expected: number,
+  delta: number,
+  msg?: string
+) {
   if (msg) flag(this, 'message', msg);
-  let obj = flag(this, 'object'),
-    flagMsg = flag(this, 'message'),
-    ssfi = flag(this, 'ssfi');
+  const obj: number = flag(this, 'object');
+  const flagMsg: string = flag(this, 'message');
+  const ssfi = flag(this, 'ssfi');
 
   new Assertion(obj, flagMsg, ssfi, true).is.numeric;
   let message = 'A `delta` value is required for `closeTo`';
@@ -3148,11 +3186,12 @@ function closeTo(expected, delta, msg) {
   }
   new Assertion(expected, flagMsg, ssfi, true).is.numeric;
 
-  const abs = (x) => (x < 0n ? -x : x);
+  const abs = (x: number) => (x < 0n ? -x : x);
 
   // Used to round floating point number precision arithmetics
   // See: https://stackoverflow.com/a/3644302
-  const strip = (number) => parseFloat(parseFloat(number).toPrecision(12));
+  const strip = (number: number) =>
+    parseFloat(parseFloat(number as never).toPrecision(12));
 
   this.assert(
     strip(abs(obj - expected)) <= delta,
@@ -3172,9 +3211,15 @@ Assertion.addMethod('approximately', closeTo);
  * @param {unknown} ordered
  * @returns {boolean}
  */
-function isSubsetOf(_subset, _superset, cmp, contains, ordered) {
+function isSubsetOf(
+  _subset: ArrayLike<any>,
+  _superset: ArrayLike<any>,
+  cmp?: (a: any, b: any) => boolean,
+  contains?: boolean,
+  ordered?: boolean
+): boolean {
   let superset = Array.from(_superset);
-  let subset = Array.from(_subset);
+  const subset = Array.from(_subset);
   if (!contains) {
     if (subset.length !== superset.length) return false;
     superset = superset.slice();
@@ -3184,7 +3229,7 @@ function isSubsetOf(_subset, _superset, cmp, contains, ordered) {
     if (ordered) return cmp ? cmp(elem, superset[idx]) : elem === superset[idx];
 
     if (!cmp) {
-      let matchIdx = superset.indexOf(elem);
+      const matchIdx = superset.indexOf(elem);
       if (matchIdx === -1) return false;
 
       // Remove match from superset so not counted twice if duplicate in subset.
@@ -3328,7 +3373,7 @@ Assertion.addMethod('members', function (subset, msg) {
  * @namespace BDD
  * @public
  */
-Assertion.addProperty('iterable', function (msg) {
+Assertion.addProperty('iterable', function (this: Assertion, msg?: string) {
   if (msg) flag(this, 'message', msg);
   let obj = flag(this, 'object');
 
@@ -3377,7 +3422,7 @@ Assertion.addProperty('iterable', function (msg) {
  * @namespace BDD
  * @public
  */
-function oneOf(list, msg) {
+function oneOf(this: Assertion, list: any[], msg?: string) {
   if (msg) flag(this, 'message', msg);
   let expected = flag(this, 'object'),
     flagMsg = flag(this, 'message'),
@@ -3516,11 +3561,16 @@ Assertion.addMethod('oneOf', oneOf);
  * @namespace BDD
  * @public
  */
-function assertChanges(subject, prop, msg) {
+function assertChanges(
+  this: Assertion,
+  subject: any,
+  prop?: string,
+  msg?: string
+) {
   if (msg) flag(this, 'message', msg);
-  let fn = flag(this, 'object'),
-    flagMsg = flag(this, 'message'),
-    ssfi = flag(this, 'ssfi');
+  const fn = flag(this, 'object');
+  const flagMsg = flag(this, 'message');
+  const ssfi = flag(this, 'ssfi');
   new Assertion(fn, flagMsg, ssfi, true).is.a('function');
 
   let initial;
@@ -3534,8 +3584,8 @@ function assertChanges(subject, prop, msg) {
 
   fn();
 
-  let final = prop === undefined || prop === null ? subject() : subject[prop];
-  let msgObj = prop === undefined || prop === null ? initial : '.' + prop;
+  const final = prop === undefined || prop === null ? subject() : subject[prop];
+  const msgObj = prop === undefined || prop === null ? initial : '.' + prop;
 
   // This gets flagged because of the .by(delta) assertion
   flag(this, 'deltaMsgObj', msgObj);
@@ -3632,20 +3682,25 @@ Assertion.addMethod('changes', assertChanges);
  * @namespace BDD
  * @public
  */
-function assertIncreases(subject, prop, msg) {
+function assertIncreases(
+  this: Assertion,
+  subject: string | ((...args: any[]) => any) | Record<string, any>,
+  prop: string,
+  msg?: string
+) {
   if (msg) flag(this, 'message', msg);
-  let fn = flag(this, 'object'),
-    flagMsg = flag(this, 'message'),
-    ssfi = flag(this, 'ssfi');
+  const fn = flag(this, 'object');
+  const flagMsg = flag(this, 'message');
+  const ssfi = flag(this, 'ssfi');
   new Assertion(fn, flagMsg, ssfi, true).is.a('function');
 
   let initial;
   if (!prop) {
     new Assertion(subject, flagMsg, ssfi, true).is.a('function');
-    initial = subject();
+    initial = (subject as (...args: any[]) => any)();
   } else {
     new Assertion(subject, flagMsg, ssfi, true).to.have.property(prop);
-    initial = subject[prop];
+    initial = (subject as Record<string, any>)[prop];
   }
 
   // Make sure that the target is a number
@@ -3653,8 +3708,11 @@ function assertIncreases(subject, prop, msg) {
 
   fn();
 
-  let final = prop === undefined || prop === null ? subject() : subject[prop];
-  let msgObj = prop === undefined || prop === null ? initial : '.' + prop;
+  const final =
+    prop === undefined || prop === null
+      ? (subject as (...args: any[]) => any)()
+      : (subject as Record<string, any>)[prop];
+  const msgObj = prop === undefined || prop === null ? initial : '.' + prop;
 
   flag(this, 'deltaMsgObj', msgObj);
   flag(this, 'initialDeltaValue', initial);
@@ -3750,20 +3808,25 @@ Assertion.addMethod('increases', assertIncreases);
  * @namespace BDD
  * @public
  */
-function assertDecreases(subject, prop, msg) {
+function assertDecreases(
+  this: Assertion,
+  subject: string | ((...args: any[]) => any) | Record<string, any>,
+  prop: string,
+  msg?: string
+) {
   if (msg) flag(this, 'message', msg);
-  let fn = flag(this, 'object'),
-    flagMsg = flag(this, 'message'),
-    ssfi = flag(this, 'ssfi');
+  const fn = flag(this, 'object');
+  const flagMsg = flag(this, 'message');
+  const ssfi = flag(this, 'ssfi');
   new Assertion(fn, flagMsg, ssfi, true).is.a('function');
 
   let initial;
   if (!prop) {
     new Assertion(subject, flagMsg, ssfi, true).is.a('function');
-    initial = subject();
+    initial = (subject as (...args: any[]) => any)();
   } else {
     new Assertion(subject, flagMsg, ssfi, true).to.have.property(prop);
-    initial = subject[prop];
+    initial = (subject as Record<string, any>)[prop];
   }
 
   // Make sure that the target is a number
@@ -3771,8 +3834,11 @@ function assertDecreases(subject, prop, msg) {
 
   fn();
 
-  let final = prop === undefined || prop === null ? subject() : subject[prop];
-  let msgObj = prop === undefined || prop === null ? initial : '.' + prop;
+  const final =
+    prop === undefined || prop === null
+      ? (subject as (...args: any[]) => any)()
+      : (subject as Record<string, any>)[prop];
+  const msgObj = prop === undefined || prop === null ? initial : '.' + prop;
 
   flag(this, 'deltaMsgObj', msgObj);
   flag(this, 'initialDeltaValue', initial);
@@ -3855,7 +3921,7 @@ Assertion.addMethod('decreases', assertDecreases);
  * @namespace BDD
  * @public
  */
-function assertDelta(delta, msg) {
+function assertDelta(this: Assertion, delta: number, msg: string) {
   if (msg) flag(this, 'message', msg);
 
   let msgObj = flag(this, 'deltaMsgObj');
@@ -3915,7 +3981,7 @@ Assertion.addProperty('extensible', function () {
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/isExtensible
   // The following provides ES6 behavior for ES5 environments.
 
-  let isExtensible = obj === Object(obj) && Object.isExtensible(obj);
+  const isExtensible = obj === Object(obj) && Object.isExtensible(obj);
 
   this.assert(
     isExtensible,
@@ -4057,7 +4123,7 @@ Assertion.addProperty('frozen', function () {
  * @namespace BDD
  * @public
  */
-Assertion.addProperty('finite', function (this: AssertionStatic) {
+Assertion.addProperty('finite', function () {
   const obj = flag(this, 'object');
 
   this.assert(
@@ -4074,7 +4140,7 @@ Assertion.addProperty('finite', function (this: AssertionStatic) {
  * @param {unknown} actual
  * @returns {boolean}
  */
-function compareSubset(expected, actual) {
+function compareSubset(expected: unknown, actual: unknown): boolean {
   if (expected === actual) {
     return true;
   }
@@ -4108,8 +4174,8 @@ function compareSubset(expected, actual) {
   }
 
   return Object.keys(expected).every(function (key) {
-    let expectedValue = expected[key];
-    let actualValue = actual[key];
+    const expectedValue = (expected as Record<string, unknown>)[key];
+    const actualValue = (actual as Record<string, unknown>)[key];
     if (
       typeof expectedValue === 'object' &&
       expectedValue !== null &&

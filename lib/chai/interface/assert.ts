@@ -950,8 +950,6 @@ export interface Assert {
     message?: string
   ): void;
 
-  // throw: this['throws'];
-
   /**
    * Asserts that fn will throw an error.
    *
@@ -1652,7 +1650,10 @@ export interface Assert {
    * @param object   Actual value.
    * @param message   Message to display on error.
    */
-  isEmpty<T>(object: T, message?: string): void;
+  isEmpty<T extends object | any[] | string | Map<any, any> | Set<any>>(
+    object: T,
+    message?: string
+  ): void;
 
   /**
    * Asserts that the target contains values. For arrays and strings, it checks

@@ -65,7 +65,7 @@ function loadShould(): Should {
     configurable: true
   });
 
-  let should: Partial<Should> = {};
+  const should = {} as Should;
 
   /**
    * ### .fail([message])
@@ -165,12 +165,12 @@ function loadShould(): Should {
    * @public
    */
   should.Throw = function (
-    actual: Function,
-    constructor: Error | Function,
+    actual: (...args: any) => any,
+    constructor?: Error | ((...args: any) => any) | string | RegExp,
     expected?: string | RegExp,
     message?: string
   ): void {
-    new Assertion(actual, message).to.Throw(constructor, expected);
+    new Assertion(actual, message).to.Throw(constructor as never, expected);
   };
 
   /**
@@ -232,12 +232,12 @@ function loadShould(): Should {
    * @public
    */
   should.not.Throw = function (
-    actual: Function,
-    constructor: Error | Function,
+    actual: (...args: any) => any,
+    constructor?: Error | ((...args: any) => any) | string | RegExp,
     expected?: string | RegExp,
     message?: string
   ) {
-    new Assertion(actual, message).to.not.Throw(constructor, expected);
+    new Assertion(actual, message).to.not.Throw(constructor as never, expected);
   };
 
   /**

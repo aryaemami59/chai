@@ -109,6 +109,7 @@ export interface Assertion
   oneOf: OneOf;
   // by: DeltaAssertion;
   __flags: {[key: PropertyKey]: unknown};
+  iterable: Assertion;
   // _obj: any;
 }
 

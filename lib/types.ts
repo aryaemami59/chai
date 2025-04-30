@@ -244,10 +244,14 @@ export interface ShouldAssertion {
 
 export interface ShouldThrow {
   // FIXME:
-  // (actual: Function, expected?: string | RegExp, message?: string): void;
   (
-    actual: Function,
-    constructor: Error | Function,
+    actual: (...args: any) => any,
+    expected?: string | RegExp,
+    message?: string
+  ): void;
+  (
+    actual: (...args: any) => any,
+    constructor: Error | ((...args: any) => any),
     expected?: string | RegExp,
     message?: string
   ): void;
@@ -401,9 +405,9 @@ export interface Keys {
 }
 
 export interface Throw {
-  // (expected?: string | RegExp, message?: string): Assertion;
+  (expected?: string | RegExp, message?: string): Assertion;
   (
-    constructor: Error | Function,
+    constructor: Error | ((...args: any[]) => any),
     expected?: string | RegExp,
     message?: string
   ): Assertion;
@@ -414,7 +418,7 @@ export interface RespondTo {
 }
 
 export interface Satisfy {
-  (matcher: Function, message?: string): Assertion;
+  (matcher: (...args: any[]) => any, message?: string): Assertion;
 }
 
 export interface Members {
@@ -423,7 +427,6 @@ export interface Members {
 
 export interface PropertyChange {
   <ObjectType>(
-
     object: ObjectType,
     property?: (Record<string, never> & string) | keyof ObjectType,
     message?: string
