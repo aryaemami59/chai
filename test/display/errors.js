@@ -1,4 +1,4 @@
-import * as chai from '../../index.js';
+import * as chai from 'chai';
 
 var expect = chai.expect;
 

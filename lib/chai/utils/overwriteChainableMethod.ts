@@ -39,23 +39,7 @@ import {transferFlags} from './transferFlags.js';
  * @name overwriteChainableMethod
  * @public
  */
-export function overwriteChainableMethod<
-  T extends {
-    __methods?: {
-      method: {
-        (...args: any[]): void;
-        method: (...args: any[]) => any;
-        chainingBehavior: (...args: any[]) => any;
-      };
-      [key: string]: {
-        (...args: any[]): void;
-        method: (...args: any[]) => any;
-        chainingBehavior: (...args: any[]) => any;
-      };
-    };
-  }
->(
-  // this: Assertion,
+export function overwriteChainableMethod(
   ctx: Record<string, any>,
   name: string,
   method: (...args: any[]) => (...args: any[]) => any,

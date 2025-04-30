@@ -52,7 +52,9 @@
     },
     "./package.json": "./package.json"
   },
-  "sideEffects": false,
+  "sideEffects": [
+    "./lib/chai/core/assertions.ts"
+  ],
   "scripts": {
     "prebuild": "npm run clean",
     "build": "tsup --config=tsup.config.mts",

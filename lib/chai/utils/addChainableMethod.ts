@@ -15,13 +15,13 @@ import {transferFlags} from './transferFlags.js';
  */
 
 // Check whether `Object.setPrototypeOf` is supported
-let canSetPrototype = typeof Object.setPrototypeOf === 'function';
+const canSetPrototype = typeof Object.setPrototypeOf === 'function';
 
 // Without `Object.setPrototypeOf` support, this module will need to add properties to a function.
 // However, some of functions' own props are not configurable and should be skipped.
-let testFn = function () {};
-let excludeNames = Object.getOwnPropertyNames(testFn).filter(function (name) {
-  let propDesc = Object.getOwnPropertyDescriptor(testFn, name);
+const testFn = function () {};
+const excludeNames = Object.getOwnPropertyNames(testFn).filter(function (name) {
+  const propDesc = Object.getOwnPropertyDescriptor(testFn, name);
 
   // Note: PhantomJS 1.x includes `callee` as one of `testFn`'s own properties,
   // but then returns `undefined` as the property descriptor for `callee`. As a
@@ -33,8 +33,7 @@ let excludeNames = Object.getOwnPropertyNames(testFn).filter(function (name) {
 });
 
 // Cache `Function` properties
-let call = Function.prototype.call,
-  apply = Function.prototype.apply;
+const {call, apply} = Function.prototype;
 
 /**
  * ### .addChainableMethod(ctx, name, method, chainingBehavior)
@@ -64,17 +63,8 @@ let call = Function.prototype.call,
  * @name addChainableMethod
  * @public
  */
-export function addChainableMethod<
-  T extends {
-    __methods?: {
-      [key: string]: {
-        method?: (...args: any[]) => any;
-        chainingBehavior: (...args: any[]) => any;
-      };
-    };
-  } & Assertion
->(
-  ctx: T,
+export function addChainableMethod(
+  ctx: Record<string, any>,
   name: string,
   method: (...args: any[]) => void,
   chainingBehavior?: () => void
@@ -154,7 +144,7 @@ export function addChainableMethod<
         });
       }
 
-      transferFlags(this, chainableMethodWrapper as unknown as Assertion);
+      transferFlags(this, chainableMethodWrapper as never);
       return proxify(chainableMethodWrapper);
     },
     configurable: true

@@ -3924,11 +3924,11 @@ Assertion.addMethod('decreases', assertDecreases);
 function assertDelta(this: Assertion, delta: number, msg: string) {
   if (msg) flag(this, 'message', msg);
 
-  let msgObj = flag(this, 'deltaMsgObj');
-  let initial = flag(this, 'initialDeltaValue');
-  let final = flag(this, 'finalDeltaValue');
-  let behavior = flag(this, 'deltaBehavior');
-  let realDelta = flag(this, 'realDelta');
+  const msgObj = flag(this, 'deltaMsgObj');
+  const initial = flag(this, 'initialDeltaValue');
+  const final = flag(this, 'finalDeltaValue');
+  const behavior = flag(this, 'deltaBehavior');
+  const realDelta = flag(this, 'realDelta');
 
   let expression;
   if (behavior === 'change') {
@@ -3974,7 +3974,7 @@ Assertion.addMethod('by', assertDelta);
  * @public
  */
 Assertion.addProperty('extensible', function () {
-  let obj = flag(this, 'object');
+  const obj = flag(this, 'object');
 
   // In ES5, if the argument to this method is a primitive, then it will cause a TypeError.
   // In ES6, a non-object argument will be treated as if it was a non-extensible ordinary object, simply return false.

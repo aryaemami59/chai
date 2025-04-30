@@ -1,7 +1,7 @@
-import * as chai from '../index.js';
+import * as chai from 'chai';
 import {globalErr as err} from './bootstrap/index.js';
 
-import '../register-should.js'; 
+import '../register-should.js';
 
 describe('configuration', function () {
   var assert = chai.assert;

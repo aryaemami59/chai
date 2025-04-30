@@ -1,3 +1,3 @@
-import {assert} from './index.js';
+import {assert} from 'chai';
 
 globalThis.assert = assert;

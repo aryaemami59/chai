@@ -1,4 +1,4 @@
-import * as chai from '../index.js';
+import * as chai from 'chai';
 
 describe('containsSubset', function () {
   const {assert, expect} = chai;

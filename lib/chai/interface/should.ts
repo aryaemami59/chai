@@ -5,7 +5,7 @@
  */
 
 import {AssertionError} from 'assertion-error';
-import type {AssertionStatic, Operator, ShouldAssertion} from '../../types.js';
+import type {Operator, ShouldAssertion} from '../../types.js';
 import {Assertion} from '../assertion.js';
 
 export interface Should extends ShouldAssertion {
@@ -19,8 +19,6 @@ export interface Should extends ShouldAssertion {
   ): never;
 }
 
-// export type {Should} from '../../types.js';
-
 /**
  * @returns {void}
  */
@@ -29,7 +27,7 @@ function loadShould(): Should {
   /**
    * @returns {Assertion}
    */
-  function shouldGetter(this: Assertion & AssertionStatic) {
+  function shouldGetter(this: unknown): Assertion {
     if (
       this instanceof String ||
       this instanceof Number ||
@@ -37,14 +35,14 @@ function loadShould(): Should {
       (typeof Symbol === 'function' && this instanceof Symbol) ||
       (typeof BigInt === 'function' && this instanceof BigInt)
     ) {
-      return new Assertion(this.valueOf(), undefined, shouldGetter);
+      return new Assertion(this.valueOf(), null!, shouldGetter);
     }
-    return new Assertion(this, undefined, shouldGetter);
+    return new Assertion(this, null!, shouldGetter);
   }
   /**
    * @param {unknown} value
    */
-  function shouldSetter(this: Assertion & AssertionStatic, value: unknown) {
+  function shouldSetter(this: Assertion, value: unknown) {
     // See https://github.com/chaijs/chai/issues/86: this makes
     // `whatever.should = someValue` actually set `someValue`, which is
     // especially useful for `global.should = require('chai').should()`.
@@ -88,18 +86,8 @@ function loadShould(): Should {
    * @namespace BDD
    * @public
    */
-  // should.fail =
-  // function fail(message?: string): never;
-
-  // function fail(
-  //   actual: any,
-  //   expected: any,
-  //   message?: string,
-  //   operator?: Operator
-  // ): never;
-
-  function fail(
-    actual?: any,
+  should.fail = function (
+    actual: any,
     expected?: any,
     message?: string,
     operator?: Operator
@@ -119,9 +107,7 @@ function loadShould(): Should {
       },
       should.fail
     );
-  }
-
-  should.fail = fail;
+  };
 
   /**
    * ### .equal(actual, expected, [message])
@@ -261,7 +247,7 @@ function loadShould(): Should {
   should['throw'] = should['Throw'];
   should.not['throw'] = should.not['Throw'];
 
-  return should as Should;
+  return should;
 }
 
 export const should = loadShould;
