@@ -36,7 +36,7 @@ import {transferFlags} from './transferFlags.js';
  * @public
  */
 export function addMethod(
-  this: Assertion,
+  // this: Assertion,
   ctx: Record<string, any>,
   name: string,
   method: Function

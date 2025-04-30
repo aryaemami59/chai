@@ -41,7 +41,7 @@ import {transferFlags} from './transferFlags.js';
  */
 export function overwriteChainableMethod<
   T extends {
-    __methods: {
+    __methods?: {
       method: {
         (...args: any[]): void;
         method: (...args: any[]) => any;
@@ -55,13 +55,13 @@ export function overwriteChainableMethod<
     };
   }
 >(
-  this: Assertion,
-  ctx: T,
+  // this: Assertion,
+  ctx: Record<string, any>,
   name: string,
   method: (...args: any[]) => (...args: any[]) => any,
   chainingBehavior?: (...args: any[]) => (...args: any[]) => any
 ) {
-  const chainableBehavior = ctx.__methods[name];
+  const chainableBehavior = ctx.__methods![name];
 
   const _chainingBehavior = chainableBehavior.chainingBehavior;
   chainableBehavior.chainingBehavior =

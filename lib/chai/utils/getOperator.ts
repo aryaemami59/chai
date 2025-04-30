@@ -1,4 +1,4 @@
-import type {Operator} from '../../types.js';
+import type {AssertionArgs, Operator} from '../../types.js';
 import {flag} from './flag.js';
 import {type} from './type-detect.js';
 
@@ -30,8 +30,8 @@ function isObjectType(obj: unknown): obj is object {
  * @public
  */
 export function getOperator(
-  obj: Record<string, any>,
-  args: unknown[]
+  obj: object,
+  args: AssertionArgs
 ):
   | Operator
   | 'notDeepStrictEqual'
@@ -40,7 +40,6 @@ export function getOperator(
   | 'strictEqual'
   | undefined {
   const operator: Operator = flag(obj, 'operator');
-  console.log(operator);
   const negate = flag(obj, 'negate');
   const expected = args[3];
   let msg = negate ? args[2] : args[1];
@@ -53,7 +52,7 @@ export function getOperator(
     msg = msg();
   }
 
-  const message = (msg || '') as string;
+  const message = msg || '';
 
   if (!message) {
     return undefined;

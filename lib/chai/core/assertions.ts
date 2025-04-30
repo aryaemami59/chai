@@ -6,7 +6,7 @@
  */
 
 import {AssertionError} from 'assertion-error';
-import type {AssertionStatic} from '../../types.js';
+import type {AssertionPrototype, AssertionStatic} from '../../types.js';
 import {Assertion} from '../assertion.js';
 import {config} from '../config.js';
 import * as _ from '../utils/index.js';
@@ -512,7 +512,7 @@ function includeChainingBehavior(this: Assertion) {
  * @namespace BDD
  * @public
  */
-function include(this: Assertion, val: unknown, message?: string) {
+function include(this: Assertion, val: any, message?: string) {
   if (message) flag(this, 'message', message);
 
   const obj = flag(this, 'object');
@@ -542,18 +542,18 @@ function include(this: Assertion, val: unknown, message?: string) {
         );
       }
 
-      included = obj.has(val);
+      included = (obj as WeakSet<WeakKey>).has((val as WeakKey));
       break;
 
     case 'map':
-      obj.forEach(function (item) {
+      obj.forEach(function (item: any) {
         included = included || isEql(item, val);
       });
       break;
 
     case 'set':
       if (isDeep) {
-        obj.forEach(function (item) {
+        obj.forEach(function (item: any) {
           included = included || isEql(item, val);
         });
       } else {
@@ -563,7 +563,7 @@ function include(this: Assertion, val: unknown, message?: string) {
 
     case 'array':
       if (isDeep) {
-        included = obj.some(function (item) {
+        included = obj.some(function (item: any) {
           return isEql(item, val);
         });
       } else {
@@ -592,11 +592,11 @@ function include(this: Assertion, val: unknown, message?: string) {
         );
       }
 
-      let props = Object.keys(val);
-      let firstErr = null;
+      const props = Object.keys((val as object));
+      let firstErr: Error | null = null;
       let numErrs = 0;
 
-      props.forEach(function (prop) {
+      props.forEach(function (this: Assertion, prop) {
         let propAssertion = new Assertion(obj);
         _.transferFlags(this, propAssertion, true);
         flag(propAssertion, 'lockSsfi', true);
@@ -609,10 +609,10 @@ function include(this: Assertion, val: unknown, message?: string) {
         try {
           propAssertion.property(prop, val[prop]);
         } catch (err) {
-          if (!_.checkError.compatibleConstructor(err, AssertionError)) {
+          if (!_.checkError.compatibleConstructor((err as Error), AssertionError)) {
             throw err;
           }
-          if (firstErr === null) firstErr = err;
+          if (firstErr === null) firstErr = err as Error;
           numErrs++;
         }
       }, this);
@@ -923,7 +923,7 @@ Assertion.addProperty('NaN', function () {
  * @namespace BDD
  * @public
  */
-function assertExist() {
+function assertExist(this: AssertionPrototype & Assertion) {
   let val = flag(this, 'object');
   this.assert(
     val !== null && val !== undefined,

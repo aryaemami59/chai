@@ -23,7 +23,7 @@ import {type} from './type-detect.js';
  */
 export function expectTypes(obj: object, types: string[]) {
   let flagMsg = flag(obj, 'message');
-  let ssfi = flag(obj, 'ssfi');
+  const ssfi = flag(obj, 'ssfi');
 
   flagMsg = flagMsg ? flagMsg + ': ' : '';
 
@@ -34,7 +34,7 @@ export function expectTypes(obj: object, types: string[]) {
   types.sort();
 
   // Transforms ['lorem', 'ipsum'] into 'a lorem, or an ipsum'
-  let str = types
+  const str = types
     .map(function (t, index) {
       let art = ~['a', 'e', 'i', 'o', 'u'].indexOf(t.charAt(0)) ? 'an' : 'a';
       let or = types.length > 1 && index === types.length - 1 ? 'or ' : '';

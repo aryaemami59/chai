@@ -5,25 +5,21 @@
  */
 
 // Dependencies that are used for multiple exports are required here only once
-import {
-  compatibleConstructor,
-  compatibleInstance,
-  compatibleMessage
-} from 'check-error';
+import * as checkError from 'check-error';
 import type {ChaiUtils} from '../../types.js';
-export * as checkError from 'check-error';
 
 // test utility
 import {test} from './test.js';
 
 // type utility
-export {type} from './type-detect.js';
+import {type} from './type-detect.js';
+// export {type};
 
 // expectTypes utility
 import {expectTypes} from './expectTypes.js';
 
 // message utility
-export {getMessage} from './getMessage.js';
+import {getMessage} from './getMessage.js';
 
 // actual utility
 import {getActual} from './getActual.js';
@@ -41,7 +37,7 @@ import {flag} from './flag.js';
 import {transferFlags} from './transferFlags.js';
 
 // Deep equal utility
-export {default as eql} from 'deep-eql';
+import {default as eql} from 'deep-eql';
 
 // Deep path info
 import {getPathInfo, hasProperty} from 'pathval';
@@ -52,7 +48,7 @@ import {getPathInfo, hasProperty} from 'pathval';
  * @param {Function} fn
  * @returns {string}
  */
-export function getName(fn: (...args: any[]) => any): string {
+function getName(fn: (...args: any[]) => any): string {
   return fn.name;
 }
 
@@ -78,10 +74,13 @@ import {overwriteChainableMethod} from './overwriteChainableMethod.js';
 import {compareByInspect} from './compareByInspect.js';
 
 // Get own enumerable property symbols method
-export {getOwnEnumerablePropertySymbols} from './getOwnEnumerablePropertySymbols.js';
+import {getOwnEnumerablePropertySymbols} from './getOwnEnumerablePropertySymbols.js';
 
 // Get own enumerable properties method
 import {getOwnEnumerableProperties} from './getOwnEnumerableProperties.js';
+
+// Checks error against a given set of criteria
+// export {checkError};
 
 // Proxify util
 import {proxify} from './proxify.js';
@@ -91,13 +90,12 @@ import {addLengthGuard} from './addLengthGuard.js';
 
 // isProxyEnabled helper
 import {isProxyEnabled} from './isProxyEnabled.js';
-import {type} from './type-detect.js';
 
 // isNaN method
-export {isNaN} from './isNaN.js';
+import {isNaN} from './isNaN.js';
 
 // getOperator method
-export {getOperator} from './getOperator.js';
+import {getOperator} from './getOperator.js';
 
 /**
  * Determines if an object is a `RegExp`
@@ -106,7 +104,7 @@ export {getOperator} from './getOperator.js';
  * @param {*} obj Object to test
  * @returns {boolean}
  */
-export function isRegExp(obj: any): boolean {
+function isRegExp(obj: any): boolean {
   return Object.prototype.toString.call(obj) === '[object RegExp]';
 }
 
@@ -116,43 +114,40 @@ export function isRegExp(obj: any): boolean {
  * @param {unknown} obj Object to test
  * @returns {boolean}
  */
-export function isNumeric(obj: unknown): boolean {
+function isNumeric(obj: unknown): boolean {
   return ['Number', 'BigInt'].includes(type(obj));
 }
 
-import {getProperties} from './getProperties.js';
-
-import {getMessage} from './getMessage.js';
-
-import {getOwnEnumerablePropertySymbols} from './getOwnEnumerablePropertySymbols.js';
-
 export const util = {
-  overwriteChainableMethod,
+  addChainableMethod,
+  addLengthGuard,
+  addMethod,
+  addProperty,
   compareByInspect,
-  getOwnEnumerableProperties,
   expectTypes,
-  getActual,
-  inspect,
-  objDisplay,
   flag,
-  transferFlags,
+  getActual,
+  getMessage,
+  getName,
+  getOwnEnumerableProperties,
+  getOwnEnumerablePropertySymbols,
   getPathInfo,
   hasProperty,
-  addProperty,
-  addMethod,
-  overwriteProperty,
-  overwriteMethod,
-  addChainableMethod,
-  proxify,
-  addLengthGuard,
+  inspect,
   isProxyEnabled,
-  getProperties,
-  getOwnEnumerablePropertySymbols,
-  getMessage,
-  compatibleInstance,
+  objDisplay,
+  overwriteChainableMethod,
+  overwriteMethod,
+  overwriteProperty,
+  proxify,
   test,
-  compatibleConstructor,
-  compatibleMessage
+  eql,
+  isNaN,
+  isRegExp,
+  isNumeric,
+  getOperator,
+  checkError,
+  transferFlags
 } satisfies ChaiUtils;
 
 export {
@@ -160,24 +155,30 @@ export {
   addLengthGuard,
   addMethod,
   addProperty,
+  checkError,
   compareByInspect,
-  compatibleConstructor,
-  compatibleInstance,
-  compatibleMessage,
+  eql,
   expectTypes,
   flag,
   getActual,
+  getMessage,
+  getName,
+  getOperator,
   getOwnEnumerableProperties,
+  getOwnEnumerablePropertySymbols,
   getPathInfo,
-  getProperties,
   hasProperty,
   inspect,
+  isNaN,
+  isNumeric,
   isProxyEnabled,
+  isRegExp,
   objDisplay,
   overwriteChainableMethod,
   overwriteMethod,
   overwriteProperty,
   proxify,
   test,
-  transferFlags
+  transferFlags,
+  type
 };

@@ -4,6 +4,7 @@
  * MIT Licensed
  */
 
+import type {AssertionPrototype} from '../../types.js';
 import {Assertion} from '../assertion.js';
 import {flag} from './flag.js';
 import {isProxyEnabled} from './isProxyEnabled.js';
@@ -34,8 +35,14 @@ import {transferFlags} from './transferFlags.js';
  * @name addProperty
  * @public
  */
-export function addProperty(ctx: object, name: string, getter?: () => any) {
-  getter = getter === undefined ? function () {} : getter;
+export function addProperty(
+  ctx: object,
+  name: string,
+  getter: (this: AssertionPrototype & Assertion) => any = function (
+    this: AssertionPrototype & Assertion
+  ) {}
+) {
+  // getter = getter === undefined ? function () {} : getter;
 
   Object.defineProperty(ctx, name, {
     get: function propertyGetter() {

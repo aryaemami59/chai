@@ -41,7 +41,6 @@ import {transferFlags} from './transferFlags.js';
  * @public
  */
 export function overwriteProperty(
-  this: Assertion,
   ctx: object,
   name: string,
   getter: (this: Assertion, _super: any) => any

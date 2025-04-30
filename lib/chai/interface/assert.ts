@@ -6,12 +6,7 @@
 
 import {AssertionError} from 'assertion-error';
 import * as chai from '../../index.js';
-import type {
-  AssertStatic,
-  Constructor,
-  Operator,
-  OperatorComparable
-} from '../../types.js';
+import type {Operator, OperatorComparable} from '../../types.js';
 import {Assertion} from '../assertion.js';
 import {flag, inspect} from '../utils/index.js';
 
@@ -407,7 +402,7 @@ export interface Assert {
    * @param value   Actual value.
    * @param message   Message to display on error.
    */
-  isNumber<T>(value: T, message?: string): void;
+  isNumber<T>(value: T, message?: string): asserts value is Extract<T, number>;
 
   /**
    * Asserts that value is not a number.
@@ -435,7 +430,10 @@ export interface Assert {
    * @param value   Actual value.
    * @param message   Message to display on error.
    */
-  isBoolean<T>(value: T, message?: string): void;
+  isBoolean<T>(
+    value: T,
+    message?: string
+  ): asserts value is Extract<T, boolean>;
 
   /**
    * Asserts that value is not a boolean.
@@ -444,7 +442,10 @@ export interface Assert {
    * @param value   Actual value.
    * @param message   Message to display on error.
    */
-  isNotBoolean<T>(value: T, message?: string): void;
+  isNotBoolean<T>(
+    value: T,
+    message?: string
+  ): asserts value is Exclude<T, boolean>;
 
   /**
    * Asserts that value's type is name, as determined by Object.prototype.toString.
@@ -474,9 +475,9 @@ export interface Assert {
    * @param constructor   Potential expected contructor of value.
    * @param message   Message to display on error.
    */
-  instanceOf<T>(
+  instanceOf<T extends abstract new (...args: any) => any>(
     value: unknown,
-    constructor: Constructor<T>,
+    constructor: InstanceType<T>,
     message?: string
   ): asserts value is T;
 
@@ -489,9 +490,9 @@ export interface Assert {
    * @param constructor   Potential expected contructor of value.
    * @param message   Message to display on error.
    */
-  notInstanceOf<T, U>(
+  notInstanceOf<T, U extends abstract new (...args: any) => any>(
     value: T,
-    type: Constructor<U>,
+    type: InstanceType<U>,
     message?: string
   ): asserts value is Exclude<T, U>;
 
@@ -790,7 +791,7 @@ export interface Assert {
    * @param message   Message to display on error.
    */
   property<T>(
-    object: T,
+    object: (Record<string, never> & string) | keyof T,
     property: string,
     /* keyof T */ message?: string
   ): void;
@@ -927,12 +928,12 @@ export interface Assert {
    * @param ignored   Ignored parameter.
    * @param message   Message to display on error.
    */
-  throw(
-    fn: () => void,
-    errMsgMatcher?: RegExp | string,
-    ignored?: any,
-    message?: string
-  ): void;
+  // throw(
+  //   fn: () => void,
+  //   errMsgMatcher?: RegExp | string,
+  //   ignored?: any,
+  //   message?: string
+  // ): void;
 
   /**
    * Asserts that fn will throw an error.
@@ -944,7 +945,39 @@ export interface Assert {
    */
   throw(
     fn: () => void,
-    errorLike?: ErrorConstructor | Error | null,
+    errorLike?: ErrorConstructor | Error | null | RegExp | string,
+    errMsgMatcher?: RegExp | string | null,
+    message?: string
+  ): void;
+
+  // throw: this['throws'];
+
+  /**
+   * Asserts that fn will throw an error.
+   *
+   * @param fn   Function that may throw.
+   * @param errMsgMatcher   Expected error message matcher.
+   * @param ignored   Ignored parameter.
+   * @param message   Message to display on error.
+   */
+  // throws(
+  //   fn: () => void,
+  //   errMsgMatcher?: RegExp | string,
+  //   ignored?: any,
+  //   message?: string
+  // ): void;
+
+  /**
+   * Asserts that fn will throw an error.
+   *
+   * @param fn   Function that may throw.
+   * @param errorLike   Expected error constructor or error instance.
+   * @param errMsgMatcher   Expected error message matcher.
+   * @param message   Message to display on error.
+   */
+  throws(
+    fn: () => void,
+    errorLike?: ErrorConstructor | Error | null | RegExp | string,
     errMsgMatcher?: RegExp | string | null,
     message?: string
   ): void;
@@ -957,42 +990,12 @@ export interface Assert {
    * @param ignored   Ignored parameter.
    * @param message   Message to display on error.
    */
-  throws(
-    fn: () => void,
-    errMsgMatcher?: RegExp | string,
-    ignored?: any,
-    message?: string
-  ): void;
-
-  /**
-   * Asserts that fn will throw an error.
-   *
-   * @param fn   Function that may throw.
-   * @param errorLike   Expected error constructor or error instance.
-   * @param errMsgMatcher   Expected error message matcher.
-   * @param message   Message to display on error.
-   */
-  throws(
-    fn: () => void,
-    errorLike?: ErrorConstructor | Error | null,
-    errMsgMatcher?: RegExp | string | null,
-    message?: string
-  ): void;
-
-  /**
-   * Asserts that fn will throw an error.
-   *
-   * @param fn   Function that may throw.
-   * @param errMsgMatcher   Expected error message matcher.
-   * @param ignored   Ignored parameter.
-   * @param message   Message to display on error.
-   */
-  Throw(
-    fn: () => void,
-    errMsgMatcher?: RegExp | string,
-    ignored?: any,
-    message?: string
-  ): void;
+  // Throw(
+  //   fn: () => void,
+  //   errMsgMatcher?: RegExp | string,
+  //   ignored?: any,
+  //   message?: string
+  // ): void;
 
   /**
    * Asserts that fn will throw an error.
@@ -1004,7 +1007,7 @@ export interface Assert {
    */
   Throw(
     fn: () => void,
-    errorLike?: ErrorConstructor | Error | null,
+    errorLike?: ErrorConstructor | Error | null | RegExp | string,
     errMsgMatcher?: RegExp | string | null,
     message?: string
   ): void;
@@ -1017,12 +1020,12 @@ export interface Assert {
    * @param ignored   Ignored parameter.
    * @param message   Message to display on error.
    */
-  doesNotThrow(
-    fn: () => void,
-    errMsgMatcher?: RegExp | string,
-    ignored?: any,
-    message?: string
-  ): void;
+  // doesNotThrow(
+  //   fn: () => void,
+  //   errMsgMatcher?: RegExp | string,
+  //   ignored?: any,
+  //   message?: string
+  // ): void;
 
   /**
    * Asserts that fn will not throw an error.
@@ -1034,7 +1037,7 @@ export interface Assert {
    */
   doesNotThrow(
     fn: () => void,
-    errorLike?: ErrorConstructor | Error | null,
+    errorLike?: ErrorConstructor | Error | null | RegExp | string,
     errMsgMatcher?: RegExp | string | null,
     message?: string
   ): void;
@@ -1296,16 +1299,16 @@ export interface Assert {
    * @param change amount (delta)
    * @param message _optional_
    */
-  changesBy<ObjectType>(
+  changesBy<ObjectType extends Record<string, any>>(
     modifier: (...args: any[]) => any,
     object: ObjectType,
-    property: string,
-    /* keyof T */ change: number,
+    property: (Record<string, never> & string) | keyof ObjectType,
+    change: number,
     message?: string
   ): void;
-  changesBy<ObjectType>(
+  changesBy(
     modifier: (...args: any[]) => any,
-    object: ObjectType,
+    object: Record<string, any>,
     change: number,
     message?: string
   ): void;
@@ -1319,11 +1322,11 @@ export interface Assert {
    * @param property   Property of object expected not to be modified.
    * @param message   Message to display on error.
    */
-  doesNotChange<T>(
-    modifier: Function,
-    object: T,
+  doesNotChange(
+    modifier: (...args: any[]) => any,
+    object: Record<string, number>,
     property: string,
-    /* keyof T */ message?: string
+    message?: string
   ): void;
 
   /**
@@ -1336,7 +1339,7 @@ export interface Assert {
    * @param message   Message to display on error.
    */
   increases<T>(
-    modifier: Function,
+    modifier: (...args: any[]) => any,
     object: T,
     property: string,
     /* keyof T */ message?: string
@@ -1352,15 +1355,15 @@ export interface Assert {
    * @param change amount (delta)
    * @param message _optional_
    */
-  increasesBy<T>(
-    modifier: Function,
+  increasesBy<T extends Record<string, any>>(
+    modifier: (...args: any[]) => any,
     object: T,
-    property: string,
-    /* keyof T */ change: number,
+    property: (Record<string, never> & string) | keyof T,
+    change: number,
     message?: string
   ): void;
   increasesBy<T>(
-    modifier: Function,
+    modifier: (...args: any[]) => any,
     object: T,
     change: number,
     message?: string
@@ -1375,11 +1378,11 @@ export interface Assert {
    * @param property   Property of object expected not to be increased.
    * @param message   Message to display on error.
    */
-  doesNotIncrease<T>(
-    modifier: Function,
+  doesNotIncrease<T extends Record<string, any>>(
+    modifier: (...args: any[]) => any,
     object: T,
     property: string,
-    /* keyof T */ message?: string
+    message?: string
   ): void;
 
   /**
@@ -1393,15 +1396,15 @@ export interface Assert {
    * @param message _optional_
    */
 
-  increasesButNotBy<T>(
-    modifier: Function,
+  increasesButNotBy<T extends Record<string, any>>(
+    modifier: (...args: any[]) => any,
     object: T,
     property: string,
     /* keyof T */ change: number,
     message?: string
   ): void;
   increasesButNotBy<T>(
-    modifier: Function,
+    modifier: (...args: any[]) => any,
     object: T,
     change: number,
     message?: string
@@ -1417,10 +1420,10 @@ export interface Assert {
    * @param message   Message to display on error.
    */
   decreases<T>(
-    modifier: Function,
+    modifier: (...args: any[]) => any,
     object: T,
     property: string,
-    /* keyof T */ message?: string
+    message?: string
   ): void;
 
   /**
@@ -1435,14 +1438,14 @@ export interface Assert {
    */
 
   decreasesBy<T>(
-    modifier: Function,
+    modifier: (...args: any[]) => any,
     object: T,
     property: string,
     /* keyof T */ change: number,
     message?: string
   ): void;
   decreasesBy<T>(
-    modifier: Function,
+    modifier: (...args: any[]) => any,
     object: T,
     change: number,
     message?: string
@@ -1458,10 +1461,10 @@ export interface Assert {
    * @param message   Message to display on error.
    */
   doesNotDecrease<T>(
-    modifier: Function,
+    modifier: (...args: any[]) => any,
     object: T,
     property: string,
-    /* keyof T */ message?: string
+    message?: string
   ): void;
 
   /**
@@ -1476,14 +1479,14 @@ export interface Assert {
    */
 
   doesNotDecreaseBy<T>(
-    modifier: Function,
+    modifier: (...args: any[]) => any,
     object: T,
     property: string,
     /* keyof T */ change: number,
     message?: string
   ): void;
   doesNotDecreaseBy<T>(
-    modifier: Function,
+    modifier: (...args: any[]) => any,
     object: T,
     change: number,
     message?: string
@@ -1501,14 +1504,14 @@ export interface Assert {
    */
 
   decreasesButNotBy<T>(
-    modifier: Function,
+    modifier: (...args: any[]) => any,
     object: T,
     property: string,
     /* keyof T */ change: number,
     message?: string
   ): void;
   decreasesButNotBy<T>(
-    modifier: Function,
+    modifier: (...args: any[]) => any,
     object: T,
     change: number,
     message?: string
@@ -1922,6 +1925,63 @@ export interface Assert {
     value: any,
     message?: string
   ): void;
+
+  isCallable(value: unknown, message?: string): void;
+  isNotCallable(value: unknown, message?: string): void;
+  isNumeric(value: unknown, message?: string): void;
+  isNotNumeric(value: unknown, message?: string): void;
+  ownProperty<T extends Record<string, any>>(
+    obj: T,
+    prop: (Record<string, never> & string) | keyof T,
+    message?: string
+  ): void;
+
+  notOwnProperty(
+    obj: Record<string, any>,
+    prop: string,
+    message?: string
+  ): void;
+  ownPropertyVal<T extends Record<string, any>>(
+    obj: T,
+    prop: (Record<string, never> & string) | keyof T,
+    value: any,
+    message?: string
+  ): void;
+  notOwnPropertyVal(
+    obj: Record<string, any>,
+    prop: string,
+    value: any,
+    message?: string
+  ): void;
+  deepOwnPropertyVal(
+    obj: Record<string, any>,
+    prop: string,
+    value: any,
+    message?: string
+  ): void;
+  notDeepOwnPropertyVal(
+    obj: Record<string, any>,
+    prop: string,
+    value: any,
+    message?: string
+  ): void;
+  notSameMembers(set1: any[], set2: any[], message?: string): void;
+  isIterable(obj: unknown, message?: string): void;
+  changesButNotBy(
+    modifier: (...args: any[]) => any,
+    object: object,
+    property: string,
+    delta: number,
+    message?: string
+  ): void;
+  changesButNotBy(
+    modifier: (...args: any[]) => any,
+    object: object,
+    delta: number,
+    message?: string
+  ): void;
+  empty<T>(object: T, message?: string): void;
+  notEmpty<T>(object: T, message?: string): void;
 }
 
 /**
@@ -1938,10 +1998,12 @@ export interface Assert {
  * @namespace Assert
  * @public
  */
-export function assert(expression: any, message?: string): asserts expression {
+function asserts(expression: any, message?: string): asserts expression {
   const test = new Assertion(null, undefined, chai.assert, true);
   test.assert(expression, message, '[ negation message unavailable ]');
 }
+
+export const assert = asserts as Assert;
 
 /**
  * ### .fail([message])
@@ -1964,9 +2026,16 @@ export function assert(expression: any, message?: string): asserts expression {
  * @namespace Assert
  * @public
  */
-assert.fail = function <T>(
+function fail(message?: string): never;
+function fail<T>(
   actual: T,
   expected: T,
+  message?: string,
+  operator?: Operator
+): never;
+function fail<T>(
+  actual?: T,
+  expected?: T,
   message?: string,
   operator?: Operator
 ) {
@@ -1991,7 +2060,9 @@ assert.fail = function <T>(
     },
     assert.fail
   );
-};
+}
+
+assert.fail = fail;
 
 /**
  * ### .isOk(object, [message])
@@ -2656,7 +2727,7 @@ assert.isNotString = function (value: unknown, message: string) {
  * @namespace Assert
  * @public
  */
-assert.isNumber = function (value: number, message: string) {
+assert.isNumber = function <T>(value: T, message: string) {
   new Assertion(value, message, assert.isNumber, true).to.be.a('number');
 };
 
@@ -2732,7 +2803,7 @@ assert.isNotNumeric = function (value: unknown, message: string) {
  * @namespace Assert
  * @public
  */
-assert.isFinite = function (value: number, message: string) {
+assert.isFinite = function <T>(value: T, message: string) {
   new Assertion(value, message, assert.isFinite, true).to.be.finite;
 };
 
@@ -2861,7 +2932,10 @@ assert.instanceOf = function (value: object, type: object, message: string) {
  * @namespace Assert
  * @public
  */
-assert.notInstanceOf = function (value: object, type: object, message: string) {
+assert.notInstanceOf = function <
+  T,
+  U extends abstract new (...args: any) => any
+>(value: T, type: InstanceType<U>, message: string) {
   new Assertion(
     value,
     message,
@@ -2900,8 +2974,13 @@ assert.notInstanceOf = function (value: object, type: object, message: string) {
  * @namespace Assert
  * @public
  */
-assert.include = function (
-  expression: Array<any> | string,
+assert.include = function <T>(
+  expression:
+    | string
+    | readonly T[]
+    | ReadonlySet<T>
+    | ReadonlyMap<any, T>
+    | object,
   inc: unknown,
   message: string
 ) {
@@ -2939,8 +3018,13 @@ assert.include = function (
  * @namespace Assert
  * @public
  */
-assert.notInclude = function (
-  expression: Array<any> | string,
+assert.notInclude = function <T>(
+  expression:
+    | string
+    | readonly T[]
+    | ReadonlySet<T>
+    | ReadonlyMap<any, T>
+    | object,
   inc: unknown,
   message: string
 ) {
@@ -2967,8 +3051,13 @@ assert.notInclude = function (
  * @namespace Assert
  * @public
  */
-assert.deepInclude = function (
-  expression: Array<any> | string,
+assert.deepInclude = function <T>(
+  expression:
+    | string
+    | readonly T[]
+    | ReadonlySet<T>
+    | ReadonlyMap<any, T>
+    | object,
   inc: unknown,
   message: string
 ) {
@@ -2997,8 +3086,13 @@ assert.deepInclude = function (
  * @namespace Assert
  * @public
  */
-assert.notDeepInclude = function (
-  expression: Array<any> | string,
+assert.notDeepInclude = function <T>(
+  expression:
+    | string
+    | readonly T[]
+    | ReadonlySet<T>
+    | ReadonlyMap<any, T>
+    | object,
   inc: unknown,
   message: string
 ) {
@@ -3303,7 +3397,7 @@ assert.notMatch = function (expression: unknown, re: RegExp, message: string) {
  * @namespace Assert
  * @public
  */
-assert.property = function (obj: object, prop: string, message: string) {
+assert.property = function (obj, prop: string, message: string) {
   new Assertion(obj, message, assert.property, true).to.have.property(prop);
 };
 
@@ -3322,7 +3416,7 @@ assert.property = function (obj: object, prop: string, message: string) {
  * @namespace Assert
  * @public
  */
-assert.notProperty = function (obj: object, prop: string, message: string) {
+assert.notProperty = function (obj, prop: string, message: string) {
   new Assertion(obj, message, assert.notProperty, true).to.not.have.property(
     prop
   );
@@ -3346,7 +3440,7 @@ assert.notProperty = function (obj: object, prop: string, message: string) {
  * @public
  */
 assert.propertyVal = function (
-  obj: object,
+  obj,
   prop: string,
   value: unknown,
   message: string
@@ -3376,7 +3470,7 @@ assert.propertyVal = function (
  * @public
  */
 assert.notPropertyVal = function (
-  obj: object,
+  obj,
   prop: string,
   value: unknown,
   message: string
@@ -3404,7 +3498,7 @@ assert.notPropertyVal = function (
  * @public
  */
 assert.deepPropertyVal = function (
-  obj: object,
+  obj,
   prop: string,
   value: unknown,
   message: string
@@ -3436,7 +3530,7 @@ assert.deepPropertyVal = function (
  * @public
  */
 assert.notDeepPropertyVal = function (
-  obj: object,
+  obj,
   prop: string,
   value: unknown,
   message: string
@@ -3463,7 +3557,7 @@ assert.notDeepPropertyVal = function (
  * @param {string} message
  * @public
  */
-assert.ownProperty = function (obj: object, prop: string, message: string) {
+assert.ownProperty = function (obj, prop: string, message: string) {
   new Assertion(obj, message, assert.ownProperty, true).to.have.own.property(
     prop
   );
@@ -3631,7 +3725,7 @@ assert.notDeepOwnPropertyVal = function (
  * @namespace Assert
  * @public
  */
-assert.nestedProperty = function (obj: object, prop: string, message: string) {
+assert.nestedProperty = function (obj, prop: string, message: string) {
   new Assertion(
     obj,
     message,
@@ -3656,11 +3750,7 @@ assert.nestedProperty = function (obj: object, prop: string, message: string) {
  * @namespace Assert
  * @public
  */
-assert.notNestedProperty = function (
-  obj: object,
-  prop: string,
-  message: string
-) {
+assert.notNestedProperty = function (obj, prop: string, message: string) {
   new Assertion(
     obj,
     message,
@@ -3687,7 +3777,7 @@ assert.notNestedProperty = function (
  * @public
  */
 assert.nestedPropertyVal = function (
-  obj: object,
+  obj,
   prop: string,
   value: unknown,
   message: string
@@ -3719,7 +3809,7 @@ assert.nestedPropertyVal = function (
  * @public
  */
 assert.notNestedPropertyVal = function (
-  obj: object,
+  obj,
   prop: string,
   value: unknown,
   message: string
@@ -3750,7 +3840,7 @@ assert.notNestedPropertyVal = function (
  * @public
  */
 assert.deepNestedPropertyVal = function (
-  obj: object,
+  obj,
   prop: string,
   value: unknown,
   message: string
@@ -3783,7 +3873,7 @@ assert.deepNestedPropertyVal = function (
  * @public
  */
 assert.notDeepNestedPropertyVal = function (
-  obj: object,
+  obj,
   prop: string,
   value: unknown,
   message: string
@@ -4171,10 +4261,10 @@ assert.doesNotHaveAllDeepKeys = function (
  */
 assert.throws = function (
   fn: () => void,
-  errorLike?: ErrorConstructor | Error | null,
+  errorLike?: ErrorConstructor | Error | null | RegExp | string,
   errMsgMatcher?: RegExp | string | null,
   message?: string
-): unknown {
+) {
   if ('string' === typeof errorLike || errorLike instanceof RegExp) {
     errMsgMatcher = errorLike;
     errorLike = null;
@@ -4217,7 +4307,7 @@ assert.throws = function (
  */
 assert.doesNotThrow = function (
   fn: () => void,
-  errorLike?: ErrorConstructor | Error | null,
+  errorLike?: ErrorConstructor | Error | null | RegExp | string,
   errMsgMatcher?: RegExp | string | null,
   message?: string
 ) {
@@ -4869,10 +4959,10 @@ assert.isIterable = function (obj: unknown, message: string) {
  * @namespace Assert
  * @public
  */
-assert.changes = function <T>(
+assert.changes = function (
   modifier: (...args: any[]) => any,
-  object: T,
-  property: (Record<string, never> & string) | keyof T,
+  object,
+  property: string,
   message?: string
 ) {
   if (arguments.length === 3 && typeof object === 'function') {
@@ -4882,7 +4972,7 @@ assert.changes = function <T>(
 
   new Assertion(modifier, message, assert.changes, true).to.change(
     object,
-    property
+    property as never
   );
 };
 
@@ -4899,30 +4989,30 @@ assert.changes = function <T>(
  * @param {Function} modifier modifier function
  * @param {object} object object or getter function
  * @param {string} property property name _optional_
- * @param {number} delta message change amount (delta)
+ * @param {number} change message change amount (delta)
  * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
-assert.changesBy = function <ObjectType>(
+assert.changesBy = function (
   modifier: (...args: any[]) => any,
-  object: object,
-  property: (Record<string, never> & string) | keyof ObjectType,
-  delta: number,
+  object: Record<string, any>,
+  property: string | number,
+  change?: string | number,
   message?: string
 ) {
   if (arguments.length === 4 && typeof object === 'function') {
-    const tmpMsg = delta;
-    delta = property;
-    message = tmpMsg;
+    const tmpMsg = change;
+    change = property as number;
+    message = tmpMsg as unknown as string;
   } else if (arguments.length === 3) {
-    delta = property;
-    property = null;
+    change = property as number;
+    property = null!;
   }
 
-  new Assertion(modifier, message, assert.changesBy, true).to
-    .change(object, property)
-    .by(delta);
+  new Assertion(modifier, message as string, assert.changesBy, true).to
+    .change(object, property as string)
+    .by(change as number);
 };
 
 /**
@@ -4935,29 +5025,26 @@ assert.changesBy = function <ObjectType>(
  *   assert.doesNotChange(fn, obj, 'value');
  *
  * @name doesNotChange
- * @param {Function} fn modifier function
- * @param {object} obj object or getter function
- * @param {string} prop property name _optional_
+ * @param {Function} modifier modifier function
+ * @param {object} object object or getter function
+ * @param {string} property property name _optional_
  * @param {string} message _optional_
  * @returns {unknown}
  * @namespace Assert
  * @public
  */
-assert.doesNotChange = function (
-  fn: Function,
-  obj: object,
-  prop: string,
-  message: string
-): unknown {
-  if (arguments.length === 3 && typeof obj === 'function') {
-    message = prop;
-    prop = null;
+assert.doesNotChange = function (modifier, object, property, message): unknown {
+  if (arguments.length === 3 && typeof object === 'function') {
+    message = property;
+    property = null!;
   }
 
-  return new Assertion(fn, message, assert.doesNotChange, true).to.not.change(
-    obj,
-    prop
-  );
+  return new Assertion(
+    modifier,
+    message,
+    assert.doesNotChange,
+    true
+  ).to.not.change(object, property);
 };
 
 /**
@@ -4970,33 +5057,33 @@ assert.doesNotChange = function (
  *     assert.changesButNotBy(fn, obj, 'value', 5);
  *
  * @name changesButNotBy
- * @param {Function} fn - modifier function
- * @param {object} obj - object or getter function
- * @param {string} prop - property name _optional_
+ * @param {Function} modifier - modifier function
+ * @param {object} object - object or getter function
+ * @param {string} property - property name _optional_
  * @param {number} delta - change amount (delta)
  * @param {string} message - message _optional_
  * @namespace Assert
  * @public
  */
 assert.changesButNotBy = function (
-  fn: Function,
-  obj: object,
-  prop: string,
-  delta: number,
-  message: string
+  modifier: (...args: any[]) => any,
+  object: Record<string, any>,
+  property: string | number,
+  delta?: string | number,
+  message?: string
 ) {
-  if (arguments.length === 4 && typeof obj === 'function') {
-    let tmpMsg = delta;
-    delta = prop;
+  if (arguments.length === 4 && typeof object === 'function') {
+    const tmpMsg = delta as string;
+    delta = property;
     message = tmpMsg;
   } else if (arguments.length === 3) {
-    delta = prop;
-    prop = null;
+    delta = property;
+    property = null!;
   }
 
-  new Assertion(fn, message, assert.changesButNotBy, true).to
-    .change(obj, prop)
-    .but.not.by(delta);
+  new Assertion(modifier, message, assert.changesButNotBy, true).to
+    .change(object, property as string)
+    .but.not.by(delta as number);
 };
 
 /**
@@ -5011,26 +5098,26 @@ assert.changesButNotBy = function (
  * @public
  * @namespace Assert
  * @name increases
- * @param {Function} fn - modifier function
+ * @param {(...args: any[]) => any} fn - modifier function
  * @param {object} obj - object or getter function
- * @param {string} prop - property name _optional_
+ * @param {string} property - property name _optional_
  * @param {string} message - message _optional_
  * @returns {unknown}
  */
 assert.increases = function (
-  fn: Function,
-  obj: object,
-  prop: string,
+  fn: (...args: any[]) => any,
+  obj,
+  property,
   message: string
 ): unknown {
   if (arguments.length === 3 && typeof obj === 'function') {
-    message = prop;
-    prop = null;
+    message = property;
+    property = null!;
   }
 
   return new Assertion(fn, message, assert.increases, true).to.increase(
     obj,
-    prop
+    property as never
   );
 };
 
@@ -5046,31 +5133,31 @@ assert.increases = function (
  * @public
  * @name increasesBy
  * @namespace Assert
- * @param {Function} fn - modifier function
- * @param {object} obj - object or getter function
- * @param {string} prop - property name _optional_
- * @param {number} delta - change amount (delta)
+ * @param {Function} modifier - modifier function
+ * @param {object} object - object or getter function
+ * @param {string} property - property name _optional_
+ * @param {number} change - change amount (delta)
  * @param {string} message - message _optional_
  */
 assert.increasesBy = function (
-  fn: Function,
-  obj: object,
-  prop: string,
-  delta: number,
-  message: string
+  modifier: (...args: any[]) => any,
+  object: Record<string, any>,
+  property: string | number,
+  change?: string | number,
+  message?: string
 ) {
-  if (arguments.length === 4 && typeof obj === 'function') {
-    let tmpMsg = delta;
-    delta = prop;
+  if (arguments.length === 4 && typeof object === 'function') {
+    const tmpMsg = change as string;
+    change = property;
     message = tmpMsg;
   } else if (arguments.length === 3) {
-    delta = prop;
-    prop = null;
+    change = property;
+    property = null!;
   }
 
-  new Assertion(fn, message, assert.increasesBy, true).to
-    .increase(obj, prop)
-    .by(delta);
+  new Assertion(modifier, message, assert.increasesBy, true).to
+    .increase(object, property as string)
+    .by(change as number);
 };
 
 /**
@@ -5083,31 +5170,31 @@ assert.increasesBy = function (
  *     assert.doesNotIncrease(fn, obj, 'value');
  *
  * @name doesNotIncrease
- * @param {Function} fn modifier function
- * @param {object} obj object or getter function
- * @param {string} prop property name _optional_
+ * @param {Function} modifier modifier function
+ * @param {object} object object or getter function
+ * @param {string} property property name _optional_
  * @returns {Assertion}
  * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
 assert.doesNotIncrease = function (
-  fn: Function,
-  obj: object,
-  prop: string,
+  modifier: (...args: any[]) => any,
+  object: Record<string, any>,
+  property: string,
   message: string
 ): Assertion {
-  if (arguments.length === 3 && typeof obj === 'function') {
-    message = prop;
-    prop = null;
+  if (arguments.length === 3 && typeof object === 'function') {
+    message = property;
+    property = null!;
   }
 
   return new Assertion(
-    fn,
+    modifier,
     message,
     assert.doesNotIncrease,
     true
-  ).to.not.increase(obj, prop);
+  ).to.not.increase(object, property);
 };
 
 /**
@@ -5120,33 +5207,33 @@ assert.doesNotIncrease = function (
  *     assert.increasesButNotBy(fn, obj, 'value', 10);
  *
  * @name increasesButNotBy
- * @param {Function} fn modifier function
- * @param {object} obj object or getter function
- * @param {string} prop property name _optional_
- * @param {number} delta change amount (delta)
+ * @param {Function} modifier modifier function
+ * @param {object} object object or getter function
+ * @param {string} property property name _optional_
+ * @param {number} change change amount (delta)
  * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
 assert.increasesButNotBy = function (
-  fn: Function,
-  obj: object,
-  prop: string,
-  delta: number,
-  message: string
+  modifier: (...args: any[]) => any,
+  object: Record<string, any>,
+  property: string | number,
+  change?: string | number,
+  message?: string
 ) {
-  if (arguments.length === 4 && typeof obj === 'function') {
-    let tmpMsg = delta;
-    delta = prop;
+  if (arguments.length === 4 && typeof object === 'function') {
+    const tmpMsg = change as string;
+    change = property;
     message = tmpMsg;
   } else if (arguments.length === 3) {
-    delta = prop;
-    prop = null;
+    change = property;
+    property = null!;
   }
 
-  new Assertion(fn, message, assert.increasesButNotBy, true).to
-    .increase(obj, prop)
-    .but.not.by(delta);
+  new Assertion(modifier, message, assert.increasesButNotBy, true).to
+    .increase(object, property as string)
+    .but.not.by(change as number);
 };
 
 /**
@@ -5159,28 +5246,28 @@ assert.increasesButNotBy = function (
  *     assert.decreases(fn, obj, 'value');
  *
  * @name decreases
- * @param {Function} fn modifier function
- * @param {object} obj object or getter function
- * @param {string} prop property name _optional_
+ * @param {Function} modifier modifier function
+ * @param {object} object object or getter function
+ * @param {string} property property name _optional_
  * @returns {Assertion}
  * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
 assert.decreases = function (
-  fn: Function,
-  obj: object,
-  prop: string,
+  modifier: (...args: any[]) => any,
+  object,
+  property,
   message: string
 ): Assertion {
-  if (arguments.length === 3 && typeof obj === 'function') {
-    message = prop;
-    prop = null;
+  if (arguments.length === 3 && typeof object === 'function') {
+    message = property;
+    property = null!;
   }
 
-  return new Assertion(fn, message, assert.decreases, true).to.decrease(
-    obj,
-    prop
+  return new Assertion(modifier, message, assert.decreases, true).to.decrease(
+    object,
+    property as never
   );
 };
 
@@ -5194,33 +5281,33 @@ assert.decreases = function (
  *     assert.decreasesBy(fn, obj, 'value', 5);
  *
  * @name decreasesBy
- * @param {Function} fn modifier function
- * @param {object} obj object or getter function
- * @param {string} prop property name _optional_
- * @param {number} delta change amount (delta)
+ * @param {Function} modifier modifier function
+ * @param {object} object object or getter function
+ * @param {string} property property name _optional_
+ * @param {number} change change amount (delta)
  * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
 assert.decreasesBy = function (
-  fn: Function,
-  obj: object,
-  prop: string,
-  delta: number,
-  message: string
+  modifier: (...args: any[]) => any,
+  object: Record<string, any>,
+  property: string | number,
+  change?: string | number,
+  message?: string
 ) {
-  if (arguments.length === 4 && typeof obj === 'function') {
-    let tmpMsg = delta;
-    delta = prop;
+  if (arguments.length === 4 && typeof object === 'function') {
+    const tmpMsg = change as string;
+    change = property;
     message = tmpMsg;
   } else if (arguments.length === 3) {
-    delta = prop;
-    prop = null;
+    change = property;
+    property = null!;
   }
 
-  new Assertion(fn, message, assert.decreasesBy, true).to
-    .decrease(obj, prop)
-    .by(delta);
+  new Assertion(modifier, message, assert.decreasesBy, true).to
+    .decrease(object, property as string)
+    .by(change as number);
 };
 
 /**
@@ -5233,31 +5320,31 @@ assert.decreasesBy = function (
  *     assert.doesNotDecrease(fn, obj, 'value');
  *
  * @name doesNotDecrease
- * @param {Function} fn modifier function
- * @param {object} obj object or getter function
- * @param {string} prop property name _optional_
+ * @param {Function} modifier modifier function
+ * @param {object} object object or getter function
+ * @param {string} property property name _optional_
  * @returns {Assertion}
  * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
 assert.doesNotDecrease = function (
-  fn: Function,
-  obj: object,
-  prop: string,
+  modifier: (...args: any[]) => any,
+  object,
+  property,
   message: string
 ): Assertion {
-  if (arguments.length === 3 && typeof obj === 'function') {
-    message = prop;
-    prop = null;
+  if (arguments.length === 3 && typeof object === 'function') {
+    message = property;
+    property = null!;
   }
 
   return new Assertion(
-    fn,
+    modifier,
     message,
     assert.doesNotDecrease,
     true
-  ).to.not.decrease(obj, prop);
+  ).to.not.decrease(object, property as never);
 };
 
 /**
@@ -5270,34 +5357,34 @@ assert.doesNotDecrease = function (
  *     assert.doesNotDecreaseBy(fn, obj, 'value', 1);
  *
  * @name doesNotDecreaseBy
- * @param {Function} fn modifier function
- * @param {object} obj object or getter function
- * @param {string} prop property name _optional_
- * @param {number} delta change amount (delta)
+ * @param {Function} modifier modifier function
+ * @param {object} object object or getter function
+ * @param {string} property property name _optional_
+ * @param {number} change change amount (delta)
  * @returns {Assertion}
  * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
 assert.doesNotDecreaseBy = function (
-  fn: Function,
-  obj: object,
-  prop: string,
-  delta: number,
-  message: string
+  modifier: (...args: any[]) => any,
+  object: Record<string, any>,
+  property: string | number,
+  change?: string | number,
+  message?: string
 ): Assertion {
-  if (arguments.length === 4 && typeof obj === 'function') {
-    let tmpMsg = delta;
-    delta = prop;
+  if (arguments.length === 4 && typeof object === 'function') {
+    const tmpMsg = change as string;
+    change = property;
     message = tmpMsg;
   } else if (arguments.length === 3) {
-    delta = prop;
-    prop = null;
+    change = property;
+    property = null!;
   }
 
-  return new Assertion(fn, message, assert.doesNotDecreaseBy, true).to.not
-    .decrease(obj, prop)
-    .by(delta);
+  return new Assertion(modifier, message, assert.doesNotDecreaseBy, true).to.not
+    .decrease(object, property as string)
+    .by(change as number);
 };
 
 /**
@@ -5310,33 +5397,33 @@ assert.doesNotDecreaseBy = function (
  *     assert.decreasesButNotBy(fn, obj, 'value', 1);
  *
  * @name decreasesButNotBy
- * @param {Function} fn modifier function
- * @param {object} obj object or getter function
- * @param {string} prop property name _optional_
- * @param {number} delta change amount (delta)
+ * @param {Function} modifier modifier function
+ * @param {object} object object or getter function
+ * @param {string} property property name _optional_
+ * @param {number} change change amount (delta)
  * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
 assert.decreasesButNotBy = function (
-  fn: Function,
-  obj: object,
-  prop: string,
-  delta: number,
-  message: string
+  modifier: (...args: any[]) => any,
+  object: Record<string, any>,
+  property: string | number,
+  change?: string | number,
+  message?: string
 ) {
-  if (arguments.length === 4 && typeof obj === 'function') {
-    let tmpMsg = delta;
-    delta = prop;
+  if (arguments.length === 4 && typeof object === 'function') {
+    const tmpMsg = change as string;
+    change = property;
     message = tmpMsg;
   } else if (arguments.length === 3) {
-    delta = prop;
-    prop = null;
+    change = property;
+    property = null!;
   }
 
-  new Assertion(fn, message, assert.decreasesButNotBy, true).to
-    .decrease(obj, prop)
-    .but.not.by(delta);
+  new Assertion(modifier, message, assert.decreasesButNotBy, true).to
+    .decrease(object, property as string)
+    .but.not.by(change as number);
 };
 
 /**
@@ -5354,7 +5441,7 @@ assert.decreasesButNotBy = function (
  * @namespace Assert
  * @public
  */
-assert.ifError = function (value: object) {
+assert.ifError = function (value) {
   if (value) {
     throw value;
   }
@@ -5369,13 +5456,13 @@ assert.ifError = function (value: object) {
  *
  * @name isExtensible
  * @alias extensible
- * @param {object} obj
+ * @param {object} object
  * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
-assert.isExtensible = function (obj: object, message: string) {
-  new Assertion(obj, message, assert.isExtensible, true).to.be.extensible;
+assert.isExtensible = function (object, message) {
+  new Assertion(object, message, assert.isExtensible, true).to.be.extensible;
 };
 
 /**
@@ -5393,13 +5480,13 @@ assert.isExtensible = function (obj: object, message: string) {
  *
  * @name isNotExtensible
  * @alias notExtensible
- * @param {object} obj
+ * @param {object} object
  * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
-assert.isNotExtensible = function (obj: object, message: string) {
-  new Assertion(obj, message, assert.isNotExtensible, true).to.not.be
+assert.isNotExtensible = function (object, message) {
+  new Assertion(object, message, assert.isNotExtensible, true).to.not.be
     .extensible;
 };
 
@@ -5417,13 +5504,13 @@ assert.isNotExtensible = function (obj: object, message: string) {
  *
  * @name isSealed
  * @alias sealed
- * @param {object} obj
+ * @param {object} object
  * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
-assert.isSealed = function (obj: object, message: string) {
-  new Assertion(obj, message, assert.isSealed, true).to.be.sealed;
+assert.isSealed = function (object, message) {
+  new Assertion(object, message, assert.isSealed, true).to.be.sealed;
 };
 
 /**
@@ -5435,13 +5522,13 @@ assert.isSealed = function (obj: object, message: string) {
  *
  * @name isNotSealed
  * @alias notSealed
- * @param {object} obj
+ * @param {object} object
  * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
-assert.isNotSealed = function (obj: object, message: string) {
-  new Assertion(obj, message, assert.isNotSealed, true).to.not.be.sealed;
+assert.isNotSealed = function (object, message) {
+  new Assertion(object, message, assert.isNotSealed, true).to.not.be.sealed;
 };
 
 /**
@@ -5460,7 +5547,7 @@ assert.isNotSealed = function (obj: object, message: string) {
  * @namespace Assert
  * @public
  */
-assert.isFrozen = function (obj: object, message: string) {
+assert.isFrozen = function (obj, message) {
   new Assertion(obj, message, assert.isFrozen, true).to.be.frozen;
 };
 
@@ -5473,13 +5560,13 @@ assert.isFrozen = function (obj: object, message: string) {
  *
  * @name isNotFrozen
  * @alias notFrozen
- * @param {object} obj
+ * @param {object} object
  * @param {string} message _optional_
  * @namespace Assert
  * @public
  */
-assert.isNotFrozen = function (obj: object, message: string) {
-  new Assertion(obj, message, assert.isNotFrozen, true).to.not.be.frozen;
+assert.isNotFrozen = function (object, message) {
+  new Assertion(object, message, assert.isNotFrozen, true).to.not.be.frozen;
 };
 
 /**
@@ -5503,10 +5590,7 @@ assert.isNotFrozen = function (obj: object, message: string) {
  * @namespace Assert
  * @public
  */
-assert.isEmpty = function (
-  value: object | Array<any> | string | Map<any, any> | Set<any>,
-  message: string
-) {
+assert.isEmpty = function (value, message) {
   new Assertion(value, message, assert.isEmpty, true).to.be.empty;
 };
 
@@ -5531,10 +5615,7 @@ assert.isEmpty = function (
  * @namespace Assert
  * @public
  */
-assert.isNotEmpty = function (
-  value: object | Array<any> | string | Map<any, any> | Set<any>,
-  message: string
-) {
+assert.isNotEmpty = function (value, message) {
   new Assertion(value, message, assert.isNotEmpty, true).to.not.be.empty;
 };
 
@@ -5596,24 +5677,22 @@ assert.doesNotContainSubset = function (
  * @returns {unknown}
  */
 const aliases = [
-  ['isOk', 'ok'],
-  ['isNotOk', 'notOk'],
-  ['throws', 'throw'],
-  ['throws', 'Throw'],
-  ['isExtensible', 'extensible'],
-  ['isNotExtensible', 'notExtensible'],
-  ['isSealed', 'sealed'],
-  ['isNotSealed', 'notSealed'],
-  ['isFrozen', 'frozen'],
+  ['isOk', 'ok'] as const,
+  ['isNotOk', 'notOk'] as const,
+  ['throws', 'throw'] as const,
+  ['throws', 'Throw'] as const,
+  ['isExtensible', 'extensible'] as const,
+  ['isNotExtensible', 'notExtensible'] as const,
+  ['isSealed', 'sealed'] as const,
+  ['isNotSealed', 'notSealed'] as const,
+  ['isFrozen', 'frozen'] as const,
   ['isNotFrozen', 'notFrozen'],
-  ['isEmpty', 'empty'],
-  ['isNotEmpty', 'notEmpty'],
-  ['isCallable', 'isFunction'],
-  ['isNotCallable', 'isNotFunction'],
-  ['containsSubset', 'containSubset']
+  ['isEmpty', 'empty'] as const,
+  ['isNotEmpty', 'notEmpty'] as const,
+  ['isCallable', 'isFunction'] as const,
+  ['isNotCallable', 'isNotFunction'] as const,
+  ['containsSubset', 'containSubset'] as const
 ] as const;
 for (const [name, as] of aliases) {
-  (assert as AssertStatic)[as] = assert[name];
+  assert[as] = assert[name] as Assert;
 }
-
-// export {assert as AssertStatic}

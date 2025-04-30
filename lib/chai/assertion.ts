@@ -9,10 +9,10 @@ import {AssertionError} from 'assertion-error';
 import type {
   AssertionArgs,
   AssertionPrototype,
-  AssertionStatic,
   CloseTo,
   ContainSubset,
   Deep,
+  DeltaAssertion,
   Equal,
   Include,
   KeyFilter,
@@ -36,13 +36,13 @@ import type {
   TypeComparison
 } from '../types.js';
 import {config} from './config.js';
-import {eql, getOperator, util} from './utils/index.js';
+import * as util from './utils/index.js';
 
 export interface Assertion
   extends LanguageChains,
     NumericComparison,
     TypeComparison {
-  not: Assertion;
+  not: this extends DeltaAssertion ? DeltaAssertion : Assertion;
   deep: Deep;
   ordered: Ordered;
   nested: Nested;
@@ -107,12 +107,15 @@ export interface Assertion
   sealed: Assertion;
   frozen: Assertion;
   oneOf: OneOf;
+  // by: DeltaAssertion;
+  __flags: {[key: PropertyKey]: unknown};
+  // _obj: any;
 }
 
 // export type {AssertionType as Assertion}
 
-export class Assertion {
-  declare prototype: AssertionPrototype;
+export class Assertion implements AssertionPrototype, Assertion {
+  // public static declare prototype: AssertionPrototype;
 
   /** @type {{}} */
   __flags: {[key: PropertyKey]: unknown} = {};
@@ -162,7 +165,7 @@ export class Assertion {
     util.flag(this, 'lockSsfi', lockSsfi);
     util.flag(this, 'object', target);
     util.flag(this, 'message', message);
-    util.flag(this, 'eql', config.deepEqual || eql);
+    util.flag(this, 'eql', config.deepEqual || util.eql);
 
     return util.proxify(this);
   }
@@ -205,7 +208,7 @@ export class Assertion {
    */
   static addProperty(
     name: string,
-    getter?: (this: AssertionStatic) => any
+    getter?: (this: AssertionPrototype & Assertion) => any
   ): void {
     util.addProperty(this.prototype, name, getter);
   }
@@ -216,7 +219,7 @@ export class Assertion {
    */
   static addMethod(
     name: string,
-    method: (this: Assertion, ...args: any[]) => any
+    method: (this: AssertionPrototype & Assertion, ...args: any[]) => any
   ) {
     util.addMethod(this.prototype, name, method);
   }
@@ -228,7 +231,7 @@ export class Assertion {
    */
   static addChainableMethod(
     name: string,
-    method: (this: Assertion, ...args: any[]) => void,
+    method: (this: AssertionPrototype & Assertion, ...args: any[]) => void,
     chainingBehavior?: () => void
   ) {
     util.addChainableMethod(this.prototype, name, method, chainingBehavior);
@@ -248,7 +251,7 @@ export class Assertion {
    */
   static overwriteMethod(
     name: string,
-    method: (this: AssertionStatic, ...args: any[]) => any
+    method: (this: AssertionPrototype & Assertion, ...args: any[]) => any
   ) {
     util.overwriteMethod(this.prototype, name, method);
   }
@@ -259,10 +262,12 @@ export class Assertion {
    * @param {Function} chainingBehavior
    */
   static overwriteChainableMethod(
-    this: Assertion,
     name: string,
-    method: (this: AssertionStatic, ...args: any[]) => void,
-    chainingBehavior?: () => void
+    method: (
+      this: AssertionPrototype & Assertion,
+      ...args: any[]
+    ) => (...args: any[]) => any,
+    chainingBehavior?: (...args: any[]) => (...args: any[]) => any
   ) {
     util.overwriteChainableMethod(
       this.prototype,
@@ -286,7 +291,7 @@ export class Assertion {
    * @param {boolean} showDiff (optional) when set to `true`, assert will display a diff in addition to the message if expression fails
    * @returns {void}
    */
-  assert(
+  public assert(
     _expr: unknown,
     msg?: Message,
     _negateMsg?: Message,
@@ -310,7 +315,7 @@ export class Assertion {
         showDiff
       } satisfies Record<PropertyKey, unknown> as Record<PropertyKey, unknown>;
 
-      const operator = getOperator(this, args);
+      const operator = util.getOperator(this, args);
       if (operator) {
         assertionErrorObjectProperties.operator = operator;
       }
@@ -328,7 +333,7 @@ export class Assertion {
    *
    * @returns {unknown}
    */
-  get _obj(): unknown {
+  public get _obj(): unknown {
     return util.flag(this, 'object');
   }
 
@@ -337,7 +342,7 @@ export class Assertion {
    *
    * @param {unknown} val
    */
-  set _obj(val: unknown) {
+  public set _obj(val: unknown) {
     util.flag(this, 'object', val);
   }
 }

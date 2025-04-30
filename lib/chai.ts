@@ -12,7 +12,7 @@ import './chai/core/assertions.js';
 import {assert} from './chai/interface/assert.js';
 import {expect} from './chai/interface/expect.js';
 import * as should from './chai/interface/should.js';
-import {util} from './chai/utils/index.js';
+import * as util from './chai/utils/index.js';
 import type {ChaiPlugin, ChaiStatic} from './types.js';
 
 const {version} = packageJson;
@@ -42,7 +42,7 @@ export function use(fn: ChaiPlugin): ChaiStatic {
     Assertion,
     version,
     ...should
-  };
+  } satisfies ChaiStatic;
 
   if (!~used.indexOf(fn)) {
     fn(exports, util);

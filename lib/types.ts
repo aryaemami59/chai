@@ -1,7 +1,9 @@
-// import deepEqual = require("deep-eql");
+import * as checkError from 'check-error';
+import deepEqual from 'deep-eql';
 
 import type {AssertionError} from 'assertion-error';
 import type {Assertion} from './chai/assertion.js';
+import type {Config} from './chai/config.js';
 import type {Assert} from './chai/interface/assert.js';
 import type {Should} from './chai/interface/should.js';
 
@@ -61,7 +63,7 @@ export interface ChaiUtils {
   expectTypes(obj: object, types: string[]): void;
   flag(obj: object, key: string, value?: any): any;
   getActual(obj: object, args: AssertionArgs): any;
-  getProperties(obj: object): string[];
+  // getProperties(obj: object): string[];
   getOwnEnumerablePropertySymbols(obj: object): symbol[];
   getOwnEnumerableProperties(obj: object): Array<string | symbol>;
   // getMessage(errorLike: Error | string): string;
@@ -77,24 +79,40 @@ export interface ChaiUtils {
   proxify(obj: object, nonChainableMethodName: string): object;
   test(obj: object, args: AssertionArgs): boolean;
   transferFlags(assertion: Assertion, obj: object, includeAll?: boolean): void;
-  compatibleInstance(
-    thrown: Error,
-    errorLike: Error | ErrorConstructor
-  ): boolean;
-  compatibleConstructor(
-    thrown: Error,
-    errorLike: Error | ErrorConstructor
-  ): boolean;
-  compatibleMessage(thrown: Error, errMatcher: string | RegExp): boolean;
+  // compatibleInstance(
+  //   thrown: Error,
+  //   errorLike: Error | ErrorConstructor
+  // ): boolean;
+  // compatibleConstructor(
+  //   thrown: Error,
+  //   errorLike: Error | ErrorConstructor
+  // ): boolean;
+  // compatibleMessage(thrown: Error, errMatcher: string | RegExp): boolean;
   // getConstructorName(constructorFn: Function): string;
   // getFuncName(constructorFn: Function): string | null;
+  getName(constructorFn: Function): string | null;
 
   // Reexports from pathval:
   hasProperty(obj: object | undefined | null, name: ObjectProperty): boolean;
   getPathInfo(obj: object, path: string): PathInfo;
+  getOperator(
+    obj: object,
+    args: AssertionArgs
+  ):
+    | Operator
+    | 'notDeepStrictEqual'
+    | 'notStrictEqual'
+    | 'deepStrictEqual'
+    | 'strictEqual'
+    | undefined;
   // getPathValue(obj: object, path: string): object | undefined;
 
-  // eql: typeof deepEqual;
+  isNaN: typeof Number.isNaN;
+  isRegExp(obj: any): boolean;
+  isNumeric(obj: any): boolean;
+
+  eql: typeof deepEqual;
+  checkError: typeof checkError;
 }
 
 export type ChaiPlugin = (chai: ChaiStatic, utils: ChaiUtils) => void;
@@ -138,13 +156,20 @@ export type AssertionArgs = [
 ];
 
 export interface AssertionPrototype {
-  assert(...args: AssertionArgs): void;
+  assert(
+    expression: any,
+    message: Message,
+    negatedMessage: Message,
+    expectedValue?: any,
+    actualValue?: any,
+    showDiff?: boolean
+  ): void;
   _obj: any;
 }
 
-export interface AssertionStatic extends AssertionPrototype {
+export interface AssertionStatic {
   prototype: AssertionPrototype;
-  __flags: {[key: PropertyKey]: unknown};
+  // __flags: {[key: PropertyKey]: unknown};
 
   new (
     target: any,
@@ -158,30 +183,36 @@ export interface AssertionStatic extends AssertionPrototype {
   showDiff: boolean;
 
   // Partials of functions on ChaiUtils:
-  addProperty(name: string, getter: (this: AssertionStatic) => any): void;
+  addProperty(
+    name: string,
+    getter: (this: AssertionPrototype & Assertion) => any
+  ): void;
   addMethod(
     name: string,
-    method: (this: AssertionStatic, ...args: any[]) => any
+    method: (this: AssertionPrototype & Assertion, ...args: any[]) => any
   ): void;
   // FIXME:
   addChainableMethod(
     name: string,
-    method: (this: Assertion, ...args: any[]) => void,
+    method: (this: AssertionPrototype & Assertion, ...args: any[]) => void,
     chainingBehavior?: () => void
   ): void;
   // FIXME:
   overwriteProperty(
     name: string,
-    getter: (this: Assertion, _super: any) => any
+    getter: (this: AssertionPrototype & Assertion, _super: any) => any
   ): void;
   overwriteMethod(
     name: string,
-    method: (this: AssertionStatic, ...args: any[]) => any
+    method: (this: AssertionPrototype & Assertion, ...args: any[]) => any
   ): void;
   overwriteChainableMethod(
     name: string,
-    method: (this: AssertionStatic, ...args: any[]) => void,
-    chainingBehavior?: () => void
+    method: (
+      this: AssertionPrototype & Assertion,
+      ...args: any[]
+    ) => (...args: any[]) => any,
+    chainingBehavior?: (...args: any[]) => any
   ): void;
 }
 
@@ -236,7 +267,7 @@ export interface LanguageChains {
   at: Assertion;
   of: Assertion;
   same: Assertion;
-  but: Assertion;
+  but: this extends DeltaAssertion ? DeltaAssertion : Assertion;
   does: Assertion;
 }
 
@@ -391,40 +422,16 @@ export interface Members {
 }
 
 export interface PropertyChange {
-  <ObjectType>(object: ObjectType, property?: (Record<string, never> & string) | keyof ObjectType, message?: string): DeltaAssertion;
+  <ObjectType>(
+
+    object: ObjectType,
+    property?: (Record<string, never> & string) | keyof ObjectType,
+    message?: string
+  ): DeltaAssertion;
 }
 
 export interface DeltaAssertion extends Assertion {
-  by(delta: number, msg?: string): Assertion;
-}
-
-export interface Config {
-  /**
-   * Default: false
-   */
-  includeStack: boolean;
-
-  /**
-   * Default: true
-   */
-  showDiff: boolean;
-
-  /**
-   * Default: 40
-   */
-  truncateThreshold: number;
-
-  /**
-   * Default: true
-   */
-  useProxy: boolean;
-
-  /**
-   * Default: ['then', 'catch', 'inspect', 'toJSON']
-   */
-  proxyExcludedKeys: string[];
-
-  deepEqual: <L, R>(expected: L, actual: R) => void;
+  by(delta: number, msg?: string): Assertion & DeltaAssertion;
 }
 
 // FIXME:
