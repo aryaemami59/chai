@@ -6,7 +6,7 @@
 
 import {AssertionError} from 'assertion-error';
 import * as chai from '../../../lib/index.js';
-import type {Operator} from '../../types.js';
+import type {ExpectStatic, Operator} from '../../types.js';
 import {Assertion} from '../assertion.js';
 
 /**
@@ -14,11 +14,11 @@ import {Assertion} from '../assertion.js';
  * @param {string} message
  * @returns {Assertion}
  */
-function expect(val: any, message?: string): Assertion {
+function expects(val: any, message?: string): Assertion {
   return new Assertion(val, message);
 }
 
-export {expect};
+export const expect = expects as ExpectStatic;
 
 /**
  * ### .fail([message])

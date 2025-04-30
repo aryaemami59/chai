@@ -22,8 +22,8 @@ import {type} from './type-detect.js';
  * @public
  */
 export function expectTypes(obj: object, types: string[]) {
-  let flagMsg = flag(obj, 'message');
-  const ssfi = flag(obj, 'ssfi');
+  let flagMsg: string | undefined = flag(obj, 'message');
+  const ssfi: (...args: unknown[]) => unknown = flag(obj, 'ssfi');
 
   flagMsg = flagMsg ? flagMsg + ': ' : '';
 
@@ -36,13 +36,13 @@ export function expectTypes(obj: object, types: string[]) {
   // Transforms ['lorem', 'ipsum'] into 'a lorem, or an ipsum'
   const str = types
     .map(function (t, index) {
-      let art = ~['a', 'e', 'i', 'o', 'u'].indexOf(t.charAt(0)) ? 'an' : 'a';
-      let or = types.length > 1 && index === types.length - 1 ? 'or ' : '';
+      const art = ~['a', 'e', 'i', 'o', 'u'].indexOf(t.charAt(0)) ? 'an' : 'a';
+      const or = types.length > 1 && index === types.length - 1 ? 'or ' : '';
       return or + art + ' ' + t;
     })
     .join(', ');
 
-  let objType = type(obj).toLowerCase();
+  const objType = type(obj).toLowerCase();
 
   if (
     !types.some(function (expected) {

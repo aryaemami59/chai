@@ -21,6 +21,6 @@ import {inspect} from './inspect.js';
  * @namespace Utils
  * @public
  */
-export function compareByInspect(a: object, b: object): -1 | 1 {
+export function compareByInspect(a: unknown, b: unknown): -1 | 1 {
   return inspect(a) < inspect(b) ? -1 : 1;
 }

@@ -7,8 +7,8 @@ import {type} from './type-detect.js';
  * @returns {boolean}
  */
 function isObjectType(obj: unknown): obj is object {
-  let objectType = type(obj);
-  let objectTypes = ['Array', 'Object', 'Function'];
+  const objectType = type(obj);
+  const objectTypes = ['Array', 'Object', 'Function'];
 
   return objectTypes.indexOf(objectType) !== -1;
 }

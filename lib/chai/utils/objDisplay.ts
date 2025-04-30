@@ -21,8 +21,8 @@ import {inspect} from './inspect.js';
  * @public
  */
 export function objDisplay(obj: unknown): string {
-  let str = inspect(obj),
-    type = Object.prototype.toString.call(obj);
+  const str = inspect(obj);
+  const type = Object.prototype.toString.call(obj);
 
   if (config.truncateThreshold && str.length >= config.truncateThreshold) {
     if (type === '[object Function]') {
@@ -33,11 +33,11 @@ export function objDisplay(obj: unknown): string {
     } else if (type === '[object Array]') {
       return `[ Array(${(obj as []).length}) ]`;
     } else if (type === '[object Object]') {
-      let keys = Object.keys(obj as object),
-        kstr =
-          keys.length > 2
-            ? keys.splice(0, 2).join(', ') + ', ...'
-            : keys.join(', ');
+      const keys = Object.keys(obj as object);
+      const kstr =
+        keys.length > 2
+          ? keys.splice(0, 2).join(', ') + ', ...'
+          : keys.join(', ');
       return '{ Object (' + kstr + ') }';
     } else {
       return str;

@@ -12,10 +12,12 @@ import './chai/core/assertions.js';
 import {assert} from './chai/interface/assert.js';
 import {expect} from './chai/interface/expect.js';
 import * as should from './chai/interface/should.js';
-import * as util from './chai/utils/index.js';
-import type {ChaiPlugin, ChaiStatic} from './types.js';
+import * as utils from './chai/utils/index.js';
+import type {ChaiPlugin, ChaiStatic, ChaiUtils} from './types.js';
 
 const {version} = packageJson;
+
+const util = utils as ChaiUtils;
 
 const used: ChaiPlugin[] = [];
 

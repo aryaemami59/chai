@@ -10,7 +10,12 @@ import {isProxyEnabled} from './isProxyEnabled.js';
  */
 
 /** @type {PropertyKey[]} */
-const builtins = ['__flags', '__methods', '_obj', 'assert'];
+const builtins = [
+  '__flags',
+  '__methods',
+  '_obj',
+  'assert'
+] satisfies PropertyKey[];
 
 /**
  * ### .proxify(object)
@@ -73,7 +78,11 @@ export function proxify<T extends object>(
             !Object.prototype.hasOwnProperty(prop) &&
             builtins.indexOf(prop) === -1
           ) {
-            let dist = stringDistanceCapped(property, prop, suggestionDistance);
+            const dist = stringDistanceCapped(
+              property,
+              prop,
+              suggestionDistance
+            );
             if (dist < suggestionDistance) {
               suggestion = prop;
               suggestionDistance = dist;
@@ -133,7 +142,7 @@ function stringDistanceCapped(strA: string, strB: string, cap: number): number {
     return cap;
   }
 
-  let memo = [];
+  const memo = [];
   // `memo` is a two-dimensional array containing distances.
   // memo[i][j] is the distance between strA.slice(0, i) and
   // strB.slice(0, j).
@@ -146,7 +155,7 @@ function stringDistanceCapped(strA: string, strB: string, cap: number): number {
   }
 
   for (let i = 1; i <= strA.length; i++) {
-    let ch = strA.charCodeAt(i - 1);
+    const ch = strA.charCodeAt(i - 1);
     for (let j = 1; j <= strB.length; j++) {
       if (Math.abs(i - j) >= cap) {
         memo[i][j] = cap;

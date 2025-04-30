@@ -21,7 +21,7 @@ import {config} from '../config.js';
  * @name inspect
  */
 export function inspect(
-  obj: any,
+  obj: unknown,
   showHidden?: boolean,
   depth?: number,
   colors?: boolean

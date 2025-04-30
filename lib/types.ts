@@ -169,7 +169,6 @@ export interface AssertionPrototype {
 
 export interface AssertionStatic {
   prototype: AssertionPrototype;
-  // __flags: {[key: PropertyKey]: unknown};
 
   new (
     target: any,
@@ -401,7 +400,7 @@ export interface Match {
 
 export interface Keys {
   (...keys: string[]): Assertion;
-  (keys: readonly any[] | Object): Assertion;
+  (keys: readonly any[] | object): Assertion;
 }
 
 export interface Throw {

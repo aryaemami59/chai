@@ -45,7 +45,7 @@ export function addProperty(
   // getter = getter === undefined ? function () {} : getter;
 
   Object.defineProperty(ctx, name, {
-    get: function propertyGetter() {
+    get: function propertyGetter(this: Assertion) {
       // Setting the `ssfi` flag to `propertyGetter` causes this function to
       // be the starting point for removing implementation frames from the
       // stack trace of a failed assertion.
@@ -65,10 +65,10 @@ export function addProperty(
         flag(this, 'ssfi', propertyGetter);
       }
 
-      let result = getter.call(this);
+      const result = getter.call(this);
       if (result !== undefined) return result;
 
-      let newAssertion = new Assertion();
+      const newAssertion = new Assertion();
       transferFlags(this, newAssertion);
       return newAssertion;
     },

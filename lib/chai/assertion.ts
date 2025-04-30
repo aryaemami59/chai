@@ -116,10 +116,7 @@ export interface Assertion
 // export type {AssertionType as Assertion}
 
 export class Assertion implements AssertionPrototype, Assertion {
-  // public static declare prototype: AssertionPrototype;
-
-  /** @type {{}} */
-  __flags: {[key: PropertyKey]: unknown} = {};
+  public __flags: {[key: PropertyKey]: unknown} = {};
 
   /**
    * Creates object for chaining.

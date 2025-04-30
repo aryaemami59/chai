@@ -250,5 +250,5 @@ function loadShould(): Should {
   return should;
 }
 
-export const should = loadShould;
-export const Should = loadShould;
+export const should = loadShould as () => Should;
+export const Should = loadShould as () => Should;

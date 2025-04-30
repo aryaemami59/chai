@@ -19,7 +19,7 @@ import {flag} from './flag.js';
  * @name test
  */
 export function test(obj: object, args: AssertionArgs): boolean {
-  const negate = flag(obj, 'negate');
+  const negate: boolean = flag(obj, 'negate');
   const expr = args[0];
   return negate ? !expr : expr;
 }

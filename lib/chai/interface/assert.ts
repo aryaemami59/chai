@@ -20,20 +20,23 @@ export interface Assert {
   /**
    * Throws a failure.
    *
+   * **Note**: Node.js assert module-compatible.
+   *
    * @param message    Message to display on error.
-   * @remarks Node.js assert module-compatible.
    */
   fail(message?: string): never;
 
   /**
    * Throws a failure.
    *
+   * **Note**: Node.js assert module-compatible.
+   *
    * T   Type of the objects.
+   *
    * @param actual   Actual value.
    * @param expected   Potential expected value.
    * @param message    Message to display on error.
    * @param operator   Comparison operator, if not strict equality.
-   * @remarks Node.js assert module-compatible.
    */
   fail<T>(actual: T, expected: T, message?: string, operator?: Operator): never;
 
@@ -57,6 +60,7 @@ export interface Assert {
    * Asserts that object is falsy.
    *
    * T   Type of object.
+   *
    * @param object   Object to test.
    * @param message    Message to display on error.
    */
@@ -66,6 +70,7 @@ export interface Assert {
    * Asserts that object is falsy.
    *
    * T   Type of object.
+   *
    * @param object   Object to test.
    * @param message    Message to display on error.
    */
@@ -75,6 +80,7 @@ export interface Assert {
    * Asserts non-strict equality (==) of actual and expected.
    *
    * T   Type of the objects.
+   *
    * @param actual   Actual value.
    * @param expected   Potential expected value.
    * @param message   Message to display on error.
@@ -85,6 +91,7 @@ export interface Assert {
    * Asserts non-strict inequality (!=) of actual and expected.
    *
    * T   Type of the objects.
+   *
    * @param actual   Actual value.
    * @param expected   Potential expected value.
    * @param message   Message to display on error.
@@ -95,6 +102,7 @@ export interface Assert {
    * Asserts strict equality (===) of actual and expected.
    *
    * T   Type of the objects.
+   *
    * @param actual   Actual value.
    * @param expected   Potential expected value.
    * @param message   Message to display on error.
@@ -105,6 +113,7 @@ export interface Assert {
    * Asserts strict inequality (!==) of actual and expected.
    *
    * T   Type of the objects.
+   *
    * @param actual   Actual value.
    * @param expected   Potential expected value.
    * @param message   Message to display on error.
@@ -115,6 +124,7 @@ export interface Assert {
    * Asserts that actual is deeply equal to expected.
    *
    * T   Type of the objects.
+   *
    * @param actual   Actual value.
    * @param expected   Potential expected value.
    * @param message   Message to display on error.
@@ -125,6 +135,7 @@ export interface Assert {
    * Asserts that actual is not deeply equal to expected.
    *
    * T   Type of the objects.
+   *
    * @param actual   Actual value.
    * @param expected   Potential expected value.
    * @param message   Message to display on error.
@@ -135,6 +146,7 @@ export interface Assert {
    * Alias to deepEqual
    *
    * T   Type of the objects.
+   *
    * @param actual   Actual value.
    * @param expected   Potential expected value.
    * @param message   Message to display on error.
@@ -232,6 +244,7 @@ export interface Assert {
    * Asserts that value is not true.
    *
    * T   Type of value.
+   *
    * @param value   Actual value.
    * @param message   Message to display on error.
    */
@@ -257,6 +270,7 @@ export interface Assert {
    * Asserts that value is not null.
    *
    * T   Type of value.
+   *
    * @param value   Actual value.
    * @param message   Message to display on error.
    */
@@ -266,6 +280,7 @@ export interface Assert {
    * Asserts that value is NaN.
    *
    * T   Type of value.
+   *
    * @param value   Actual value.
    * @param message   Message to display on error.
    */
@@ -275,6 +290,7 @@ export interface Assert {
    * Asserts that value is not NaN.
    *
    * T   Type of value.
+   *
    * @param value   Actual value.
    * @param message   Message to display on error.
    */
@@ -284,6 +300,7 @@ export interface Assert {
    * Asserts that the target is neither null nor undefined.
    *
    * T   Type of value.
+   *
    * @param value   Actual value.
    * @param message    Message to display on error.
    */
@@ -312,6 +329,7 @@ export interface Assert {
    * Asserts that value is not undefined.
    *
    * T   Type of value.
+   *
    * @param value   Actual value.
    * @param message   Message to display on error.
    */
@@ -324,6 +342,7 @@ export interface Assert {
    * Asserts that value is a function.
    *
    * T   Type of value.
+   *
    * @param value   Actual value.
    * @param message   Message to display on error.
    */
@@ -333,6 +352,7 @@ export interface Assert {
    * Asserts that value is not a function.
    *
    * T   Type of value.
+   *
    * @param value   Actual value.
    * @param message   Message to display on error.
    */
@@ -342,10 +362,12 @@ export interface Assert {
    * Asserts that value is an object of type 'Object'
    * (as revealed by Object.prototype.toString).
    *
+   * **Note**: The assertion does not match subclassed objects.
+   *
    * T   Type of value.
+   *
    * @param value   Actual value.
    * @param message   Message to display on error.
-   * @remarks The assertion does not match subclassed objects.
    */
   isObject<T>(value: T, message?: string): void;
 
@@ -354,6 +376,7 @@ export interface Assert {
    * (as revealed by Object.prototype.toString).
    *
    * T   Type of value.
+   *
    * @param value   Actual value.
    * @param message   Message to display on error.
    */
@@ -363,6 +386,7 @@ export interface Assert {
    * Asserts that value is an array.
    *
    * T   Type of value.
+   *
    * @param value   Actual value.
    * @param message   Message to display on error.
    */
@@ -372,6 +396,7 @@ export interface Assert {
    * Asserts that value is not an array.
    *
    * T   Type of value.
+   *
    * @param value   Actual value.
    * @param message   Message to display on error.
    */
@@ -381,6 +406,7 @@ export interface Assert {
    * Asserts that value is a string.
    *
    * T   Type of value.
+   *
    * @param value   Actual value.
    * @param message   Message to display on error.
    */
@@ -390,6 +416,7 @@ export interface Assert {
    * Asserts that value is not a string.
    *
    * T   Type of value.
+   *
    * @param value   Actual value.
    * @param message   Message to display on error.
    */
@@ -399,6 +426,7 @@ export interface Assert {
    * Asserts that value is a number.
    *
    * T   Type of value.
+   *
    * @param value   Actual value.
    * @param message   Message to display on error.
    */
@@ -408,6 +436,7 @@ export interface Assert {
    * Asserts that value is not a number.
    *
    * T   Type of value.
+   *
    * @param value   Actual value.
    * @param message   Message to display on error.
    */
@@ -418,6 +447,7 @@ export interface Assert {
    * Unlike `.isNumber`, this will fail for `NaN` and `Infinity`.
    *
    * T   Type of value
+   *
    * @param value    Actual value
    * @param message   Message to display on error.
    */
@@ -427,6 +457,7 @@ export interface Assert {
    * Asserts that value is a boolean.
    *
    * T   Type of value.
+   *
    * @param value   Actual value.
    * @param message   Message to display on error.
    */
@@ -439,6 +470,7 @@ export interface Assert {
    * Asserts that value is not a boolean.
    *
    * T   Type of value.
+   *
    * @param value   Actual value.
    * @param message   Message to display on error.
    */
@@ -451,6 +483,7 @@ export interface Assert {
    * Asserts that value's type is name, as determined by Object.prototype.toString.
    *
    * T   Type of value.
+   *
    * @param value   Actual value.
    * @param name   Potential expected type name of value.
    * @param message   Message to display on error.
@@ -461,6 +494,7 @@ export interface Assert {
    * Asserts that value's type is not name, as determined by Object.prototype.toString.
    *
    * T   Type of value.
+   *
    * @param value   Actual value.
    * @param name   Potential expected type name of value.
    * @param message   Message to display on error.
@@ -471,6 +505,7 @@ export interface Assert {
    * Asserts that value is an instance of constructor.
    *
    * T   Expected type of value.
+   *
    * @param value   Actual value.
    * @param constructor   Potential expected contructor of value.
    * @param message   Message to display on error.
@@ -486,6 +521,7 @@ export interface Assert {
    *
    * T   Type of value.
    * U   Type that value shouldn't be an instance of.
+   *
    * @param value   Actual value.
    * @param constructor   Potential expected contructor of value.
    * @param message   Message to display on error.
@@ -509,6 +545,7 @@ export interface Assert {
    * Asserts that haystack includes needle.
    *
    * T   Type of values in haystack.
+   *
    * @param haystack   Container array, set or map.
    * @param needle   Potential value contained in haystack.
    * @param message   Message to display on error.
@@ -523,6 +560,7 @@ export interface Assert {
    * Asserts that haystack includes needle.
    *
    * T   Type of values in haystack.
+   *
    * @param haystack   WeakSet container.
    * @param needle   Potential value contained in haystack.
    * @param message   Message to display on error.
@@ -537,6 +575,7 @@ export interface Assert {
    * Asserts that haystack includes needle.
    *
    * T   Type of haystack.
+   *
    * @param haystack   Object.
    * @param needle   Potential subset of the haystack's properties.
    * @param message   Message to display on error.
@@ -556,6 +595,7 @@ export interface Assert {
    * Asserts that haystack does not include needle.
    *
    * T   Type of values in haystack.
+   *
    * @param haystack   Container array, set or map.
    * @param needle   Potential value contained in haystack.
    * @param message   Message to display on error.
@@ -570,6 +610,7 @@ export interface Assert {
    * Asserts that haystack does not include needle.
    *
    * T   Type of values in haystack.
+   *
    * @param haystack   WeakSet container.
    * @param needle   Potential value contained in haystack.
    * @param message   Message to display on error.
@@ -584,6 +625,7 @@ export interface Assert {
    * Asserts that haystack does not include needle.
    *
    * T   Type of haystack.
+   *
    * @param haystack   Object.
    * @param needle   Potential subset of the haystack's properties.
    * @param message   Message to display on error.
@@ -605,6 +647,7 @@ export interface Assert {
    * Asserts that haystack includes needle. Deep equality is used.
    *
    * T   Type of values in haystack.
+   *
    * @param haystack   Container array, set or map.
    * @param needle   Potential value contained in haystack.
    * @param message   Message to display on error.
@@ -619,6 +662,7 @@ export interface Assert {
    * Asserts that haystack includes needle. Deep equality is used.
    *
    * T   Type of haystack.
+   *
    * @param haystack   Object.
    * @param needle   Potential subset of the haystack's properties.
    * @param message   Message to display on error.
@@ -644,6 +688,7 @@ export interface Assert {
    * Asserts that haystack does not include needle. Deep equality is used.
    *
    * T   Type of values in haystack.
+   *
    * @param haystack   Container array, set or map.
    * @param needle   Potential value contained in haystack.
    * @param message   Message to display on error.
@@ -658,6 +703,7 @@ export interface Assert {
    * Asserts that haystack does not include needle. Deep equality is used.
    *
    * T   Type of haystack.
+   *
    * @param haystack   Object.
    * @param needle   Potential subset of the haystack's properties.
    * @param message   Message to display on error.
@@ -786,6 +832,7 @@ export interface Assert {
    * Asserts that object has a property named by property.
    *
    * T   Type of object.
+   *
    * @param object   Container object.
    * @param property   Potential contained property of object.
    * @param message   Message to display on error.
@@ -800,6 +847,7 @@ export interface Assert {
    * Asserts that object does not have a property named by property.
    *
    * T   Type of object.
+   *
    * @param object   Container object.
    * @param property   Potential contained property of object.
    * @param message   Message to display on error.
@@ -815,6 +863,7 @@ export interface Assert {
    * using dot- and bracket-notation for deep reference.
    *
    * T   Type of object.
+   *
    * @param object   Container object.
    * @param property   Potential contained property of object.
    * @param message   Message to display on error.
@@ -826,6 +875,7 @@ export interface Assert {
    * string using dot- and bracket-notation for deep reference.
    *
    * T   Type of object.
+   *
    * @param object   Container object.
    * @param property   Potential contained property of object.
    * @param message   Message to display on error.
@@ -837,6 +887,7 @@ export interface Assert {
    *
    * T   Type of object.
    * V   Type of value.
+   *
    * @param object   Container object.
    * @param property   Potential contained property of object.
    * @param value   Potential expected property value.
@@ -854,6 +905,7 @@ export interface Assert {
    *
    * T   Type of object.
    * V   Type of value.
+   *
    * @param object   Container object.
    * @param property   Potential contained property of object.
    * @param value   Potential expected property value.
@@ -872,6 +924,7 @@ export interface Assert {
    *
    * T   Type of object.
    * V   Type of value.
+   *
    * @param object   Container object.
    * @param property   Potential contained property of object.
    * @param value   Potential expected property value.
@@ -890,6 +943,7 @@ export interface Assert {
    *
    * T   Type of object.
    * V   Type of value.
+   *
    * @param object   Container object.
    * @param property   Potential contained property of object.
    * @param value   Potential expected property value.
@@ -906,6 +960,7 @@ export interface Assert {
    * Asserts that object has a length property with the expected value.
    *
    * T   Type of object.
+   *
    * @param object   Container object.
    * @param length   Potential expected length of object.
    * @param message   Message to display on error.
@@ -1089,6 +1144,7 @@ export interface Assert {
    * Asserts that set1 and set2 have the same members. Order is not take into account.
    *
    * T   Type of set values.
+   *
    * @param set1   Actual set of values.
    * @param set2   Potential expected set of values.
    * @param message   Message to display on error.
@@ -1100,6 +1156,7 @@ export interface Assert {
    * Order is not take into account.
    *
    * T   Type of set values.
+   *
    * @param set1   Actual set of values.
    * @param set2   Potential expected set of values.
    * @param message   Message to display on error.
@@ -1110,7 +1167,8 @@ export interface Assert {
    * Asserts that `set1` and `set2` don't have the same members in any order.
    * Uses a deep equality check.
    *
-   *  T   Type of set values.
+   * T   Type of set values.
+   *
    * @param set1
    * @param set2
    * @param message
@@ -1122,6 +1180,7 @@ export interface Assert {
    * Uses a strict equality check (===).
    *
    * T   Type of set values.
+   *
    * @param set1   Actual set of values.
    * @param set2   Potential expected set of values.
    * @param message   Message to display on error.
@@ -1133,6 +1192,7 @@ export interface Assert {
    * Uses a strict equality check (===).
    *
    * T   Type of set values.
+   *
    * @param set1   Actual set of values.
    * @param set2   Potential expected set of values.
    * @param message   Message to display on error.
@@ -1144,6 +1204,7 @@ export interface Assert {
    * Uses a deep equality check.
    *
    * T   Type of set values.
+   *
    * @param set1   Actual set of values.
    * @param set2   Potential expected set of values.
    * @param message   Message to display on error.
@@ -1155,6 +1216,7 @@ export interface Assert {
    * Uses a deep equality check.
    *
    * T   Type of set values.
+   *
    * @param set1   Actual set of values.
    * @param set2   Potential expected set of values.
    * @param message   Message to display on error.
@@ -1166,6 +1228,7 @@ export interface Assert {
    * Uses a strict equality check (===).
    *
    * T   Type of set values.
+   *
    * @param superset   Actual set of values.
    * @param subset   Potential contained set of values.
    * @param message   Message to display on error.
@@ -1177,6 +1240,7 @@ export interface Assert {
    * Uses a strict equality check (===).
    *
    * T   Type of set values.
+   *
    * @param superset   Actual set of values.
    * @param subset   Potential contained set of values.
    * @param message   Message to display on error.
@@ -1192,6 +1256,7 @@ export interface Assert {
    * Uses a deep equality check.
    *
    * T   Type of set values.
+   *
    * @param superset   Actual set of values.
    * @param subset   Potential contained set of values.
    * @param message   Message to display on error.
@@ -1207,6 +1272,7 @@ export interface Assert {
    * Uses a deep equality check.
    *
    * T   Type of set values.
+   *
    * @param superset   Actual set of values.
    * @param subset   Potential contained set of values.
    * @param message   Message to display on error.
@@ -1221,6 +1287,7 @@ export interface Assert {
    * Asserts that subset is included in superset. Order is not take into account.
    *
    * T   Type of set values.
+   *
    * @param superset   Actual set of values.
    * @param subset   Potential contained set of values.
    * @param message   Message to display on error.
@@ -1232,6 +1299,7 @@ export interface Assert {
    * Uses a strict equality check (===). Duplicates are ignored.
    *
    * T   Type of set values.
+   *
    * @param superset   Actual set of values.
    * @param subset   Potential not contained set of values.
    * @param message   Message to display on error.
@@ -1243,6 +1311,7 @@ export interface Assert {
    * Order is not take into account.
    *
    * T   Type of set values.
+   *
    * @param superset   Actual set of values.
    * @param subset   Potential contained set of values.
    * @param message   Message to display on error.
@@ -1256,6 +1325,7 @@ export interface Assert {
    * assert.notIncludeDeepMembers([ { a: 1 }, { b: 2 }, { c: 3 } ], [ { b: 2 }, { f: 5 } ], 'not include deep members');
    *
    * T   Type of set values.
+   *
    * @param superset   Actual set of values.
    * @param subset   Potential contained set of values.
    * @param message   Message to display on error.
@@ -1266,6 +1336,7 @@ export interface Assert {
    * Asserts that non-object, non-array value inList appears in the flat array list.
    *
    * T   Type of list values.
+   *
    * @param inList   Value expected to be in the list.
    * @param list   List of values.
    * @param message   Message to display on error.
@@ -1276,6 +1347,7 @@ export interface Assert {
    * Asserts that a function changes the value of a property.
    *
    * T   Type of object.
+   *
    * @param modifier   Function to run.
    * @param object   Container object.
    * @param property   Property of object expected to be modified.
@@ -1315,6 +1387,7 @@ export interface Assert {
    * Asserts that a function does not change the value of a property.
    *
    * T   Type of object.
+   *
    * @param modifier   Function to run.
    * @param object   Container object.
    * @param property   Property of object expected not to be modified.
@@ -1331,6 +1404,7 @@ export interface Assert {
    * Asserts that a function increases an object property.
    *
    * T   Type of object.
+   *
    * @param modifier   Function to run.
    * @param object   Container object.
    * @param property   Property of object expected to be increased.
@@ -1347,6 +1421,7 @@ export interface Assert {
    * Asserts that a function increases a numeric object property or a function's return value by an amount (delta).
    *
    * T   Type of object or function.
+   *
    * @param modifier function
    * @param object or getter function
    * @param property name _optional_
@@ -1371,6 +1446,7 @@ export interface Assert {
    * Asserts that a function does not increase an object property.
    *
    * T   Type of object.
+   *
    * @param modifier   Function to run.
    * @param object   Container object.
    * @param property   Property of object expected not to be increased.
@@ -1387,6 +1463,7 @@ export interface Assert {
    * Asserts that a function does not increase a numeric object property or function's return value by an amount (delta).
    *
    * T   Type of object or function.
+   *
    * @param modifier function
    * @param object or getter function
    * @param property name _optional_
@@ -1412,6 +1489,7 @@ export interface Assert {
    * Asserts that a function decreases an object property.
    *
    * T   Type of object.
+   *
    * @param modifier   Function to run.
    * @param object   Container object.
    * @param property   Property of object expected to be decreased.
@@ -1428,6 +1506,7 @@ export interface Assert {
    * Asserts that a function decreases a numeric object property or a function's return value by an amount (delta)
    *
    * T   Type of object or function.
+   *
    * @param modifier function
    * @param object or getter function
    * @param property name _optional_
@@ -1453,6 +1532,7 @@ export interface Assert {
    * Asserts that a function does not decrease an object property.
    *
    * T   Type of object.
+   *
    * @param modifier   Function to run.
    * @param object   Container object.
    * @param property   Property of object expected not to be decreased.
@@ -1469,6 +1549,7 @@ export interface Assert {
    * Asserts that a function does not decreases a numeric object property or a function's return value by an amount (delta)
    *
    * T   Type of object or function.
+   *
    * @param modifier function
    * @param object or getter function
    * @param property name _optional_
@@ -1494,6 +1575,7 @@ export interface Assert {
    * Asserts that a function does not decreases a numeric object property or a function's return value by an amount (delta)
    *
    * T   Type of object or function.
+   *
    * @param modifier function
    * @param object or getter function
    * @param property name _optional_
@@ -1518,11 +1600,13 @@ export interface Assert {
   /**
    * Asserts if value is not a false value, and throws if it is a true value.
    *
+   * This is added to allow for chai to be a drop-in replacement for
+   * Node’s assert class.
+   *
    * T   Type of object.
+   *
    * @param object   Actual value.
    * @param message   Message to display on error.
-   * @remarks This is added to allow for chai to be a drop-in replacement for
-   *          Node’s assert class.
    */
   ifError<T>(object: T, message?: string): void;
 
@@ -1530,6 +1614,7 @@ export interface Assert {
    * Asserts that object is extensible (can have new properties added to it).
    *
    * T   Type of object
+   *
    * @param object   Actual value.
    * @param message   Message to display on error.
    */
@@ -1539,6 +1624,7 @@ export interface Assert {
    * Asserts that object is extensible (can have new properties added to it).
    *
    * T   Type of object
+   *
    * @param object   Actual value.
    * @param message   Message to display on error.
    */
@@ -1548,6 +1634,7 @@ export interface Assert {
    * Asserts that object is not extensible.
    *
    * T   Type of object
+   *
    * @param object   Actual value.
    * @param message   Message to display on error.
    */
@@ -1557,6 +1644,7 @@ export interface Assert {
    * Asserts that object is not extensible.
    *
    * T   Type of object
+   *
    * @param object   Actual value.
    * @param message   Message to display on error.
    */
@@ -1567,6 +1655,7 @@ export interface Assert {
    * and its existing properties cannot be removed).
    *
    * T   Type of object
+   *
    * @param object   Actual value.
    * @param message   Message to display on error.
    */
@@ -1577,6 +1666,7 @@ export interface Assert {
    * and its existing properties cannot be removed).
    *
    * T   Type of object
+   *
    * @param object   Actual value.
    * @param message   Message to display on error.
    */
@@ -1586,6 +1676,7 @@ export interface Assert {
    * Asserts that object is not sealed.
    *
    * T   Type of object
+   *
    * @param object   Actual value.
    * @param message   Message to display on error.
    */
@@ -1595,6 +1686,7 @@ export interface Assert {
    * Asserts that object is not sealed.
    *
    * T   Type of object
+   *
    * @param object   Actual value.
    * @param message   Message to display on error.
    */
@@ -1605,6 +1697,7 @@ export interface Assert {
    * and its existing properties cannot be removed).
    *
    * T   Type of object
+   *
    * @param object   Actual value.
    * @param message   Message to display on error.
    */
@@ -1615,6 +1708,7 @@ export interface Assert {
    * and its existing properties cannot be removed).
    *
    * T   Type of object
+   *
    * @param object   Actual value.
    * @param message   Message to display on error.
    */
@@ -1625,6 +1719,7 @@ export interface Assert {
    * and its existing properties cannot be removed).
    *
    * T   Type of object
+   *
    * @param object   Actual value.
    * @param message   Message to display on error.
    */
@@ -1635,6 +1730,7 @@ export interface Assert {
    * and its existing properties cannot be removed).
    *
    * T   Type of object
+   *
    * @param object   Actual value.
    * @param message   Message to display on error.
    */
@@ -1647,6 +1743,7 @@ export interface Assert {
    * of own enumerable string keys.
    *
    * T   Type of object
+   *
    * @param object   Actual value.
    * @param message   Message to display on error.
    */
@@ -1661,6 +1758,7 @@ export interface Assert {
    * For non-function objects, it gets the count of own enumerable string keys.
    *
    * T   Type of object.
+   *
    * @param object   Object to test.
    * @param message    Message to display on error.
    */
@@ -1672,13 +1770,14 @@ export interface Assert {
    * will be used as the expected set of keys.
    *
    * T   Type of object.
+   *
    * @param object   Object to test.
    * @param keys   Keys to check
    * @param message    Message to display on error.
    */
   hasAnyKeys<T>(
     object: T,
-    keys: Array<Object | string> | {[key: string]: any},
+    keys: Array<object | string> | {[key: string]: any},
     message?: string
   ): void;
 
@@ -1688,13 +1787,14 @@ export interface Assert {
    * will be used as the expected set of keys.
    *
    * T   Type of object.
+   *
    * @param object   Object to test.
    * @param keys   Keys to check
    * @param message    Message to display on error.
    */
   hasAllKeys<T>(
     object: T,
-    keys: Array<Object | string> | {[key: string]: any},
+    keys: Array<object | string> | {[key: string]: any},
     message?: string
   ): void;
 
@@ -1704,13 +1804,14 @@ export interface Assert {
    * will be used as the expected set of keys.
    *
    * T   Type of object.
+   *
    * @param object   Object to test.
    * @param keys   Keys to check
    * @param message    Message to display on error.
    */
   containsAllKeys<T>(
     object: T,
-    keys: Array<Object | string> | {[key: string]: any},
+    keys: Array<object | string> | {[key: string]: any},
     message?: string
   ): void;
 
@@ -1720,13 +1821,14 @@ export interface Assert {
    * will be used as the expected set of keys.
    *
    * T   Type of object.
+   *
    * @param object   Object to test.
    * @param keys   Keys to check
    * @param message    Message to display on error.
    */
   doesNotHaveAnyKeys<T>(
     object: T,
-    keys: Array<Object | string> | {[key: string]: any},
+    keys: Array<object | string> | {[key: string]: any},
     message?: string
   ): void;
 
@@ -1736,13 +1838,14 @@ export interface Assert {
    * will be used as the expected set of keys.
    *
    * T   Type of object.
+   *
    * @param object   Object to test.
    * @param keys   Keys to check
    * @param message    Message to display on error.
    */
   doesNotHaveAllKeys<T>(
     object: T,
-    keys: Array<Object | string> | {[key: string]: any},
+    keys: Array<object | string> | {[key: string]: any},
     message?: string
   ): void;
 
@@ -1754,13 +1857,14 @@ export interface Assert {
    * will be used as the expected set of keys.
    *
    * T   Type of object.
+   *
    * @param object   Object to test.
    * @param keys   Keys to check
    * @param message    Message to display on error.
    */
   hasAnyDeepKeys<T>(
     object: T,
-    keys: Array<Object | string> | {[key: string]: any},
+    keys: Array<object | string> | {[key: string]: any},
     message?: string
   ): void;
 
@@ -1772,13 +1876,14 @@ export interface Assert {
    * will be used as the expected set of keys.
    *
    * T   Type of object.
+   *
    * @param object   Object to test.
    * @param keys   Keys to check
    * @param message    Message to display on error.
    */
   hasAllDeepKeys<T>(
     object: T,
-    keys: Array<Object | string> | {[key: string]: any},
+    keys: Array<object | string> | {[key: string]: any},
     message?: string
   ): void;
 
@@ -1790,13 +1895,14 @@ export interface Assert {
    * will be used as the expected set of keys.
    *
    * T   Type of object.
+   *
    * @param object   Object to test.
    * @param keys   Keys to check
    * @param message    Message to display on error.
    */
   containsAllDeepKeys<T>(
     object: T,
-    keys: Array<Object | string> | {[key: string]: any},
+    keys: Array<object | string> | {[key: string]: any},
     message?: string
   ): void;
 
@@ -1808,13 +1914,14 @@ export interface Assert {
    * will be used as the expected set of keys.
    *
    * T   Type of object.
+   *
    * @param object   Object to test.
    * @param keys   Keys to check
    * @param message    Message to display on error.
    */
   doesNotHaveAnyDeepKeys<T>(
     object: T,
-    keys: Array<Object | string> | {[key: string]: any},
+    keys: Array<object | string> | {[key: string]: any},
     message?: string
   ): void;
 
@@ -1826,13 +1933,14 @@ export interface Assert {
    * will be used as the expected set of keys.
    *
    * T   Type of object.
+   *
    * @param object   Object to test.
    * @param keys   Keys to check
    * @param message    Message to display on error.
    */
   doesNotHaveAllDeepKeys<T>(
     object: T,
-    keys: Array<Object | string> | {[key: string]: any},
+    keys: Array<object | string> | {[key: string]: any},
     message?: string
   ): void;
 
@@ -1841,6 +1949,7 @@ export interface Assert {
    * which can be a string using dot- and bracket-notation for nested reference.
    *
    * T   Type of object.
+   *
    * @param object   Object to test.
    * @param property    Property to test.
    * @param message    Message to display on error.
@@ -1853,6 +1962,7 @@ export interface Assert {
    * The property cannot exist on the object nor anywhere in its prototype chain.
    *
    * T   Type of object.
+   *
    * @param object   Object to test.
    * @param property    Property to test.
    * @param message    Message to display on error.
@@ -1864,6 +1974,7 @@ export interface Assert {
    * property can use dot- and bracket-notation for nested reference. Uses a strict equality check (===).
    *
    * T   Type of object.
+   *
    * @param object   Object to test.
    * @param property    Property to test.
    * @param value    Value to test.
@@ -1881,6 +1992,7 @@ export interface Assert {
    * property can use dot- and bracket-notation for nested reference. Uses a strict equality check (===).
    *
    * T   Type of object.
+   *
    * @param object   Object to test.
    * @param property    Property to test.
    * @param value    Value to test.
@@ -1898,6 +2010,7 @@ export interface Assert {
    * property can use dot- and bracket-notation for nested reference. Uses a deep equality check.
    *
    * T   Type of object.
+   *
    * @param object   Object to test.
    * @param property    Property to test.
    * @param value    Value to test.
@@ -1915,6 +2028,7 @@ export interface Assert {
    * property can use dot- and bracket-notation for nested reference. Uses a deep equality check.
    *
    * T   Type of object.
+   *
    * @param object   Object to test.
    * @param property    Property to test.
    * @param value    Value to test.
@@ -2027,33 +2141,22 @@ export const assert = asserts as Assert;
  * @namespace Assert
  * @public
  */
-function fail(message?: string): never;
-function fail<T>(
-  actual: T,
-  expected: T,
-  message?: string,
-  operator?: Operator
-): never;
-function fail<T>(
-  actual?: T,
-  expected?: T,
+assert.fail = function (
+  actual: unknown,
+  expected?: unknown,
   message?: string,
   operator?: Operator
 ) {
-  const doWeHaveLessThanTwoArguments =
-    message == null && operator == null && arguments.length < 2;
+  if (message == null && operator == null && arguments.length < 2) {
+    // Comply with Node's fail([message]) interface
 
-  // if (message == null && operator == null && arguments.length < 2) {
-  //   // Comply with Node's fail([message]) interface
+    message = actual as string;
+    actual = undefined!;
+  }
 
-  //   message = actual;
-  //   actual = undefined;
-  // }
-
-  const errorMessage =
-    (doWeHaveLessThanTwoArguments ? actual : message) || 'assert.fail()';
+  message = message || 'assert.fail()';
   throw new AssertionError(
-    errorMessage as string,
+    message as string,
     {
       actual,
       expected,
@@ -2061,9 +2164,7 @@ function fail<T>(
     },
     assert.fail
   );
-}
-
-assert.fail = fail;
+};
 
 /**
  * ### .isOk(object, [message])
@@ -2118,7 +2219,7 @@ assert.isNotOk = function (value: unknown, message: string) {
  * @public
  */
 assert.equal = function (actual: unknown, expected: unknown, message: string) {
-  let test = new Assertion(actual, message, assert.equal, true);
+  const test = new Assertion(actual, message, assert.equal, true);
 
   test.assert(
     expected == flag(test, 'object'),
@@ -2403,7 +2504,7 @@ assert.isNotTrue = function (value: unknown, message: string) {
  * @public
  */
 assert.isFalse = function (value: unknown, message: string) {
-  new Assertion(value, message, assert.isFalse, true).is['false'];
+  new Assertion(value, message, assert.isFalse, true).is.false;
 };
 
 /**
@@ -2728,7 +2829,7 @@ assert.isNotString = function (value: unknown, message: string) {
  * @namespace Assert
  * @public
  */
-assert.isNumber = function <T>(value: T, message: string) {
+assert.isNumber = function (value: unknown, message: string) {
   new Assertion(value, message, assert.isNumber, true).to.be.a('number');
 };
 
@@ -2804,7 +2905,7 @@ assert.isNotNumeric = function (value: unknown, message: string) {
  * @namespace Assert
  * @public
  */
-assert.isFinite = function <T>(value: T, message: string) {
+assert.isFinite = function (value: unknown, message: string) {
   new Assertion(value, message, assert.isFinite, true).to.be.finite;
 };
 
@@ -4379,7 +4480,7 @@ assert.operator = function (
         assert.operator
       );
   }
-  let test = new Assertion(ok, message, assert.operator, true);
+  const test = new Assertion(ok, message, assert.operator, true);
   test.assert(
     true === flag(test, 'object'),
     'expected ' + inspect(value) + ' to be ' + operator + ' ' + inspect(val2),

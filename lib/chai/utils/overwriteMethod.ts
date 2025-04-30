@@ -48,14 +48,14 @@ export function overwriteMethod(
   name: string,
   method: Function
 ) {
-  let _method = ctx[name],
-    _super = function () {
-      throw new Error(name + ' is not a function');
-    };
+  const _method = ctx[name];
+  let _super = function () {
+    throw new Error(name + ' is not a function');
+  };
 
   if (_method && 'function' === typeof _method) _super = _method;
 
-  let overwritingMethodWrapper = function (this: Assertion) {
+  const overwritingMethodWrapper = function (this: Assertion) {
     // Setting the `ssfi` flag to `overwritingMethodWrapper` causes this
     // function to be the starting point for removing implementation frames from
     // the stack trace of a failed assertion.
@@ -75,16 +75,16 @@ export function overwriteMethod(
     // Setting the `lockSsfi` flag to `true` prevents the overwritten assertion
     // from changing the `ssfi` flag. By this point, the `ssfi` flag is already
     // set to the correct starting point for this assertion.
-    let origLockSsfi = flag(this, 'lockSsfi');
+    const origLockSsfi = flag(this, 'lockSsfi');
     flag(this, 'lockSsfi', true);
-    let result = method(_super).apply(this, arguments);
+    const result = method(_super).apply(this, arguments);
     flag(this, 'lockSsfi', origLockSsfi);
 
     if (result !== undefined) {
       return result;
     }
 
-    let newAssertion = new Assertion();
+    const newAssertion = new Assertion();
     transferFlags(this, newAssertion);
     return newAssertion;
   };
